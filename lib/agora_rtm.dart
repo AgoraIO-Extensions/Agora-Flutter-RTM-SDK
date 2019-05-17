@@ -70,14 +70,15 @@ class AgoraRtmClient {
   }
 
   Future<String> renewToken(String token) async {
-    _AgoraRtmPlugin._channel.invokeMethod(
-        'AgoraRtmClient_renewToken', {'clientIndex': _clientIndex, 'token': token});
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_renewToken',
+        {'clientIndex': _clientIndex, 'token': token});
     _renewTokenCompletion = new Completer<String>();
     return _renewTokenCompletion.future;
   }
 
   Future<Map<String, bool>> queryPeersOnlineStatus(List<String> peerIds) async {
-    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_queryPeersOnlineStatus',
+    _AgoraRtmPlugin._channel.invokeMethod(
+        'AgoraRtmClient_queryPeersOnlineStatus',
         {'clientIndex': _clientIndex, 'peerIds': peerIds});
     _queryPeersOnlineStatusCompletion = new Completer<Map<String, bool>>();
     return _queryPeersOnlineStatusCompletion.future;
@@ -95,7 +96,8 @@ class AgoraRtmClient {
 
   Future<AgoraRtmChannel> createChannel(String channelId) async {
     int channelIndex = await _AgoraRtmPlugin._channel.invokeMethod(
-        'AgoraRtmClient_createChannel', {'clientIndex': _clientIndex, 'channelId': channelId});
+        'AgoraRtmClient_createChannel',
+        {'clientIndex': _clientIndex, 'channelId': channelId});
     if (channelIndex >= 0) {
       AgoraRtmChannel channel =
           AgoraRtmChannel._(this._clientIndex, channelIndex, channelId);
@@ -236,15 +238,18 @@ class AgoraRtmChannel {
   }
 
   Future<void> sendMessage(AgoraRtmMessage message) async {
-    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmChannel_sendMessage',
-        {'channelIndex': _channelIndex, 'clientIndex': _clientIndex, 'message': message._jsonMap()});
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmChannel_sendMessage', {
+      'channelIndex': _channelIndex,
+      'clientIndex': _clientIndex,
+      'message': message._jsonMap()
+    });
     _sendMessageCompletion = new Completer<void>();
     return _sendMessageCompletion.future;
   }
 
   Future<List<AgoraRtmMember>> getMembers() async {
-    _AgoraRtmPlugin._channel
-        .invokeMethod('AgoraRtmChannel_getMembers', {'channelIndex': _channelIndex});
+    _AgoraRtmPlugin._channel.invokeMethod(
+        'AgoraRtmChannel_getMembers', {'channelIndex': _channelIndex});
     _getMembersCompletion = new Completer<List<AgoraRtmMember>>();
     return _getMembersCompletion.future;
   }
@@ -307,10 +312,13 @@ class AgoraRtmChannel {
         }
         int code = arguments['errorCode'];
         if (code == 0) {
-          List<AgoraRtmMember> members = arguments['members']
-              .map((memberMap) =>
-                  AgoraRtmMember(memberMap['userId'], memberMap['channelId']))
-              .toList();
+          List memberList = List.from(arguments['members']);
+          List<AgoraRtmMember> members = List<AgoraRtmMember>();
+          for (var memberMap in memberList) {
+            AgoraRtmMember member =
+                AgoraRtmMember(memberMap['userId'], memberMap['channelId']);
+            members.add(member);
+          }
           channel._getMembersCompletion.complete(members);
         } else {
           channel._getMembersCompletion.completeError(code);
@@ -381,5 +389,10 @@ class AgoraRtmMember {
   AgoraRtmMember(String userId, String channelId) {
     this.userId = userId;
     this.channelId = channelId;
+  }
+
+  @override
+  String toString() {
+    return "{uid: " + userId + ", cid: " + channelId + "}";
   }
 }

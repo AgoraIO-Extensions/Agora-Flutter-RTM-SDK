@@ -46,6 +46,7 @@ class _MyAppState extends State<MyApp> {
                 _buildQueryOnlineStatus(),
                 _buildSendPeerMessage(),
                 _buildJoinChannel(),
+                _buildGetMembers(),
                 _buildSendChannelMessage(),
                 _buildInfoList(),
               ],
@@ -179,6 +180,18 @@ class _MyAppState extends State<MyApp> {
     ]);
   }
 
+  Widget _buildGetMembers() {
+    if (!_isLogin || !_isInChannel) {
+      return Container();
+    }
+    return Row(children: <Widget>[
+      new OutlineButton(
+        child: Text('Get Members in Channel', style: textStyle),
+        onPressed: _toggleGetMembers,
+      )
+    ]);
+  }
+
   Widget _buildInfoList() {
     return Expanded(
         child: Container(
@@ -202,6 +215,7 @@ class _MyAppState extends State<MyApp> {
 
         setState(() {
           _isLogin = false;
+          _isInChannel = false;
         });
       } catch (errorCode) {
         _log('Logout error: ' + errorCode.toString());
@@ -293,6 +307,15 @@ class _MyAppState extends State<MyApp> {
       } catch (errorCode) {
         _log('Join channel error: ' + errorCode.toString());
       }
+    }
+  }
+
+  void _toggleGetMembers() async {
+    try {
+      List<AgoraRtmMember> members = await _channel.getMembers();
+      _log('Members: ' + members.toString());
+    } catch (errorCode) {
+      _log('GetMembers failed: ' + errorCode.toString());
     }
   }
 
