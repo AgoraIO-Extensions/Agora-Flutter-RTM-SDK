@@ -237,7 +237,7 @@ class AgoraRtmChannel {
 
   Future<void> sendMessage(AgoraRtmMessage message) async {
     _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmChannel_sendMessage',
-        {'channelIndex': _channelIndex, 'message': message._jsonMap()});
+        {'channelIndex': _channelIndex, 'clientIndex': _clientIndex, 'message': message._jsonMap()});
     _sendMessageCompletion = new Completer<void>();
     return _sendMessageCompletion.future;
   }

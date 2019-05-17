@@ -142,6 +142,7 @@
     AgoraRtmKit *client = self.clients[clientIndex];
     NSString *channelId = [self stringFromArguments:callArguments key:@"channelId"];
     [client destroyChannelWithId:channelId];
+    self.clients[clientIndex] = nil;
   }
   
   else {
