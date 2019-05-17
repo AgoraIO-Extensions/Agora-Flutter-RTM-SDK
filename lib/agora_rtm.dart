@@ -27,9 +27,15 @@ class _AgoraRtmPlugin {
   }
 }
 
+/// The entry point to the Agora RTM system
 class AgoraRtmClient {
+  /// Occurs when the connection state between the SDK and the Agora RTM system changes.
   void Function(int state, int reason) onConnectionStateChanged;
+
+  /// Occurs when the local user receives a peer-to-peer message.
   void Function(AgoraRtmMessage message, String peerId) onMessageReceived;
+
+  /// Occurs when your token expires.
   void Function() onTokenExpired;
 
   final int _clientIndex;
@@ -42,6 +48,9 @@ class AgoraRtmClient {
   Completer<Map<String, bool>> _queryPeersOnlineStatusCompletion;
   Completer<void> _sendMessageToPeerCompletion;
 
+  /// Initializes an [AgoraRtmClient] instance
+  ///
+  /// The Agora RTM SDK supports multiple [AgoraRtmClient] instances.
   static Future<AgoraRtmClient> createInstance(String appId) async {
     _AgoraRtmPlugin._addMethodCallHandler();
     int id = await _AgoraRtmPlugin._channel
@@ -55,6 +64,16 @@ class AgoraRtmClient {
     }
   }
 
+  /// Allows a user to log in the Agora RTM system.
+  ///
+  /// The string length of userId must be less than 64 bytes with the following character scope:
+  /// - The 26 lowercase English letters: a to z
+  /// - The 26 uppercase English letters: A to Z
+  /// - The 10 numbers: 0 to 9
+  /// - Space
+  /// - "!", "#", "$", "%", "&", "(", ")", "+", "-", ":", ";", "<", "=", ".", ">", "?", "@", "]", "[", "^", "_", " {", "}", "|", "~", ","
+  /// Do not set userId as null and do not start with a space.
+  /// If you log in with the same user ID from a different instance, you will be kicked out of your previous login and removed from previously joined channels.
   Future<void> login(String token, String userId) async {
     _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_login',
         {'clientIndex': _clientIndex, 'token': token, 'userId': userId});
@@ -62,6 +81,7 @@ class AgoraRtmClient {
     return _loginCompletion.future;
   }
 
+  /// Allows a user to log out of the Agora RTM system.
   Future<void> logout() async {
     _AgoraRtmPlugin._channel
         .invokeMethod('AgoraRtmClient_logout', {'clientIndex': _clientIndex});
@@ -69,6 +89,7 @@ class AgoraRtmClient {
     return _logoutCompletion.future;
   }
 
+  /// Renews the token.
   Future<String> renewToken(String token) async {
     _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_renewToken',
         {'clientIndex': _clientIndex, 'token': token});
@@ -76,6 +97,7 @@ class AgoraRtmClient {
     return _renewTokenCompletion.future;
   }
 
+  /// Queries the online status of the specified user(s).
   Future<Map<String, bool>> queryPeersOnlineStatus(List<String> peerIds) async {
     _AgoraRtmPlugin._channel.invokeMethod(
         'AgoraRtmClient_queryPeersOnlineStatus',
@@ -84,6 +106,7 @@ class AgoraRtmClient {
     return _queryPeersOnlineStatusCompletion.future;
   }
 
+  /// Allows a user to send a peer-to-peer message to a specific peer user.
   Future<void> sendMessageToPeer(String peerId, AgoraRtmMessage message) async {
     _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_sendMessageToPeer', {
       'clientIndex': _clientIndex,
@@ -94,6 +117,15 @@ class AgoraRtmClient {
     return _sendMessageToPeerCompletion.future;
   }
 
+  /// Creates an [AgoraRtmChannel].
+  ///
+  /// channelId is the unique channel name of the Agora RTM session. The string length must not exceed 64 bytes with the following character scope:
+  /// - The 26 lowercase English letters: a to z
+  /// - The 26 uppercase English letters: A to Z
+  /// - The 10 numbers: 0 to 9
+  /// - Space
+  /// - "!", "#", "$", "%", "&", "(", ")", "+", "-", ":", ";", "<", "=", ".", ">", "?", "@", "]", "[", "^", "_", " {", "}", "|", "~", ","
+  /// channelId cannot be empty or set as nil.
   Future<AgoraRtmChannel> createChannel(String channelId) async {
     int channelIndex = await _AgoraRtmPlugin._channel.invokeMethod(
         'AgoraRtmClient_createChannel',
@@ -206,9 +238,18 @@ class AgoraRtmClient {
 }
 
 class AgoraRtmChannel {
+  /// Occurs when the local user receives a channel message.
   void Function(AgoraRtmMessage message, AgoraRtmMember fromMember)
       onMessageReceived;
+
+  /// Occurs when a remote user joins a channel.
+  ///
+  /// This callback is disabled when the number of the channel members exceeds 512.
   void Function(AgoraRtmMember member) onMemberJoined;
+
+  /// Occurs when a remote user leaves a channel.
+  ///
+  /// This callback is disabled when the number of the channel members exceeds 512.
   void Function(AgoraRtmMember member) onMemberLeft;
 
   final int _clientIndex;
@@ -223,6 +264,7 @@ class AgoraRtmChannel {
   Completer<void> _sendMessageCompletion;
   Completer<List<AgoraRtmMember>> _getMembersCompletion;
 
+  /// Allows a user to join a channel.
   Future<void> join() async {
     _AgoraRtmPlugin._channel
         .invokeMethod('AgoraRtmChannel_join', {'channelIndex': _channelIndex});
@@ -230,6 +272,7 @@ class AgoraRtmChannel {
     return _joinCompletion.future;
   }
 
+  /// Allows a user to leave a channel.
   Future<void> leave() async {
     _AgoraRtmPlugin._channel
         .invokeMethod('AgoraRtmChannel_leave', {'channelIndex': _channelIndex});
@@ -237,6 +280,9 @@ class AgoraRtmChannel {
     return _leaveCompletion.future;
   }
 
+  /// Allows a user to send a message to all users in the channel.
+  ///
+  /// You can send channel messages at a maximum speed of 60 queries per second.
   Future<void> sendMessage(AgoraRtmMessage message) async {
     _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmChannel_sendMessage', {
       'channelIndex': _channelIndex,
@@ -247,6 +293,7 @@ class AgoraRtmChannel {
     return _sendMessageCompletion.future;
   }
 
+  /// Retrieves the member list of a channel.
   Future<List<AgoraRtmMember>> getMembers() async {
     _AgoraRtmPlugin._channel.invokeMethod(
         'AgoraRtmChannel_getMembers', {'channelIndex': _channelIndex});
@@ -254,6 +301,9 @@ class AgoraRtmChannel {
     return _getMembersCompletion.future;
   }
 
+  /// Release an [AgoraRtmChannel] instance.
+  ///
+  /// Do not call this method in any of your callbacks.
   Future<void> release() async {
     await _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmChannel_release', {
       'channelIndex': _channelIndex,

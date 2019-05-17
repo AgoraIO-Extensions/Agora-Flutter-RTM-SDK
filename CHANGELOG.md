@@ -1,3 +1,5 @@
-## 0.0.1
+# Change log
 
-* TODO: Describe initial release.
+## 0.9.2
+
+* Flutter for Agora RTM SDK first release

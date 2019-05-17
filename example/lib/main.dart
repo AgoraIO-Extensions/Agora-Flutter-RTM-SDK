@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
 
   void _createClient() async {
     _client =
-        await AgoraRtmClient.createInstance(<Your App Id>);
+        await AgoraRtmClient.createInstance('YOUR APP ID');
     _client.onMessageReceived = (AgoraRtmMessage message, String peerId) {
       _log("Peer msg: " + peerId + ", msg: " + message.text);
     };

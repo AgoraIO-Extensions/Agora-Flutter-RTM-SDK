@@ -1,16 +1,23 @@
-# agora_rtm_example
+# AgoraRtm Example
 
-Demonstrates how to use the agora_rtm plugin.
+Demonstrates how to use the `agora_rtm` plugin.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Create an Account and Obtain an App ID
 
-A few resources to get you started if this is your first Flutter project:
+1. Create a developer account at [agora.io](https://dashboard.agora.io/signin/).
+2. In the Agora.io Dashboard that appears, click **Projects** > **Project List** in the left navigation.
+3. Copy the **App ID** from the Dashboard to a text file. You will use this ID later when you launch the app.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Update and Run the Sample Application
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+Open the `main.dart` file. In the `_createClient()` method, update `YOUR APP ID` with your App ID.
+
+```Dart
+_client = await AgoraRtmClient.createInstance('YOUR APP ID');
+```
+
+### Run example
+
+Connect device and run.
