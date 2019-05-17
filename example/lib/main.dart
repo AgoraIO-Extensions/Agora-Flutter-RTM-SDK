@@ -60,6 +60,19 @@ class _MyAppState extends State<MyApp> {
     _client.onMessageReceived = (AgoraRtmMessage message, String peerId) {
       _log("Peer msg: " + peerId + ", msg: " + message.text);
     };
+    _client.onConnectionStateChanged = (int state, int reason) {
+      _log('Connection state changed: ' +
+          state.toString() +
+          ', reason: ' +
+          reason.toString());
+      if (state == 5) {
+        _client.logout();
+        _log('Logout.');
+        setState(() {
+          _isLogin = false;
+        });
+      }
+    };
   }
 
   Future<AgoraRtmChannel> _createChannel(String name) async {

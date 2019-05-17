@@ -20,13 +20,13 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  NSString *method = call.method;
-  NSDictionary *arguments = call.arguments;
-  NSLog(@"plugin handleMethodCall: %@, argus: %@", method, arguments);
+  NSString *callMethod = call.method;
+  NSDictionary *callArguments = call.arguments;
+  NSLog(@"plugin handleMethodCall: %@, argus: %@", callMethod, callArguments);
   
   // client
-  if ([@"AgoraRtmClient_createInstance" isEqualToString:call.method]) {
-    NSString *appId = [self stringFromArguments:arguments key:@"appId"];
+  if ([@"AgoraRtmClient_createInstance" isEqualToString:callMethod]) {
+    NSString *appId = [self stringFromArguments:callArguments key:@"appId"];
     AgoraRtmKit *kit = [[AgoraRtmKit alloc] initWithAppId:appId delegate:self];
     if (kit) {
       NSNumber *key = [NSNumber numberWithInteger:self.nextClientIndex];
@@ -36,10 +36,10 @@
     } else {
       result(@(-1));
     }
-  } else if ([@"AgoraRtmClient_login" isEqualToString:call.method]) {
-    NSString *token = [self stringFromArguments:arguments key:@"token"];
-    NSString *userId = [self stringFromArguments:arguments key:@"userId"];
-    NSNumber *clientIndex = [self numberFromArguments:arguments key:@"clientIndex"];
+  } else if ([@"AgoraRtmClient_login" isEqualToString:callMethod]) {
+    NSString *token = [self stringFromArguments:callArguments key:@"token"];
+    NSString *userId = [self stringFromArguments:callArguments key:@"userId"];
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
     AgoraRtmKit *client = self.clients[clientIndex];
     [client loginByToken:token user:userId completion:^(AgoraRtmLoginErrorCode errorCode) {
       NSDictionary *arguments = [self appendRtmClientIndex:clientIndex
@@ -47,8 +47,8 @@
       [self.methodChannel invokeMethod:@"AgoraRtmClient_login"
                              arguments:arguments];
     }];
-  } else if ([@"AgoraRtmClient_logout" isEqualToString:call.method]) {
-    NSNumber *clientIndex = [self numberFromArguments:arguments key:@"clientIndex"];
+  } else if ([@"AgoraRtmClient_logout" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
     AgoraRtmKit *client = self.clients[clientIndex];
     [client logoutWithCompletion:^(AgoraRtmLogoutErrorCode errorCode) {
       NSDictionary *arguments = [self appendRtmClientIndex:clientIndex
@@ -56,10 +56,10 @@
       [self.methodChannel invokeMethod:@"AgoraRtmClient_logout"
                              arguments:arguments];
     }];
-  } else if ([@"AgoraRtmClient_queryPeersOnlineStatus" isEqualToString:call.method]) {
-    NSNumber *clientIndex = [self numberFromArguments:arguments key:@"clientIndex"];
+  } else if ([@"AgoraRtmClient_queryPeersOnlineStatus" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
     AgoraRtmKit *client = self.clients[clientIndex];
-    NSArray *peerIds = [self arrayFromArguments:arguments key:@"peerIds"];
+    NSArray *peerIds = [self arrayFromArguments:callArguments key:@"peerIds"];
     [client queryPeersOnlineStatus:peerIds completion:^(NSArray<AgoraRtmPeerOnlineStatus *> *peerOnlineStatus, AgoraRtmQueryPeersOnlineErrorCode errorCode) {
       NSMutableDictionary *results = [[NSMutableDictionary alloc] init];
       for (AgoraRtmPeerOnlineStatus *status in peerOnlineStatus) {
@@ -72,21 +72,21 @@
       [self.methodChannel invokeMethod:@"AgoraRtmClient_queryPeersOnlineStatus"
                              arguments:arguments];
     }];
-  } else if ([@"AgoraRtmClient_sendMessageToPeer" isEqualToString:call.method]) {
-    NSNumber *clientIndex = [self numberFromArguments:arguments key:@"clientIndex"];
+  } else if ([@"AgoraRtmClient_sendMessageToPeer" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
     AgoraRtmKit *client = self.clients[clientIndex];
-    NSString *peerId = [self stringFromArguments:arguments key:@"peerId"];
-    NSDictionary *messageDic = [self dictionaryFromArguments:arguments key:@"message"];
+    NSString *peerId = [self stringFromArguments:callArguments key:@"peerId"];
+    NSDictionary *messageDic = [self dictionaryFromArguments:callArguments key:@"message"];
     AgoraRtmMessage *message = [self messageFromDic:messageDic];
     [client sendMessage:message toPeer:peerId completion:^(AgoraRtmSendPeerMessageErrorCode errorCode) {
       NSDictionary *arguments = [self appendRtmClientIndex:clientIndex
                                                toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
       [self.methodChannel invokeMethod:@"AgoraRtmClient_sendMessageToPeer" arguments:arguments];
     }];
-  } else if ([@"AgoraRtmClient_createChannel" isEqualToString:call.method]) {
-    NSNumber *clientIndex = [self numberFromArguments:arguments key:@"clientIndex"];
+  } else if ([@"AgoraRtmClient_createChannel" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
     AgoraRtmKit *client = self.clients[clientIndex];
-    NSString *channelId = [self stringFromArguments:arguments key:@"channelId"];
+    NSString *channelId = [self stringFromArguments:callArguments key:@"channelId"];
     AgoraRtmChannel *channel = [client createChannelWithId:channelId delegate:self];
     if (channel) {
       NSNumber *key = [NSNumber numberWithInteger:self.nextChannelIndex];
@@ -99,34 +99,34 @@
   }
   
   // channel
-  else if ([@"AgoraRtmChannel_join" isEqualToString:call.method]) {
-    NSNumber *channelIndex = [self numberFromArguments:arguments key:@"channelIndex"];
+  else if ([@"AgoraRtmChannel_join" isEqualToString:callMethod]) {
+    NSNumber *channelIndex = [self numberFromArguments:callArguments key:@"channelIndex"];
     AgoraRtmChannel *channel = self.channels[channelIndex];
     [channel joinWithCompletion:^(AgoraRtmJoinChannelErrorCode errorCode) {
       NSDictionary *arguments = [self appendRtmChannelIndex:channelIndex
                                                 toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
       [self.methodChannel invokeMethod:@"AgoraRtmChannel_join" arguments:arguments];
     }];
-  } else if ([@"AgoraRtmChannel_leave" isEqualToString:call.method]) {
-    NSNumber *channelIndex = [self numberFromArguments:arguments key:@"channelIndex"];
+  } else if ([@"AgoraRtmChannel_leave" isEqualToString:callMethod]) {
+    NSNumber *channelIndex = [self numberFromArguments:callArguments key:@"channelIndex"];
     AgoraRtmChannel *channel = self.channels[channelIndex];
     [channel leaveWithCompletion:^(AgoraRtmLeaveChannelErrorCode errorCode) {
       NSDictionary *arguments = [self appendRtmChannelIndex:channelIndex
                                                 toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
       [self.methodChannel invokeMethod:@"AgoraRtmChannel_leave" arguments:arguments];
     }];
-  } else if ([@"AgoraRtmChannel_sendMessage" isEqualToString:call.method]) {
-    NSNumber *channelIndex = [self numberFromArguments:arguments key:@"channelIndex"];
+  } else if ([@"AgoraRtmChannel_sendMessage" isEqualToString:callMethod]) {
+    NSNumber *channelIndex = [self numberFromArguments:callArguments key:@"channelIndex"];
     AgoraRtmChannel *channel = self.channels[channelIndex];
-    NSDictionary *messageDic = [self dictionaryFromArguments:arguments key:@"message"];
+    NSDictionary *messageDic = [self dictionaryFromArguments:callArguments key:@"message"];
     AgoraRtmMessage *message = [self messageFromDic:messageDic];
     [channel sendMessage:message completion:^(AgoraRtmSendChannelMessageErrorCode errorCode) {
       NSDictionary *arguments = [self appendRtmChannelIndex:channelIndex
                                                 toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
       [self.methodChannel invokeMethod:@"AgoraRtmChannel_sendMessage" arguments:arguments];
     }];
-  } else if ([@"AgoraRtmChannel_getMembers" isEqualToString:call.method]) {
-    NSNumber *channelIndex = [self numberFromArguments:arguments key:@"channelIndex"];
+  } else if ([@"AgoraRtmChannel_getMembers" isEqualToString:callMethod]) {
+    NSNumber *channelIndex = [self numberFromArguments:callArguments key:@"channelIndex"];
     AgoraRtmChannel *channel = self.channels[channelIndex];
     [channel getMembersWithCompletion:^(NSArray<AgoraRtmMember *> * _Nullable members, AgoraRtmGetMembersErrorCode errorCode) {
       NSMutableArray *membersList = [[NSMutableArray alloc] init];
@@ -137,10 +137,10 @@
                                                 toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode], @"members": membersList}];
       [self.methodChannel invokeMethod:@"AgoraRtmChannel_getMembers" arguments:arguments];
     }];
-  } else if ([@"AgoraRtmChannel_release" isEqualToString:call.method]) {
-    NSNumber *clientIndex = [self numberFromArguments:arguments key:@"clientIndex"];
+  } else if ([@"AgoraRtmChannel_release" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
     AgoraRtmKit *client = self.clients[clientIndex];
-    NSString *channelId = [self stringFromArguments:arguments key:@"channelId"];
+    NSString *channelId = [self stringFromArguments:callArguments key:@"channelId"];
     [client destroyChannelWithId:channelId];
   }
   
