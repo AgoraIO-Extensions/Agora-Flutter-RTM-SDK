@@ -33,7 +33,7 @@ class AgoraRtmPlugin: MethodCallHandler {
   private fun getActiveContext(): Context {
     return when {
       (registrar.activity() == null) -> registrar.context()
-      else -> return registrar.activity()
+      else -> registrar.activity()
     }
   }
 
