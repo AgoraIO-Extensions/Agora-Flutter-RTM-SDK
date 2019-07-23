@@ -1,6 +1,8 @@
 package io.agora.agorartm
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import io.agora.rtm.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -11,6 +13,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 class AgoraRtmPlugin: MethodCallHandler {
   private val registrar: Registrar
   private val methodChannel: MethodChannel
+  private val eventHandler: Handler
   private var nextClientIndex: Int = 0
   private var nextChannelIndex: Int = 0
   private var clients = HashMap<Int, RtmClient>()
@@ -28,6 +31,13 @@ class AgoraRtmPlugin: MethodCallHandler {
   constructor(registrar: Registrar, channel: MethodChannel) {
     this.registrar = registrar
     this.methodChannel = channel
+    this.eventHandler = Handler(Looper.getMainLooper())
+  }
+
+  private fun invokeMethod(method: String, arguments: HashMap<String, Any>) {
+    eventHandler.post(Runnable {
+      methodChannel.invokeMethod(method, arguments)
+    })
   }
 
   private fun getActiveContext(): Context {
@@ -56,7 +66,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               val clientIndex = indexOfClient(client!!)
               if (clientIndex != null) {
                 val arguments = rtmClientArguments(clientIndex, hashMapOf("state" to state, "reason" to reason))
-                methodChannel.invokeMethod("AgoraRtmClient_onConnectionStateChanged", arguments)
+                invokeMethod("AgoraRtmClient_onConnectionStateChanged", arguments)
               }
             }
 
@@ -64,7 +74,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               val clientIndex = indexOfClient(client!!)
               if (clientIndex != null) {
                 val arguments = rtmClientArguments(clientIndex, hashMapOf("message" to mapFromMessage(message), "peerId" to peerId))
-                methodChannel.invokeMethod("AgoraRtmClient_onMessageReceived", arguments)
+                invokeMethod("AgoraRtmClient_onMessageReceived", arguments)
               }
             }
 
@@ -72,7 +82,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               val clientIndex = indexOfClient(client!!)
               if (clientIndex != null) {
                 val arguments = rtmClientArguments(clientIndex, null)
-                methodChannel.invokeMethod("AgoraRtmClient_onTokenExpired", arguments)
+                invokeMethod("AgoraRtmClient_onTokenExpired", arguments)
               }
             }
           })
@@ -92,7 +102,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         val client = clients[clientIndex]
         if (client == null) {
           val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmClient_login", arguments)
+          invokeMethod("AgoraRtmClient_login", arguments)
           return
         }
         val token = stringFromArguments(callArguments, "token")
@@ -100,12 +110,12 @@ class AgoraRtmPlugin: MethodCallHandler {
         client.login(token, userId, object : ResultCallback<Void> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmClient_login", arguments)
+            invokeMethod("AgoraRtmClient_login", arguments)
           }
 
           override fun onSuccess(p0: Void?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
-            methodChannel.invokeMethod("AgoraRtmClient_login", arguments)
+            invokeMethod("AgoraRtmClient_login", arguments)
           }
         })
       }
@@ -114,18 +124,18 @@ class AgoraRtmPlugin: MethodCallHandler {
         val client = clients[clientIndex]
         if (client == null) {
           val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmClient_logout", arguments)
+          invokeMethod("AgoraRtmClient_logout", arguments)
           return
         }
         client.logout(object : ResultCallback<Void> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmClient_logout", arguments)
+            invokeMethod("AgoraRtmClient_logout", arguments)
           }
 
           override fun onSuccess(p0: Void?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
-            methodChannel.invokeMethod("AgoraRtmClient_logout", arguments)
+            invokeMethod("AgoraRtmClient_logout", arguments)
           }
         })
       }
@@ -134,7 +144,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         val client = clients[clientIndex]
         if (client == null) {
           val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmClient_queryPeersOnlineStatus", arguments)
+          invokeMethod("AgoraRtmClient_queryPeersOnlineStatus", arguments)
           return
         }
         val peerIdArray: List<String>? = listFromArguments(callArguments, "peerIds")
@@ -146,7 +156,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         client.queryPeersOnlineStatus(s, object : ResultCallback<Map<String, Boolean>> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmClient_queryPeersOnlineStatus", arguments)
+            invokeMethod("AgoraRtmClient_queryPeersOnlineStatus", arguments)
           }
 
           override fun onSuccess(p0: Map<String, Boolean>?) {
@@ -156,7 +166,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               else -> rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
             }
 
-            methodChannel.invokeMethod("AgoraRtmClient_queryPeersOnlineStatus", arguments)
+            invokeMethod("AgoraRtmClient_queryPeersOnlineStatus", arguments)
           }
         })
       }
@@ -165,7 +175,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         val client = clients[clientIndex]
         if (client == null) {
           val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmClient_sendMessageToPeer", arguments)
+          invokeMethod("AgoraRtmClient_sendMessageToPeer", arguments)
           return
         }
         val peerId = stringFromArguments(callArguments, "peerId")
@@ -174,12 +184,12 @@ class AgoraRtmPlugin: MethodCallHandler {
         client.sendMessageToPeer(peerId, message, object : ResultCallback<Void> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmClient_sendMessageToPeer", arguments)
+            invokeMethod("AgoraRtmClient_sendMessageToPeer", arguments)
           }
 
           override fun onSuccess(p0: Void?) {
             val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
-            methodChannel.invokeMethod("AgoraRtmClient_sendMessageToPeer", arguments)
+            invokeMethod("AgoraRtmClient_sendMessageToPeer", arguments)
           }
         })
       }
@@ -188,7 +198,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         val client = clients[clientIndex]
         if (client == null) {
           val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmClient_createChannel", arguments)
+          invokeMethod("AgoraRtmClient_createChannel", arguments)
           return
         }
 
@@ -200,7 +210,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               val channelIndex = indexOfChannel(channel!!)
               if (channelIndex != null && member != null) {
                 val arguments = rtmChannelArguments(channelIndex, hashMapOf("member" to mapFromMember(member)))
-                methodChannel.invokeMethod("AgoraRtmChannel_onMemberJoined", arguments)
+                invokeMethod("AgoraRtmChannel_onMemberJoined", arguments)
               }
             }
 
@@ -208,7 +218,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               val channelIndex = indexOfChannel(channel!!)
               if (channelIndex != null && member != null) {
                 val arguments = rtmChannelArguments(channelIndex, hashMapOf("member" to mapFromMember(member)))
-                methodChannel.invokeMethod("AgoraRtmChannel_onMemberLeft", arguments)
+                invokeMethod("AgoraRtmChannel_onMemberLeft", arguments)
               }
             }
 
@@ -216,7 +226,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               val channelIndex = indexOfChannel(channel!!)
               if (channelIndex != null && message != null && fromMember != null) {
                 val arguments = rtmChannelArguments(channelIndex, hashMapOf("member" to mapFromMember(fromMember), "message" to mapFromMessage(message)))
-                methodChannel.invokeMethod("AgoraRtmChannel_onMessageReceived", arguments)
+                invokeMethod("AgoraRtmChannel_onMessageReceived", arguments)
               }
             }
           })
@@ -237,18 +247,18 @@ class AgoraRtmPlugin: MethodCallHandler {
         val channel = channels[channelIndex]
         if (channel == null) {
           val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmChannel_join", arguments)
+          invokeMethod("AgoraRtmChannel_join", arguments)
           return
         }
         channel.join(object : ResultCallback<Void> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmChannel_join", arguments)
+            invokeMethod("AgoraRtmChannel_join", arguments)
           }
 
           override fun onSuccess(p0: Void?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to 0))
-            methodChannel.invokeMethod("AgoraRtmChannel_join", arguments)
+            invokeMethod("AgoraRtmChannel_join", arguments)
           }
         })
       }
@@ -257,18 +267,18 @@ class AgoraRtmPlugin: MethodCallHandler {
         val channel = channels[channelIndex]
         if (channel == null) {
           val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmChannel_leave", arguments)
+          invokeMethod("AgoraRtmChannel_leave", arguments)
           return
         }
         channel.leave(object : ResultCallback<Void> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmChannel_leave", arguments)
+            invokeMethod("AgoraRtmChannel_leave", arguments)
           }
 
           override fun onSuccess(p0: Void?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to 0))
-            methodChannel.invokeMethod("AgoraRtmChannel_leave", arguments)
+            invokeMethod("AgoraRtmChannel_leave", arguments)
           }
         })
       }
@@ -279,7 +289,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         val channel = channels[channelIndex]
         if (client == null || channel == null) {
           val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmChannel_sendMessage", arguments)
+          invokeMethod("AgoraRtmChannel_sendMessage", arguments)
           return
         }
         val messageMap = mapFromArguments(callArguments, "message")
@@ -287,12 +297,12 @@ class AgoraRtmPlugin: MethodCallHandler {
         channel.sendMessage(message, object : ResultCallback<Void> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmChannel_sendMessage", arguments)
+            invokeMethod("AgoraRtmChannel_sendMessage", arguments)
           }
 
           override fun onSuccess(p0: Void?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to 0))
-            methodChannel.invokeMethod("AgoraRtmChannel_sendMessage", arguments)
+            invokeMethod("AgoraRtmChannel_sendMessage", arguments)
           }
         })
       }
@@ -301,13 +311,13 @@ class AgoraRtmPlugin: MethodCallHandler {
         val channel = channels[channelIndex]
         if (channel == null) {
           val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to -1))
-          methodChannel.invokeMethod("AgoraRtmChannel_getMembers", arguments)
+          invokeMethod("AgoraRtmChannel_getMembers", arguments)
           return
         }
         channel.getMembers(object : ResultCallback<List<RtmChannelMember>> {
           override fun onFailure(p0: ErrorInfo?) {
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to p0!!.errorCode))
-            methodChannel.invokeMethod("AgoraRtmChannel_getMembers", arguments)
+            invokeMethod("AgoraRtmChannel_getMembers", arguments)
           }
 
           override fun onSuccess(list: List<RtmChannelMember>?) {
@@ -318,7 +328,7 @@ class AgoraRtmPlugin: MethodCallHandler {
               }
             }
             val arguments = rtmChannelArguments(channelIndex, hashMapOf("errorCode" to 0, "members" to membersList))
-            methodChannel.invokeMethod("AgoraRtmChannel_getMembers", arguments)
+            invokeMethod("AgoraRtmChannel_getMembers", arguments)
           }
         })
       }
