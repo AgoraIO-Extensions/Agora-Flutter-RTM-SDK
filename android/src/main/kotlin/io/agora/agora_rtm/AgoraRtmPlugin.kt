@@ -31,7 +31,7 @@ class AgoraRtmPlugin: MethodCallHandler {
   constructor(registrar: Registrar, channel: MethodChannel) {
     this.registrar = registrar
     this.methodChannel = channel
-    this.eventHandler = Handler(Looper.getMainLooper());
+    this.eventHandler = Handler(Looper.getMainLooper())
   }
 
   private fun invokeMethod(method: String, arguments: HashMap<String, Any>) {
