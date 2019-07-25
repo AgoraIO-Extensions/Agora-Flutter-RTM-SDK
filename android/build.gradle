@@ -41,5 +41,5 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'io.agora.rtm:rtm-sdk:0.9.2'
+    implementation 'io.agora.rtm:rtm-sdk:1.0.0'
 }

@@ -9,6 +9,9 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 class AgoraRtmPlugin: MethodCallHandler {
   private val registrar: Registrar
@@ -343,6 +346,170 @@ class AgoraRtmPlugin: MethodCallHandler {
         channels.remove(channelIndex)
         result.success(0)
       }
+      "AgoraRtmClient_setLocalUserAttributes" -> {
+        val clientIndex = intFromArguments(callArguments, "clientIndex")
+        val client = clients[clientIndex]
+        if (client == null) {
+          val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
+          invokeMethod("AgoraRtmClient_setLocalUserAttributes", arguments)
+          return
+        }
+        val attributes: List<Map<String, String>>? = listFromArguments(callArguments, "attributes")
+        var localUserAttributes = ArrayList<RtmAttribute>()
+        attributes?.forEach {
+          var rtmAttribute = RtmAttribute()
+          rtmAttribute.key = it["key"]
+          rtmAttribute.value = it["value"]
+          localUserAttributes.add(rtmAttribute)
+        }
+        client.setLocalUserAttributes(localUserAttributes.toList(), object : ResultCallback<Void> {
+          override fun onFailure(p0: ErrorInfo?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
+            invokeMethod("AgoraRtmClient_setLocalUserAttributes", arguments)
+          }
+
+          override fun onSuccess(p0: Void?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
+            invokeMethod("AgoraRtmClient_setLocalUserAttributes", arguments)
+          }
+        })
+      }
+      "AgoraRtmClient_addOrUpdateLocalUserAttributes" -> {
+        val clientIndex = intFromArguments(callArguments, "clientIndex")
+        val client = clients[clientIndex]
+        if (client == null) {
+          val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
+          invokeMethod("AgoraRtmClient_addOrUpdateLocalUserAttributes", arguments)
+          return
+        }
+        val attributes: List<Map<String, String>>? = listFromArguments(callArguments, "attributes")
+        val localUserAttributes = ArrayList<RtmAttribute>()
+        attributes?.forEach {
+          var rtmAttribute = RtmAttribute()
+          rtmAttribute.key = it["key"]
+          rtmAttribute.value = it["value"]
+          localUserAttributes.add(rtmAttribute)
+        }
+        client.addOrUpdateLocalUserAttributes(localUserAttributes.toList(), object : ResultCallback<Void> {
+          override fun onFailure(p0: ErrorInfo?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
+            invokeMethod("AgoraRtmClient_addOrUpdateLocalUserAttributes", arguments)
+          }
+
+          override fun onSuccess(p0: Void?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
+            invokeMethod("AgoraRtmClient_addOrUpdateLocalUserAttributes", arguments)
+          }
+        })
+      }
+      "AgoraRtmClient_deleteLocalUserAttributesByKeys" -> {
+        val clientIndex = intFromArguments(callArguments, "clientIndex")
+        val client = clients[clientIndex]
+        if (client == null) {
+          val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
+          invokeMethod("AgoraRtmClient_deleteLocalUserAttributesByKeys", arguments)
+          return
+        }
+        val keys: List<String>? = listFromArguments(callArguments, "keys")
+        client.deleteLocalUserAttributesByKeys(keys, object : ResultCallback<Void> {
+          override fun onFailure(p0: ErrorInfo?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
+            invokeMethod("AgoraRtmClient_deleteLocalUserAttributesByKeys", arguments)
+          }
+
+          override fun onSuccess(p0: Void?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
+            invokeMethod("AgoraRtmChannel_deleteLocalUserAttributesByKeys", arguments)
+          }
+        })
+      }
+      "AgoraRtmClient_clearLocalUserAttributes" -> {
+        val clientIndex = intFromArguments(callArguments, "clientIndex")
+        val client = clients[clientIndex]
+        if (client == null) {
+          val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
+          invokeMethod("AgoraRtmClient_clearLocalUserAttributes", arguments)
+          return
+        }
+        client.clearLocalUserAttributes(object : ResultCallback<Void> {
+          override fun onFailure(p0: ErrorInfo?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
+            invokeMethod("AgoraRtmClient_clearLocalUserAttributes", arguments)
+          }
+
+          override fun onSuccess(p0: Void?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
+            invokeMethod("AgoraRtmClient_clearLocalUserAttributes", arguments)
+          }
+        })
+      }
+      "AgoraRtmClient_getUserAttributes" -> {
+        val clientIndex = intFromArguments(callArguments, "clientIndex")
+        val client = clients[clientIndex]
+        if (client == null) {
+          val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
+          invokeMethod("AgoraRtmClient_getUserAttributes", arguments)
+          return
+        }
+        val userId: String? = stringFromArguments(callArguments, "userId")
+        client.getUserAttributes(userId, object : ResultCallback<List<RtmAttribute>> {
+          override fun onFailure(p0: ErrorInfo?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
+            invokeMethod("AgoraRtmClient_getUserAttributes", arguments)
+          }
+
+          override fun onSuccess(args: List<RtmAttribute>?) {
+            val arguments: Any?
+            arguments = when {
+              (args != null) -> rtmClientArguments(clientIndex,
+                      hashMapOf(
+                              "errorCode" to 0,
+                              "results" to hashMapOf(
+                                        "userId" to userId,
+                                        "attributes" to extractFromAttributes(args)
+                              )
+                      )
+              )
+              else -> rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
+            }
+            invokeMethod("AgoraRtmClient_getUserAttributes", arguments)
+          }
+        })
+      }
+      "AgoraRtmClient_getUserAttributesByKeys" -> {
+        val clientIndex = intFromArguments(callArguments, "clientIndex")
+        val client = clients[clientIndex]
+        if (client == null) {
+          val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to -1))
+          invokeMethod("AgoraRtmClient_getUserAttributesByKeys", arguments)
+          return
+        }
+        val userId: String? = stringFromArguments(callArguments, "userId")
+        val keys: List<String>? = listFromArguments(callArguments, "keys")
+        client.getUserAttributesByKeys(userId, keys, object : ResultCallback<List<RtmAttribute>> {
+          override fun onFailure(p0: ErrorInfo?) {
+            val arguments = rtmClientArguments(clientIndex, hashMapOf("errorCode" to p0!!.errorCode))
+            invokeMethod("AgoraRtmClient_getUserAttributesByKeys", arguments)
+          }
+
+          override fun onSuccess(args: List<RtmAttribute>?) {
+            val arguments: Any?
+            arguments = when {
+              (args != null) -> rtmClientArguments(clientIndex,
+                      hashMapOf(
+                              "errorCode" to 0,
+                              "results" to hashMapOf(
+                                      "userId" to userId,
+                                      "attributes" to extractFromAttributes(args)
+                              )
+                      )
+              )
+              else -> rtmClientArguments(clientIndex, hashMapOf("errorCode" to 0))
+            }
+            invokeMethod("AgoraRtmClient_getUserAttributesByKeys", arguments)
+          }
+        })
+      }
       else -> {
         result.notImplemented()
       }
@@ -449,5 +616,11 @@ class AgoraRtmPlugin: MethodCallHandler {
 
   private fun mapFromMember(member: RtmChannelMember): Map<String, *> {
     return hashMapOf("userId" to member.userId, "channelId" to member.channelId)
+  }
+
+  private fun extractFromAttributes(attrs: List<RtmAttribute>): Map<String, *> {
+    return attrs.map {
+      it.key to it.value
+    }.toMap()
   }
 }
