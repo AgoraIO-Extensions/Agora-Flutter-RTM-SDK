@@ -47,6 +47,12 @@ class AgoraRtmClient {
   Completer<String> _renewTokenCompletion;
   Completer<Map<String, bool>> _queryPeersOnlineStatusCompletion;
   Completer<void> _sendMessageToPeerCompletion;
+  Completer<void> _setLocalUserAttributesCompletion;
+  Completer<void> _addOrUpdateLocalUserAttributesCompletion;
+  Completer<void> _deleteLocalUserAttributesByKeysCompletion;
+  Completer<void> _clearLocalUserAttributesCompletion;
+  Completer<Map> _getUserAttributesCompletion;
+  Completer<Map> _getUserAttributesByKeysCompletion;
 
   /// Initializes an [AgoraRtmClient] instance
   ///
@@ -115,6 +121,66 @@ class AgoraRtmClient {
     });
     _sendMessageToPeerCompletion = new Completer<void>();
     return _sendMessageToPeerCompletion.future;
+  }
+
+  /// Substitutes the local user’s attributes with new ones.
+  Future<void> setLocalUserAttributes(List<Map<String,String>> attributes) async {
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_setLocalUserAttributes', {
+      'clientIndex': _clientIndex,
+      'attributes': attributes,
+    });
+    _setLocalUserAttributesCompletion = new Completer<void>();
+    return _setLocalUserAttributesCompletion.future;
+  }
+
+  /// Adds or updates the local user’s attribute(s).
+  Future<void> addOrUpdateLocalUserAttributes(List<Map<String,String>> attributes) async {
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_addOrUpdateLocalUserAttributes', {
+      'clientIndex': _clientIndex,
+      'attributes': attributes,
+    });
+    _addOrUpdateLocalUserAttributesCompletion = new Completer<void>();
+    return _addOrUpdateLocalUserAttributesCompletion.future;
+  }
+
+  /// Deletes the local user’s attributes using attribute keys.
+  Future<void> deleteLocalUserAttributesByKeys(List<String> keys) async {
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_deleteLocalUserAttributesByKeys', {
+      'clientIndex': _clientIndex,
+      'keys': keys
+    });
+    _deleteLocalUserAttributesByKeysCompletion = new Completer<void>();
+    return _deleteLocalUserAttributesByKeysCompletion.future;
+  }
+
+  /// Clears all attributes of the local user.
+  Future<void> clearLocalUserAttributes() async {
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_clearLocalUserAttributes', {
+      'clientIndex': _clientIndex,
+    });
+    _clearLocalUserAttributesCompletion = new Completer<void>();
+    return _clearLocalUserAttributesCompletion.future;
+  }
+
+  /// Gets all attributes of a specified user.
+  Future<Map> getUserAttributes(String userId) async {
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_getUserAttributes', {
+      'clientIndex': _clientIndex,
+      'userId': userId
+    });
+    _getUserAttributesCompletion = new Completer<Map>();
+    return _getUserAttributesCompletion.future;
+  }
+
+  /// Gets the attributes of a specified user using attribute keys.
+  Future<Map> getUserAttributesByKeys(String userId, List<String> keys) async {
+    _AgoraRtmPlugin._channel.invokeMethod('AgoraRtmClient_getUserAttributesByKeys', {
+      'clientIndex': _clientIndex,
+      'userId': userId,
+      'keys': keys
+    });
+    _getUserAttributesByKeysCompletion = new Completer<Map>();
+    return _getUserAttributesByKeysCompletion.future;
   }
 
   /// Creates an [AgoraRtmChannel].
@@ -231,6 +297,80 @@ class AgoraRtmClient {
           return;
         }
         client.onTokenExpired();
+        break;
+      case 'AgoraRtmClient_setLocalUserAttributes':
+        if (client._setLocalUserAttributesCompletion == null) {
+          return;
+        }
+        int code = arguments['errorCode'];
+        if (code == 0) {
+          client._setLocalUserAttributesCompletion.complete();
+        } else {
+          client._setLocalUserAttributesCompletion.completeError(code);
+        }
+        client._setLocalUserAttributesCompletion = null;
+        break;
+      case 'AgoraRtmClient_addOrUpdateLocalUserAttributes':        
+        if (client._addOrUpdateLocalUserAttributesCompletion == null) {
+          return;
+        }
+        int code = arguments['errorCode'];
+        if (code == 0) {
+          client._addOrUpdateLocalUserAttributesCompletion.complete();
+        } else {
+          client._addOrUpdateLocalUserAttributesCompletion.completeError(code);
+        }
+        client._addOrUpdateLocalUserAttributesCompletion = null;
+        break; 
+      case 'AgoraRtmClient_deleteLocalUserAttributesByKeys':
+        if (client._deleteLocalUserAttributesByKeysCompletion == null) {
+          return;
+        }
+        int code = arguments['errorCode'];
+        if (code == 0) {
+          client._deleteLocalUserAttributesByKeysCompletion.complete();
+        } else {
+          client._deleteLocalUserAttributesByKeysCompletion.completeError(code);
+        }
+        client._deleteLocalUserAttributesByKeysCompletion = null;
+        break;
+      case 'AgoraRtmClient_clearLocalUserAttributes':
+        if (client._clearLocalUserAttributesCompletion == null) {
+          return;
+        }
+        int code = arguments['errorCode'];
+        if (code == 0) {
+          client._clearLocalUserAttributesCompletion.complete();
+        } else {
+          client._clearLocalUserAttributesCompletion.completeError(code);
+        }
+        client._clearLocalUserAttributesCompletion = null;
+        break;
+      case 'AgoraRtmClient_getUserAttributes':
+        if (client._getUserAttributesCompletion == null) {
+          return;
+        }
+        int code = arguments['errorCode'];
+        Map results = arguments['results'];
+        if (code == 0) {
+          client._getUserAttributesCompletion.complete(results);
+        } else {
+          client._getUserAttributesCompletion.completeError(code);
+        }
+        client._getUserAttributesCompletion = null;
+        break;
+      case 'AgoraRtmClient_getUserAttributesByKeys':
+        if (client._getUserAttributesByKeysCompletion == null) {
+          return;
+        }
+        int code = arguments['errorCode'];
+        Map results = arguments['results'];
+        if (code == 0) {
+          client._getUserAttributesByKeysCompletion.complete(results);
+        } else {
+          client._getUserAttributesByKeysCompletion.completeError(code);
+        }
+        client._getUserAttributesByKeysCompletion = null;
         break;
       default:
     }

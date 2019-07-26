@@ -145,6 +145,91 @@
     self.clients[clientIndex] = nil;
   }
   
+  // local user attributes
+  else if ([@"AgoraRtmClient_setLocalUserAttributes" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
+    AgoraRtmKit *client = self.clients[clientIndex];
+    NSArray *attributes = [self arrayFromArguments:callArguments key:@"attributes"];
+    NSMutableArray *rtmAttributes = [[NSMutableArray alloc] init];
+    for (NSDictionary* item in attributes) {
+      AgoraRtmAttribute *attribute = [[AgoraRtmAttribute alloc] init];
+      attribute.key = item[@"key"];
+      attribute.value = item[@"value"];
+      [rtmAttributes addObject:attribute];
+    }
+    [client setLocalUserAttributes:rtmAttributes completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSDictionary *arguments = [self appendRtmClientIndex:clientIndex toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
+      [self.methodChannel invokeMethod:@"AgoraRtmClient_setLocalUserAttributes" arguments:arguments];
+    }];
+  }
+  else if ([@"AgoraRtmClient_addOrUpdateLocalUserAttributes" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
+    AgoraRtmKit *client = self.clients[clientIndex];
+    NSArray *attributes = [self arrayFromArguments:callArguments key:@"attributes"];
+    NSMutableArray *rtmAttributes = [[NSMutableArray alloc] init];
+    for (NSDictionary* item in attributes) {
+      AgoraRtmAttribute *attribute = [[AgoraRtmAttribute alloc] init];
+      attribute.key = item[@"key"];
+      attribute.value = item[@"value"];
+      [rtmAttributes addObject:attribute];
+    }
+    [client addOrUpdateLocalUserAttributes:rtmAttributes completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSDictionary *arguments = [self appendRtmClientIndex:clientIndex toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
+      [self.methodChannel invokeMethod:@"AgoraRtmClient_addOrUpdateLocalUserAttributes" arguments:arguments];
+    }];
+  }
+  else if ([@"AgoraRtmClient_deleteLocalUserAttributesByKeys" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
+    AgoraRtmKit *client = self.clients[clientIndex];
+    NSArray *keys = [self arrayFromArguments:callArguments key:@"keys"];
+    [client deleteLocalUserAttributesByKeys:keys completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSDictionary *arguments = [self appendRtmClientIndex:clientIndex toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
+      [self.methodChannel invokeMethod:@"AgoraRtmClient_deleteLocalUserAttributesByKeys" arguments:arguments];
+    }];
+  }
+  else if ([@"AgoraRtmClient_clearLocalUserAttributes" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
+    AgoraRtmKit *client = self.clients[clientIndex];
+    [client clearLocalUserAttributesWithCompletion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSDictionary *arguments = [self appendRtmClientIndex:clientIndex toArguments:@{@"errorCode": [NSNumber numberWithInteger:errorCode]}];
+      [self.methodChannel invokeMethod:@"AgoraRtmClient_clearLocalUserAttributes" arguments:arguments];
+    }];
+  }
+  else if ([@"AgoraRtmClient_getUserAttributes" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
+    AgoraRtmKit *client = self.clients[clientIndex];
+    NSString *userId = [self stringFromArguments:callArguments key:@"userId"];
+    [client getUserAllAttributes:userId completion:^(NSArray<AgoraRtmAttribute *> * _Nullable attributes, NSString *userId, AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSMutableDictionary *userAttributes = [[NSMutableDictionary alloc] init];
+      for (AgoraRtmAttribute *item in attributes) {
+        [userAttributes setObject:item.value forKey:item.key];
+      }
+      NSDictionary *arguments = [self appendRtmClientIndex:clientIndex toArguments:@{@"errorCode":[NSNumber numberWithInteger:errorCode], @"results": @{
+                                           @"userId": userId,
+                                           @"attributes": userAttributes
+                                        }}];
+      [self.methodChannel invokeMethod:@"AgoraRtmClient_getUserAttributes" arguments:arguments];
+
+    }];
+  }
+  else if ([@"AgoraRtmClient_getUserAttributesByKeys" isEqualToString:callMethod]) {
+    NSNumber *clientIndex = [self numberFromArguments:callArguments key:@"clientIndex"];
+    AgoraRtmKit *client = self.clients[clientIndex];
+    NSString *userId = [self stringFromArguments:callArguments key:@"userId"];
+    NSArray *keys = [self arrayFromArguments:callArguments key:@"keys"];
+    [client getUserAttributes:userId ByKeys:keys completion:^(NSArray<AgoraRtmAttribute *> * _Nullable attributes, NSString *userId, AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSMutableDictionary *userAttributes = [[NSMutableDictionary alloc] init];
+      for (AgoraRtmAttribute *item in attributes) {
+        [userAttributes setObject:item.value forKey:item.key];
+      }
+      NSDictionary *arguments = [self appendRtmClientIndex:clientIndex toArguments:@{@"errorCode":[NSNumber numberWithInteger:errorCode], @"results": @{
+                                          @"userId": userId,
+                                          @"attributes": userAttributes
+                                       }}];
+      [self.methodChannel invokeMethod:@"AgoraRtmClient_getUserAttributesByKeys" arguments:arguments];
+
+    }];
+  }
   else {
     result(FlutterMethodNotImplemented);
   }
