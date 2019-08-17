@@ -207,12 +207,9 @@
   }
   else if ([@"createChannel" isEqualToString:name]) {
     NSString *channelId = args[@"channelId"];
-    RTMChannel *rtmChannel = [[RTMChannel alloc] init];
-    if (nil != rtmClient.channels[channelId]) return result(@(-1));
-    AgoraRtmChannel *channel = [rtmClient.kit createChannelWithId:channelId
-                              delegate:rtmChannel];
-    if (nil != channel || nil != rtmChannel) return result(@(-1));
-    rtmClient.channels[channelId] = @[channel, rtmChannel];
+    RTMChannel *rtmChannel = [[RTMChannel alloc] initWithClientIndex:clientIndex channelId:channelId messenger:_messenger kit:rtmClient.kit];
+    if (nil == rtmChannel) return result(@(-1));
+    rtmClient.channels[channelId] = rtmChannel;
     result(nil);
   }
   else if ([@"releaseChannel" isEqualToString:name]) {
@@ -236,11 +233,11 @@
   NSDictionary *args = params[@"args"];
   RTMClient *rtmClient = _agoraClients[clientIndex];
   
-  NSArray *agoraChannel = rtmClient.channels[channelId];
+  RTMChannel *rtmChannel = rtmClient.channels[channelId];
   
-  if (nil != agoraChannel) return result(@(-1));
+  if (nil == rtmChannel) return result(@(-1));
 
-  AgoraRtmChannel *channel = agoraChannel[0];
+  AgoraRtmChannel *channel = rtmChannel.channel;
   if ([@"join" isEqualToString:name]) {
     [channel joinWithCompletion:^(AgoraRtmJoinChannelErrorCode errorCode) {
       result(@(errorCode));

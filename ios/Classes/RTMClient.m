@@ -8,17 +8,17 @@
 #import "RTMClient.h"
 
 @implementation RTMClient
-- (id) initWithAppId:(NSString *)appId
+- (instancetype) initWithAppId:(NSString *)appId
          clientIndex:(NSNumber *)clientIndex
            messenger:(NSObject<FlutterBinaryMessenger>*)messenger {
   if (self = [super init]) {
     _messenger = messenger;
     NSString *channelName = [NSString stringWithFormat:@"io.agora.rtm.client%@", [clientIndex stringValue]];
-    _eventKit = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:messenger];
-    if (nil == _eventKit) {
+    _eventChannel = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:messenger];
+    if (nil == _eventChannel) {
       return nil;
     }
-    [_eventKit setStreamHandler:self];
+    [_eventChannel setStreamHandler:self];
     _kit = [[AgoraRtmKit new] initWithAppId:appId delegate:self];
     if (nil == _kit) return nil;
     _callKit = [_kit getRtmCallKit];
@@ -33,10 +33,11 @@
   [_localInvitations removeAllObjects];
   [_remoteInvitations removeAllObjects];
   for (NSString *channelId in _channels) {
+    [_channels removeObjectForKey:channelId];
     [_kit destroyChannelWithId:channelId];
   }
   [_channels removeAllObjects];
-  _eventKit = nil;
+  _eventChannel = nil;
   _channels = nil;
   _callKit = nil;
   _kit = nil;
@@ -45,20 +46,20 @@
 #pragma - FlutterStreamHandler
 
 - (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-  _eventSender = nil;
+  _eventSink = nil;
   return nil;
 }
 
 - (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
-  _eventSender = events;
+  _eventSink = events;
   return nil;
 }
 
 - (void) sendClientEvent:(NSString *)name params:(NSDictionary*)params {
-  if (_eventSender) {
+  if (_eventSink) {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:params];
     dict[@"event"] = name;
-    _eventSender([dict copy]);
+    _eventSink([dict copy]);
   }
 }
 

@@ -65,7 +65,7 @@ class AgoraRtmClient {
   /// Callback to the caller: occurs when the life cycle of the outgoing call invitation ends in failure.
   void Function(AgoraRtmRemoteInvitation invite, int errorCode) onRemoteInvitationFailure;
 
-  final _channels = <String, AgoraRtmChannel>{};
+  var _channels = <String, AgoraRtmChannel>{};
 
   bool _closed;
 
@@ -130,9 +130,6 @@ class AgoraRtmClient {
     _clientSubscription = _addEventChannel('io.agora.rtm.client$_clientIndex')
       .receiveBroadcastStream()
       .listen(_eventListener, onError: onError);
-    // _callKitSubscription = _addEventChannel('io.agora.rtm.client.callKit$_clientIndex')
-    //   .receiveBroadcastStream()
-    //   .listen(_eventListener, onError: onError);
   }
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {
@@ -253,7 +250,7 @@ class AgoraRtmClient {
   /// channelId cannot be empty or set as nil.
   Future<AgoraRtmChannel> createChannel(String channelId) async {
     final res = await _callNative("createChannel", {'channelId': channelId});
-    if (res < 0) throw ("Create channel failed.");
+    if (res == -1) throw ("Create channel failed.");
     AgoraRtmChannel channel =
         AgoraRtmChannel(_clientIndex, channelId);
     _channels[channelId] = channel;
@@ -263,7 +260,7 @@ class AgoraRtmClient {
   /// Releases an [AgoraRtmChannel].
   Future<void> releaseChannel(String channelId) async {
     final res = await _callNative("releaseChannel", {'channelId': channelId});
-    if (res < 0) throw ("Release channel failed.");
+    if (res == -1) throw ("Release channel failed.");
     _channels[channelId]?.close();
   }
 }

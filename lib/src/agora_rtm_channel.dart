@@ -26,14 +26,14 @@ class AgoraRtmChannel {
 
   EventChannel _addEventChannel() {
     return new EventChannel(
-        'io.agora.rtm.channel$_clientIndex$channelId');
+        'io.agora.rtm.client$_clientIndex.channel$channelId');
   }
 
   _eventListener(dynamic event) {
     final Map<dynamic, dynamic> map = event;
     switch (map['event']) {
       case 'onMessageReceived':
-        AgoraRtmMessage message = AgoraRtmMessage(map['text']);
+        AgoraRtmMessage message = AgoraRtmMessage(map['message']);
         AgoraRtmMember member = AgoraRtmMember(map['userId'], map['channelId']);
         this?.onMessageReceived(message, member);
         break;
@@ -56,11 +56,11 @@ class AgoraRtmChannel {
   }
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {
-    return AgoraRtmPlugin.callMethodForClient(methodName,
+    return AgoraRtmPlugin.callMethodForChannel(methodName,
       {
         'clientIndex': _clientIndex,
         'channelId': channelId,
-        'arguments': arguments
+        'args': arguments
       }
     );
   }
