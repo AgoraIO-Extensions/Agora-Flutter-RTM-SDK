@@ -10,10 +10,16 @@ class AgoraRtmMember {
   String userId;
   String channelId;
 
-  AgoraRtmMember(String userId, String channelId) {
-    this.userId = userId;
-    this.channelId = channelId;
-  }
+  AgoraRtmMember(this.userId, this.channelId);
+
+  AgoraRtmMember.fromJson(Map<String, dynamic> json)
+    : userId = json['userId'],
+      channelId = json['channelId'];
+
+  Map<String, dynamic> toJson() => {
+    'userId': userId,
+    'channelId': channelId,
+  };
 
   @override
   String toString() {
@@ -28,13 +34,27 @@ class AgoraRtmLocalInvitation {
   String channelId;
   String state;
 
-  AgoraRtmLocalInvitation(Map<String, String> arguments) {
-    this.calleeId = arguments['calleeId'];
-    this.content = arguments['content'];
-    this.response = arguments['response'];
-    this.channelId = arguments['channelId'];
-    this.state = arguments['state'];
-  }
+  AgoraRtmLocalInvitation(
+    this.calleeId,
+    this.content,
+    this.response,
+    this.channelId,
+    this.state);
+
+  AgoraRtmLocalInvitation.fromJson(Map<String, String> json)
+    : calleeId = json['calleeId'],
+      content = json['content'],
+      response = json['response'],
+      channelId = json['channelId'],
+      state = json['state'];
+  
+  Map<String, dynamic> toJson() => {
+    'calleeId': calleeId,
+    'content': content,
+    'response': response,
+    'channelId': channelId,
+    'state': state,
+  };
 
   @override
   String toString() {
@@ -49,13 +69,27 @@ class AgoraRtmRemoteInvitation {
   String channelId;
   String state;
 
-  AgoraRtmRemoteInvitation(Map<String, String> arguments) {
-    this.callerId = arguments['callerId'];
-    this.content = arguments['content'];
-    this.response = arguments['response'];
-    this.channelId = arguments['channelId'];
-    this.state = arguments['state'];
-  }
+  AgoraRtmRemoteInvitation(
+    this.callerId,
+    this.content,
+    this.response,
+    this.channelId,
+    this.state);
+
+  AgoraRtmRemoteInvitation.fromJson(Map<String, String> json)
+    : callerId = json['callerId'],
+      content = json['content'],
+      response = json['response'],
+      channelId = json['channelId'],
+      state = json['state'];
+  
+  Map<String, dynamic> toJson() => {
+    'callerId': callerId,
+    'content': content,
+    'response': response,
+    'channelId': channelId,
+    'state': state,
+  };
 
   @override
   String toString() {

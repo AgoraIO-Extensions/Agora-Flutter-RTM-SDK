@@ -33,15 +33,15 @@
     RTMClient *rtmClient = [[RTMClient new] initWithAppId:appId clientIndex:@(self.nextClientIndex)
         messenger:_messenger];
     if (nil == rtmClient) {
-      return result(@(-1));
+      return result(@{@"errorCode": @(-1)});
     }
     _agoraClients[@(self.nextClientIndex)] = rtmClient;
-    result(@(self.nextClientIndex));
+    result(@{@"errorCode": @(0), @"index": @(self.nextClientIndex)});
     self.nextClientIndex++;
   } else if ([@"getSdkVersion" isEqualToString:name]) {
-    result([AgoraRtmKit getSDKVersion]);
+    result(@{@"errorCode": @(0), @"version": [AgoraRtmKit getSDKVersion]});
   } else {
-    result(FlutterMethodNotImplemented);
+    result(@{@"errorCode": @(-2), @"reason": FlutterMethodNotImplemented});
   }
 }
 
@@ -51,29 +51,29 @@
   NSNumber *clientIndex = params[@"clientIndex"];
   NSDictionary *args = params[@"args"];
   RTMClient *rtmClient = _agoraClients[clientIndex];
-  if (nil == rtmClient) return result(@(-1));
+  if (nil == rtmClient) return result(@{@"errorCode": @(-1)});
 
   if ([@"destroy" isEqualToString:name]) {
-    rtmClient.channels = nil;
     rtmClient = nil;
-    result(nil);
+    [_agoraClients removeObjectForKey:clientIndex];
+    result(@{@"errorCode": @(0)});
   }
   else if ([@"login" isEqualToString:name]) {
     NSString *token = args[@"token"] != [NSNull null] ? args[@"token"] : nil;
     NSString *userId = args[@"userId"];
     [rtmClient.kit loginByToken:token user:userId completion:^(AgoraRtmLoginErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"logout" isEqualToString:name]) {
     [rtmClient.kit logoutWithCompletion:^(AgoraRtmLogoutErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"renewToken" isEqualToString:name]) {
     NSString *token = args[@"token"];
     [rtmClient.kit renewToken:token completion:^(NSString *token, AgoraRtmRenewTokenErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"queryPeersOnlineStatus" isEqualToString:name]) {
@@ -92,7 +92,7 @@
     AgoraRtmSendMessageOptions *sendMessageOption = [[AgoraRtmSendMessageOptions alloc] init];
     sendMessageOption.enableOfflineMessaging = (BOOL)[args[@"offline"] boolValue];
     [rtmClient.kit sendMessage:[[AgoraRtmMessage new] initWithText:text]  toPeer:peerId sendMessageOptions:sendMessageOption completion:^(AgoraRtmSendPeerMessageErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"setLocalUserAttributes" isEqualToString:name]) {
@@ -105,7 +105,7 @@
       [rtmAttributes addObject:attribute];
     }
     [rtmClient.kit setLocalUserAttributes:rtmAttributes completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"addOrUpdateLocalUserAttributes" isEqualToString:name]) {
@@ -118,18 +118,18 @@
       [rtmAttributes addObject:attribute];
     }
     [rtmClient.kit addOrUpdateLocalUserAttributes:rtmAttributes completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"deleteLocalUserAttributesByKeys" isEqualToString:name]) {
     NSArray *keys = args[@"keys"];
     [rtmClient.kit deleteLocalUserAttributesByKeys:keys completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"clearLocalUserAttributes" isEqualToString:name]) {
     [rtmClient.kit clearLocalUserAttributesWithCompletion :^(AgoraRtmProcessAttributeErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"getUserAttributes" isEqualToString:name]) {
@@ -140,7 +140,6 @@
         [userAttributes setObject:item.value forKey:item.key];
       }
       result(@{@"errorCode": @(errorCode),
-               @"userId": userId,
                @"attributes": userAttributes});
     }];
   }
@@ -153,7 +152,6 @@
         [userAttributes setObject:item.value forKey:item.key];
       }
       result(@{@"errorCode": @(errorCode),
-               @"userId": userId,
                @"attributes": userAttributes});
     }];
   }
@@ -165,7 +163,7 @@
     invitation.content = content;
     invitation.channelId = channelId;
     [rtmClient.callKit sendLocalInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"cancelLocalInvitation" isEqualToString:name]) {
@@ -176,51 +174,51 @@
     invitation.content = content;
     invitation.channelId = channelId;
     [rtmClient.callKit cancelLocalInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"acceptRemoteInvitation" isEqualToString:name]) {
     NSString *response = args[@"response"];
     NSString *callerId = args[@"callerId"];
     AgoraRtmRemoteInvitation *invitation = rtmClient.remoteInvitations[callerId];
-    if (nil == invitation) return result(@(-1));
+    if (nil == invitation) return result(@{@"errorCode": @(-1)});
     invitation.response = response;
     [rtmClient.callKit acceptRemoteInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
       if (rtmClient.remoteInvitations[callerId]) {
         [rtmClient.remoteInvitations removeObjectForKey:callerId];
       }
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"refuseRemoteInvitation" isEqualToString:name]) {
     NSString *response = args[@"response"];
     NSString *callerId = args[@"callerId"];
     AgoraRtmRemoteInvitation *invitation = rtmClient.remoteInvitations[callerId];
-    if (nil == invitation) return result(@(-1));
+    if (nil == invitation) return result(@{@"errorCode": @(-1)});
     invitation.response = response;
     [rtmClient.callKit refuseRemoteInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
       if (rtmClient.remoteInvitations[callerId]) {
         [rtmClient.remoteInvitations removeObjectForKey:callerId];
       }
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"createChannel" isEqualToString:name]) {
     NSString *channelId = args[@"channelId"];
     RTMChannel *rtmChannel = [[RTMChannel alloc] initWithClientIndex:clientIndex channelId:channelId messenger:_messenger kit:rtmClient.kit];
-    if (nil == rtmChannel) return result(@(-1));
+    if (nil == rtmChannel) return result(@{@"errorCode": @(-1)});
     rtmClient.channels[channelId] = rtmChannel;
-    result(nil);
+    result(@{@"errorCode": @(0)});
   }
   else if ([@"releaseChannel" isEqualToString:name]) {
     NSString *channelId = args[@"channelId"];
-    if (nil == rtmClient.channels[channelId]) return result(@(-1));
+    if (nil == rtmClient.channels[channelId]) return result(@{@"errorCode": @(-1)});
     [rtmClient.kit destroyChannelWithId:channelId];
     [rtmClient.channels removeObjectForKey:channelId];
-    result(nil);
+    result(@{@"errorCode": @(0)});
   }
   else {
-    result(FlutterMethodNotImplemented);
+    result(@{@"errorCode": @(-2), @"reason": FlutterMethodNotImplemented});
   }
 }
 
@@ -235,33 +233,40 @@
   
   RTMChannel *rtmChannel = rtmClient.channels[channelId];
   
-  if (nil == rtmChannel) return result(@(-1));
+  if (nil == rtmChannel) return result(@{@"errorCode": @(-1)});
 
   AgoraRtmChannel *channel = rtmChannel.channel;
   if ([@"join" isEqualToString:name]) {
     [channel joinWithCompletion:^(AgoraRtmJoinChannelErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"sendMessage" isEqualToString:name]) {
     AgoraRtmMessage *message = [[AgoraRtmMessage new] initWithText:args[@"message"]];
     [channel sendMessage:message
               completion:^(AgoraRtmSendChannelMessageErrorCode errorCode) {
-        result(@(errorCode));
+        result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"leave" isEqualToString:name]) {
     [channel leaveWithCompletion:^(AgoraRtmLeaveChannelErrorCode errorCode) {
-      result(@(errorCode));
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"getMembers" isEqualToString:name]) {
     [channel getMembersWithCompletion:^(NSArray<AgoraRtmMember *> * _Nullable members, AgoraRtmGetMembersErrorCode errorCode) {
-      result(@(errorCode));
+      NSMutableArray<NSDictionary*> *exportMembers = [NSMutableArray new];
+      for(AgoraRtmMember *member in members) {
+        [exportMembers addObject:@{
+                                   @"userId": member.userId,
+                                   @"channelId": member.channelId
+                                   }];
+      }
+      result(@{@"errorCode": @(errorCode), @"members": exportMembers});
     }];
   }
   else {
-    result(FlutterMethodNotImplemented);
+    result(@{@"errorCode": @(-2), @"reason": FlutterMethodNotImplemented});
   }
 }
 
@@ -278,7 +283,7 @@
   } else if ([@"AgoraRtmChannel" isEqualToString:call]) {
     [self handleAgoraRtmChannelMethod:methodName params:params result:result];
   } else {
-    result(FlutterMethodNotImplemented);
+    result(@{@"errorCode": @(-2), @"reason": FlutterMethodNotImplemented});
   }
 }
 

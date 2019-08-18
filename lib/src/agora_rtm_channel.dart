@@ -3,6 +3,21 @@ import 'package:flutter/services.dart';
 import 'agora_rtm_plugin.dart';
 import 'utils.dart';
 
+class AgoraRtmChannelException implements Exception {
+  final reason;
+  final code;
+  AgoraRtmChannelException(this.reason, this.code): super();
+
+  Map<String, dynamic> toJson() => {
+    "reason": reason,
+    "code": code
+  };
+
+  @override
+  String toString() {
+    return this.reason;
+  }
+}
 class AgoraRtmChannel {
   /// Occurs when you receive error events.
   void Function(dynamic error) onError;
@@ -65,20 +80,29 @@ class AgoraRtmChannel {
     );
   }
 
-  Future<dynamic> join() {
-    return _callNative("join", null);
+  Future<void> join() async {
+    final res = await _callNative("join", null);
+    if (res["errorCode"] != 0) throw AgoraRtmChannelException("join failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
-  Future<dynamic> sendMessage(AgoraRtmMessage message) {
-    return _callNative("sendMessage", {'message': message.text});
+  Future<void> sendMessage(AgoraRtmMessage message) async {
+    final res = await _callNative("sendMessage", {'message': message.text});
+    if (res["errorCode"] != 0) throw AgoraRtmChannelException("sendMessage failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
-  Future<dynamic> leave() {
-    return _callNative("leave", null);
+  Future<void> leave() async {
+    final res = await _callNative("leave", null);
+    if (res["errorCode"] != 0) throw AgoraRtmChannelException("leave failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
-  Future<dynamic> getMembers() {
-    return _callNative("getMembers", null);
+  Future<List<AgoraRtmMember>> getMembers() async {
+    final res = await _callNative("getMembers", null);
+    if (res["errorCode"] != 0) throw AgoraRtmChannelException("getMembers failed errorCode: ${res['errorCode']}", res['errorCode']);
+    List<AgoraRtmMember> list = [];
+    for (final member in res['members']) {
+      list.add(AgoraRtmMember.fromJson(Map<String, dynamic>.from(member)));
+    }
+    return list;
   }
 
   Future<void> close() async {

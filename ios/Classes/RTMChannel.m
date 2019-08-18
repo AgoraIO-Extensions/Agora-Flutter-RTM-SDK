@@ -46,13 +46,6 @@
   return @{@"text": message.text};
 }
 
-- (NSDictionary *)appendRtmChannelIndex:(NSNumber *)channelIndex toArguments:(NSDictionary *)arguments {
-  NSMutableDictionary *dic = [[NSMutableDictionary alloc] initWithDictionary:arguments];
-  dic[@"objIndex"] = channelIndex;
-  dic[@"obj"] = @"AgoraRtmChannel";
-  return [dic copy];
-}
-
 - (void) sendChannelEvent:(NSString *)name params:(NSDictionary*)params {
   if (_eventSink) {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithDictionary:params];
