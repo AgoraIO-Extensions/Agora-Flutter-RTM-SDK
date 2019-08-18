@@ -63,14 +63,7 @@
   }
 }
 
-- (NSDictionary *)dicFromMember:(AgoraRtmMember *)member {
-  return @{@"userId": member.userId, @"channelId": member.channelId};
-}
-
-- (NSDictionary *)dicFromMessage:(AgoraRtmMessage *)message {
-  return @{@"text": message.text};
-}
-
+#pragma - AgoraRtmDelegate
 - (void)rtmKit:(AgoraRtmKit *)kit connectionStateChanged:(AgoraRtmConnectionState)state reason:(AgoraRtmConnectionChangeReason)reason {
   [self sendClientEvent:@"onConnectionStateChanged" params: @{@"state": @(state), @"reason": @(reason)}];
 }
@@ -83,6 +76,7 @@
     [self sendClientEvent:@"onTokenExpired" params: nil];
 }
 
+#pragma - AgoraRtmCallDelegate
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationReceivedByPeer:(AgoraRtmLocalInvitation *_Nonnull)localInvitation {
   [self sendClientEvent:@"onLocalInvitationReceivedByPeer" params:@{
                                                @"localInvitation": @{

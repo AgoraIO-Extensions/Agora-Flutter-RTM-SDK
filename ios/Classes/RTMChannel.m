@@ -38,12 +38,15 @@
   _messenger = nil;
 }
 
-- (NSDictionary *)dicFromMember:(AgoraRtmMember *)member {
-  return @{@"userId": member.userId, @"channelId": member.channelId};
+#pragma - FlutterStreamHandler
+- (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+  _eventSink = nil;
+  return nil;
 }
 
-- (NSDictionary *)dicFromMessage:(AgoraRtmMessage *)message {
-  return @{@"text": message.text};
+- (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
+  _eventSink = events;
+  return nil;
 }
 
 - (void) sendChannelEvent:(NSString *)name params:(NSDictionary*)params {
@@ -54,6 +57,7 @@
   }
 }
 
+#pragma - AgoraRtmChannelDelegate
 - (void)channel:(AgoraRtmChannel *)channel memberJoined:(AgoraRtmMember *)member {
   [self sendChannelEvent:@"onMemberJoined" params:@{@"userId": member.userId, @"channelId": member.channelId}];
 }
@@ -64,16 +68,6 @@
 
 - (void)channel:(AgoraRtmChannel *)channel messageReceived:(AgoraRtmMessage *)message fromMember:(AgoraRtmMember *)member {
   [self sendChannelEvent:@"onMessageReceived" params:@{@"userId": member.userId, @"channelId": member.channelId, @"message": message.text}];
-}
-
-- (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-  _eventSink = nil;
-  return nil;
-}
-
-- (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
-  _eventSink = events;
-  return nil;
 }
 
 @end
