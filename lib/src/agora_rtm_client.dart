@@ -104,7 +104,7 @@ class AgoraRtmClient {
         this?.onConnectionStateChanged(state, reason);
         break;
       case 'onMessageReceived':
-        AgoraRtmMessage message = AgoraRtmMessage(map["message"]);
+        AgoraRtmMessage message = AgoraRtmMessage.fromJson(map["message"]);
         String peerId = map["peerId"];
         this?.onMessageReceived(message, peerId);
         break;

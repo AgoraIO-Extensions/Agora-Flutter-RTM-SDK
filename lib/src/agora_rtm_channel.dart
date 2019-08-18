@@ -48,16 +48,16 @@ class AgoraRtmChannel {
     final Map<dynamic, dynamic> map = event;
     switch (map['event']) {
       case 'onMessageReceived':
-        AgoraRtmMessage message = AgoraRtmMessage(map['message']);
-        AgoraRtmMember member = AgoraRtmMember(map['userId'], map['channelId']);
+        AgoraRtmMessage message = AgoraRtmMessage.fromJson(map['message']);
+        AgoraRtmMember member = AgoraRtmMember.fromJson(map);
         this?.onMessageReceived(message, member);
         break;
       case 'onMemberJoined':
-        AgoraRtmMember member = AgoraRtmMember(map['userId'], map['channelId']);
+        AgoraRtmMember member = AgoraRtmMember.fromJson(map);
         this?.onMemberJoined(member);
         break;
       case 'onMemberLeft': 
-        AgoraRtmMember member = AgoraRtmMember(map['userId'], map['channelId']);
+        AgoraRtmMember member = AgoraRtmMember.fromJson(map);
         this?.onMemberLeft(member);
       break;
     }

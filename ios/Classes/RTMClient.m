@@ -69,11 +69,15 @@
 }
 
 - (void)rtmKit:(AgoraRtmKit *)kit messageReceived:(AgoraRtmMessage *)message fromPeer:(NSString *)peerId {
-  [self sendClientEvent:@"onMessageReceived" params: @{@"message": message.text, @"peerId": peerId}];
+  [self sendClientEvent:@"onMessageReceived" params: @{
+                 @"message": @{@"text":message.text,
+                               @"ts": @(message.serverReceivedTs),
+                               @"offline": @(message.isOfflineMessage)
+                               },@"peerId": peerId}];
 }
 
 - (void)rtmKitTokenDidExpire:(AgoraRtmKit *)kit {
-    [self sendClientEvent:@"onTokenExpired" params: nil];
+  [self sendClientEvent:@"onTokenExpired" params:@{}];
 }
 
 #pragma - AgoraRtmCallDelegate
@@ -102,7 +106,7 @@
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationRefused:(AgoraRtmLocalInvitation *_Nonnull)localInvitation withResponse:(NSString *_Nullable)response {
-[self sendClientEvent:@"onLocalInvitationRefused" params:@{
+  [self sendClientEvent:@"onLocalInvitationRefused" params:@{
                                                @"localInvitation": @{
                                                    @"calleeId": localInvitation.calleeId,
                                                    @"content": localInvitation.content,
@@ -153,7 +157,7 @@
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationRefused:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
-  [_remoteInvitations setObject:remoteInvitation forKey:remoteInvitation.callerId];
+  [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
   [self sendClientEvent:@"onRemoteInvitationRefused" params:@{
                                                     @"remoteInvitation": @{
                                                         @"calleeId": remoteInvitation.callerId,
