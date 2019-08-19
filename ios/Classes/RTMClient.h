@@ -13,7 +13,6 @@
   @property (strong, nonatomic) AgoraRtmKit *kit;
   @property (strong, nonatomic) AgoraRtmCallKit *callKit;
   @property (strong, nonatomic) NSMutableDictionary<NSString *, RTMChannel*> *channels;
-  @property (strong, nonatomic) NSMutableDictionary<NSString *, AgoraRtmLocalInvitation *> *localInvitations;
   @property (strong, nonatomic) NSMutableDictionary<NSString *, AgoraRtmRemoteInvitation *> *remoteInvitations;
 
   @property (strong, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;

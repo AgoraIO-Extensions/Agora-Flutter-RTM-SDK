@@ -13,6 +13,11 @@
 @end
 
 @implementation AgoraRtmPlugin
+
++ (BOOL) isNSNull:(id)value {
+  return value == [NSNull null];
+}
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
                                    methodChannelWithName:@"io.agora.rtm"
@@ -71,13 +76,13 @@
     }];
   }
   else if ([@"renewToken" isEqualToString:name]) {
-    NSString *token = args[@"token"];
+    NSString *token = args[@"token"] != [NSNull null] ? args[@"token"] : nil;
     [rtmClient.kit renewToken:token completion:^(NSString *token, AgoraRtmRenewTokenErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"queryPeersOnlineStatus" isEqualToString:name]) {
-    NSArray *peerIds = args[@"peerIds"];
+    NSArray *peerIds = args[@"peerIds"] != [NSNull null] ? args[@"peerIds"] : nil;
     [rtmClient.kit queryPeersOnlineStatus:peerIds completion:^(NSArray<AgoraRtmPeerOnlineStatus *> *peerOnlineStatus, AgoraRtmQueryPeersOnlineErrorCode errorCode) {
       NSMutableDictionary *members = [[NSMutableDictionary alloc] init];
       for (AgoraRtmPeerOnlineStatus *status in peerOnlineStatus) {
@@ -87,10 +92,11 @@
     }];
   }
   else if ([@"sendMessageToPeer" isEqualToString:name]) {
-    NSString *peerId = args[@"peerId"];
-    NSString *text = args[@"message"];
+    NSString *peerId = args[@"peerId"] != [NSNull null] ? args[@"peerId"] : nil;
+    NSString *text = args[@"message"] != [NSNull null] ? args[@"message"] : nil;
+    BOOL offline = args[@"offline"] != [NSNull null] ? args[@"offline"] : false;
     AgoraRtmSendMessageOptions *sendMessageOption = [[AgoraRtmSendMessageOptions alloc] init];
-    sendMessageOption.enableOfflineMessaging = (BOOL)[args[@"offline"] boolValue];
+    sendMessageOption.enableOfflineMessaging = offline;
     [rtmClient.kit sendMessage:[[AgoraRtmMessage new] initWithText:text]  toPeer:peerId sendMessageOptions:sendMessageOption completion:^(AgoraRtmSendPeerMessageErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
@@ -122,7 +128,7 @@
     }];
   }
   else if ([@"deleteLocalUserAttributesByKeys" isEqualToString:name]) {
-    NSArray *keys = args[@"keys"];
+    NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
     [rtmClient.kit deleteLocalUserAttributesByKeys:keys completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
@@ -133,7 +139,7 @@
     }];
   }
   else if ([@"getUserAttributes" isEqualToString:name]) {
-    NSString *userId = args[@"userId"];
+    NSString *userId = args[@"userId"] != [NSNull null] ? args[@"userId"] : nil;
     [rtmClient.kit getUserAllAttributes:userId completion:^(NSArray<AgoraRtmAttribute *> * _Nullable attributes, NSString *userId, AgoraRtmProcessAttributeErrorCode errorCode) {
       NSMutableDictionary *userAttributes = [[NSMutableDictionary alloc] init];
       for (AgoraRtmAttribute *item in attributes) {
@@ -144,8 +150,8 @@
     }];
   }
   else if ([@"getUserAttributesByKeys" isEqualToString:name]) {
-    NSString *userId = args[@"userId"];
-    NSArray *keys = args[@"keys"];
+    NSString *userId = args[@"userId"] != [NSNull null] ? args[@"userId"] : nil;
+    NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
     [rtmClient.kit getUserAttributes:userId ByKeys:keys completion:^(NSArray<AgoraRtmAttribute *> * _Nullable attributes, NSString *userId, AgoraRtmProcessAttributeErrorCode errorCode) {
       NSMutableDictionary *userAttributes = [[NSMutableDictionary alloc] init];
       for (AgoraRtmAttribute *item in attributes) {
@@ -156,33 +162,45 @@
     }];
   }
   else if ([@"sendLocalInvitation" isEqualToString:name]) {
-    NSString *calleeId = args[@"calleeId"];
-    NSString *content = args[@"content"];
-    NSString *channelId = args[@"channelId"];
+    NSString *calleeId = args[@"calleeId"] != [NSNull null] ? args[@"calleeId"] : nil;
+    NSString *content = args[@"content"] != [NSNull null] ? args[@"content"] : nil;
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
     AgoraRtmLocalInvitation *invitation = [[AgoraRtmLocalInvitation new] initWithCalleeId:calleeId];
-    invitation.content = content;
-    invitation.channelId = channelId;
+    if (nil == invitation) return result(@{@"errorCode": @(-1)});
+    if (nil != content) {
+      invitation.content = content;
+    }
+    if (nil != channelId) {
+      invitation.channelId = channelId;
+    }
     [rtmClient.callKit sendLocalInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"cancelLocalInvitation" isEqualToString:name]) {
-    NSString *calleeId = args[@"calleeId"];
-    NSString *content = args[@"content"];
-    NSString *channelId = args[@"channelId"];
+    NSString *calleeId = args[@"calleeId"] != [NSNull null] ? args[@"calleeId"] : nil;
+    NSString *content = args[@"content"] != [NSNull null] ? args[@"content"] : nil;
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
     AgoraRtmLocalInvitation *invitation = [[AgoraRtmLocalInvitation new] initWithCalleeId:calleeId];
-    invitation.content = content;
-    invitation.channelId = channelId;
+    if (nil == invitation) return result(@{@"errorCode": @(-1)});
+    if (nil != content) {
+      invitation.content = content;
+    }
+    if (nil != channelId) {
+      invitation.channelId = channelId;
+    }
     [rtmClient.callKit cancelLocalInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"acceptRemoteInvitation" isEqualToString:name]) {
-    NSString *response = args[@"response"];
-    NSString *callerId = args[@"callerId"];
+    NSString *response = args[@"response"] != [NSNull null] ? args[@"response"] : nil;
+    NSString *callerId = args[@"callerId"] != [NSNull null] ? args[@"callerId"] : nil;
     AgoraRtmRemoteInvitation *invitation = rtmClient.remoteInvitations[callerId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
-    invitation.response = response;
+    if (response != nil) {
+      invitation.response = response;
+    }
     [rtmClient.callKit acceptRemoteInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
       if (rtmClient.remoteInvitations[callerId]) {
         [rtmClient.remoteInvitations removeObjectForKey:callerId];
@@ -191,11 +209,13 @@
     }];
   }
   else if ([@"refuseRemoteInvitation" isEqualToString:name]) {
-    NSString *response = args[@"response"];
-    NSString *callerId = args[@"callerId"];
+    NSString *response = args[@"response"] != [NSNull null] ? args[@"response"] : nil;
+    NSString *callerId = args[@"callerId"] != [NSNull null] ? args[@"callerId"] : nil;
     AgoraRtmRemoteInvitation *invitation = rtmClient.remoteInvitations[callerId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
-    invitation.response = response;
+    if (response != nil) {
+      invitation.response = response;
+    }
     [rtmClient.callKit refuseRemoteInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
       if (rtmClient.remoteInvitations[callerId]) {
         [rtmClient.remoteInvitations removeObjectForKey:callerId];
@@ -242,7 +262,8 @@
     }];
   }
   else if ([@"sendMessage" isEqualToString:name]) {
-    AgoraRtmMessage *message = [[AgoraRtmMessage new] initWithText:args[@"message"]];
+    NSString *text = args[@"message"] != [NSNull null] ? args[@"message"] : nil;
+    AgoraRtmMessage *message = [[AgoraRtmMessage new] initWithText:text];
     [channel sendMessage:message
               completion:^(AgoraRtmSendChannelMessageErrorCode errorCode) {
         result(@{@"errorCode": @(errorCode)});

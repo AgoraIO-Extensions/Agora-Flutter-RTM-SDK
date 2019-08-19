@@ -255,25 +255,25 @@ class AgoraRtmClient {
   }
 
   /// Allows the caller to send a call invitation to the callee.
-  Future<void> sendLocalInvitation(Map<String, String> arguments) async {
+  Future<void> sendLocalInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("sendLocalInvitation", arguments);
     if (res["errorCode"] != 0) throw AgoraRtmClientException("sendLocalInvitation failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
   /// Allows the caller to cancel a call invitation.
-  Future<void> cancelLocalInvitation(Map<String, String> arguments) async {
+  Future<void> cancelLocalInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("cancelLocalInvitation", arguments);
     if (res["errorCode"] != 0) throw AgoraRtmClientException("cancelLocalInvitation failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
   /// Allows the callee to accept a call invitation.
-  Future<void> acceptRemoteInvitation(Map<String, String> arguments) async {
+  Future<void> acceptRemoteInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("acceptRemoteInvitation", arguments);
     if (res["errorCode"] != 0) throw AgoraRtmClientException("acceptRemoteInvitation failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
   /// Allows the callee to decline a call invitation.
-  Future<void> refuseRemoteInvitation(Map<String, String> arguments) async {
+  Future<void> refuseRemoteInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("refuseRemoteInvitation", arguments);
     if (res["errorCode"] != 0) throw AgoraRtmClientException("refuseRemoteInvitation failed errorCode:${res['errorCode']}", res['errorCode']);
   }

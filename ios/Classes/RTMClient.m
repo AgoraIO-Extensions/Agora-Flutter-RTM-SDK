@@ -12,6 +12,8 @@
          clientIndex:(NSNumber *)clientIndex
            messenger:(NSObject<FlutterBinaryMessenger>*)messenger {
   if (self = [super init]) {
+    _remoteInvitations = [[NSMutableDictionary alloc] init];
+    _channels = [[NSMutableDictionary alloc] init];
     _messenger = messenger;
     NSString *channelName = [NSString stringWithFormat:@"io.agora.rtm.client%@", [clientIndex stringValue]];
     _eventChannel = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:messenger];
@@ -22,15 +24,12 @@
     _kit = [[AgoraRtmKit new] initWithAppId:appId delegate:self];
     if (nil == _kit) return nil;
     _callKit = [_kit getRtmCallKit];
-    _localInvitations = [[NSMutableDictionary alloc] init];
-    _remoteInvitations = [[NSMutableDictionary alloc] init];
-    _channels = [[NSMutableDictionary alloc] init];
+    _callKit.callDelegate = self;
   }
   return self;
 }
 
 - (void) dealloc {
-  [_localInvitations removeAllObjects];
   [_remoteInvitations removeAllObjects];
   for (NSString *channelId in _channels) {
     [_channels removeObjectForKey:channelId];
@@ -82,131 +81,171 @@
 
 #pragma - AgoraRtmCallDelegate
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationReceivedByPeer:(AgoraRtmLocalInvitation *_Nonnull)localInvitation {
+  NSString *calleeId = localInvitation.calleeId != nil ? localInvitation.calleeId : (id)[NSNull null];
+  NSString *content = localInvitation.content != nil ? localInvitation.content : (id)[NSNull null];
+  NSString *channelId = localInvitation.channelId != nil ? localInvitation.channelId : (id)[NSNull null];
+  NSString *_response = localInvitation.response != nil ? localInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onLocalInvitationReceivedByPeer" params:@{
                                                @"localInvitation": @{
-                                                                 @"calleeId": localInvitation.calleeId,
-                                                                 @"content": localInvitation.content,
-                                                                 @"channelId": localInvitation.channelId,
+                                                                 @"calleeId": calleeId,
+                                                                 @"content": content,
+                                                                 @"channelId": channelId,
                                                                  @"state": @(localInvitation.state),
-                                                                 @"response": localInvitation.response
+                                                                 @"response": _response
                                                              }
                                                }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationAccepted:(AgoraRtmLocalInvitation *_Nonnull)localInvitation withResponse:(NSString *_Nullable)response {
+  NSString *calleeId = localInvitation.calleeId != nil ? localInvitation.calleeId : (id)[NSNull null];
+  NSString *content = localInvitation.content != nil ? localInvitation.content : (id)[NSNull null];
+  NSString *channelId = localInvitation.channelId != nil ? localInvitation.channelId : (id)[NSNull null];
+  NSString *_response = localInvitation.response != nil ? localInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onLocalInvitationAccepted" params:@{
-                                               @"localInvitation": @{
-                                                   @"calleeId": localInvitation.calleeId,
-                                                   @"content": localInvitation.content,
-                                                   @"channelId": localInvitation.channelId,
-                                                   @"state": @(localInvitation.state),
-                                                   @"response": localInvitation.response
-                                                   }
-                                               }];
+                                              @"localInvitation": @{
+                                                  @"calleeId": calleeId,
+                                                  @"content": content,
+                                                  @"channelId": channelId,
+                                                  @"state": @(localInvitation.state),
+                                                  @"response": _response
+                                                  }
+                                              }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationRefused:(AgoraRtmLocalInvitation *_Nonnull)localInvitation withResponse:(NSString *_Nullable)response {
+  NSString *calleeId = localInvitation.calleeId != nil ? localInvitation.calleeId : (id)[NSNull null];
+  NSString *content = localInvitation.content != nil ? localInvitation.content : (id)[NSNull null];
+  NSString *channelId = localInvitation.channelId != nil ? localInvitation.channelId : (id)[NSNull null];
+  NSString *_response = localInvitation.response != nil ? localInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onLocalInvitationRefused" params:@{
-                                               @"localInvitation": @{
-                                                   @"calleeId": localInvitation.calleeId,
-                                                   @"content": localInvitation.content,
-                                                   @"channelId": localInvitation.channelId,
-                                                   @"state": @(localInvitation.state),
-                                                   @"response": localInvitation.response
-                                                   }
-                                               }];
+                                                @"localInvitation": @{
+                                                    @"calleeId": calleeId,
+                                                    @"content": content,
+                                                    @"channelId": channelId,
+                                                    @"state": @(localInvitation.state),
+                                                    @"response": _response
+                                                    }
+                                                }];
 }
    
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationCanceled:(AgoraRtmLocalInvitation *_Nonnull)localInvitation {
+  NSString *calleeId = localInvitation.calleeId != nil ? localInvitation.calleeId : (id)[NSNull null];
+  NSString *content = localInvitation.content != nil ? localInvitation.content : (id)[NSNull null];
+  NSString *channelId = localInvitation.channelId != nil ? localInvitation.channelId : (id)[NSNull null];
+  NSString *response = localInvitation.response != nil ? localInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onLocalInvitationCanceled" params:@{
                                                 @"localInvitation": @{
-                                                    @"calleeId": localInvitation.calleeId,
-                                                    @"content": localInvitation.content,
-                                                    @"channelId": localInvitation.channelId,
+                                                    @"calleeId": calleeId,
+                                                    @"content": content,
+                                                    @"channelId": channelId,
                                                     @"state": @(localInvitation.state),
-                                                    @"response": localInvitation.response
+                                                    @"response": response
                                                     }
                                                 }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationFailure:(AgoraRtmLocalInvitation *_Nonnull)localInvitation errorCode:(AgoraRtmLocalInvitationErrorCode)errorCode {
+  NSString *calleeId = localInvitation.calleeId != nil ? localInvitation.calleeId : (id)[NSNull null];
+  NSString *content = localInvitation.content != nil ? localInvitation.content : (id)[NSNull null];
+  NSString *channelId = localInvitation.channelId != nil ? localInvitation.channelId : (id)[NSNull null];
+  NSString *response = localInvitation.response != nil ? localInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onLocalInvitationFailure" params:@{
-                                               @"errorCode": @(errorCode),
-                                               @"localInvitation": @{
-                                                   @"calleeId": localInvitation.calleeId,
-                                                   @"content": localInvitation.content,
-                                                   @"channelId": localInvitation.channelId,
-                                                   @"state": @(localInvitation.state),
-                                                   @"response": localInvitation.response
-                                                   }
-                                               }];
+                                                  @"errorCode": @(errorCode),
+                                                  @"localInvitation": @{
+                                                      @"calleeId": calleeId,
+                                                      @"content": content,
+                                                      @"channelId": channelId,
+                                                      @"state": @(localInvitation.state),
+                                                      @"response": response
+                                                      }
+                                                  }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationReceived:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
   [_remoteInvitations setObject:remoteInvitation forKey:remoteInvitation.callerId];
+  NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
+  NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
+  NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
+  NSString *response = remoteInvitation.response != nil ? remoteInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onRemoteInvitationReceivedByPeer" params:@{
                                                    @"remoteInvitation": @{
-                                                       @"callerId": remoteInvitation.callerId,
-                                                       @"content": remoteInvitation.content,
-                                                       @"channelId": remoteInvitation.channelId,
+                                                       @"callerId": callerId,
+                                                       @"content": content,
+                                                       @"channelId": channelId,
                                                        @"state": @(remoteInvitation.state),
-                                                       @"response": remoteInvitation.response
+                                                       @"response": response
                                                        }
                                                    }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationRefused:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
   [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
+  NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
+  NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
+  NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
+  NSString *response = remoteInvitation.response != nil ? remoteInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onRemoteInvitationRefused" params:@{
-                                                    @"remoteInvitation": @{
-                                                        @"calleeId": remoteInvitation.callerId,
-                                                        @"content": remoteInvitation.content,
-                                                        @"channelId": remoteInvitation.channelId,
-                                                        @"state": @(remoteInvitation.state),
-                                                        @"response": remoteInvitation.response
-                                                        }
-                                                    }];
+                                                   @"remoteInvitation": @{
+                                                       @"callerId": callerId,
+                                                       @"content": content,
+                                                       @"channelId": channelId,
+                                                       @"state": @(remoteInvitation.state),
+                                                       @"response": response
+                                                       }
+                                                   }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationAccepted:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
   [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
+  NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
+  NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
+  NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
+  NSString *response = remoteInvitation.response != nil ? remoteInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onRemoteInvitationAccepted" params:@{
-                                                    @"remoteInvitation": @{
-                                                        @"calleeId": remoteInvitation.callerId,
-                                                        @"content": remoteInvitation.content,
-                                                        @"channelId": remoteInvitation.channelId,
-                                                        @"state": @(remoteInvitation.state),
-                                                        @"response": remoteInvitation.response
-                                                        }
-                                                    }];
+                                                  @"remoteInvitation": @{
+                                                      @"callerId": callerId,
+                                                      @"content": content,
+                                                      @"channelId": channelId,
+                                                      @"state": @(remoteInvitation.state),
+                                                      @"response": response
+                                                      }
+                                                  }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationCanceled:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
   [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
+  NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
+  NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
+  NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
+  NSString *response = remoteInvitation.response != nil ? remoteInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onRemoteInvitationCanceled" params:@{
-                                                    @"remoteInvitation": @{
-                                                        @"calleeId": remoteInvitation.callerId,
-                                                        @"content": remoteInvitation.content,
-                                                        @"channelId": remoteInvitation.channelId,
-                                                        @"state": @(remoteInvitation.state),
-                                                        @"response": remoteInvitation.response
-                                                        }
-                                                    }];
+                                                   @"remoteInvitation": @{
+                                                       @"callerId": callerId,
+                                                       @"content": content,
+                                                       @"channelId": channelId,
+                                                       @"state": @(remoteInvitation.state),
+                                                       @"response": response
+                                                       }
+                                                   }];
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationFailure:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation errorCode:(AgoraRtmRemoteInvitationErrorCode)errorCode {
   [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
+  NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
+  NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
+  NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
+  NSString *response = remoteInvitation.response != nil ? remoteInvitation.response : (id)[NSNull null];
   [self sendClientEvent:@"onRemoteInvitationFailure" params:@{
-                                                      @"errorCode": @(errorCode),
-                                                      @"remoteInvitation": @{
-                                                          @"calleeId": remoteInvitation.callerId,
-                                                          @"content": remoteInvitation.content,
-                                                          @"channelId": remoteInvitation.channelId,
-                                                          @"state": @(remoteInvitation.state),
-                                                          @"response": remoteInvitation.response
-                                                          }
-                                                      }];
+                                                  @"errorCode": @(errorCode),
+                                                   @"remoteInvitation": @{
+                                                       @"callerId": callerId,
+                                                       @"content": content,
+                                                       @"channelId": channelId,
+                                                       @"state": @(remoteInvitation.state),
+                                                       @"response": response
+                                                       }
+                                                   }];
 }
 
 @end

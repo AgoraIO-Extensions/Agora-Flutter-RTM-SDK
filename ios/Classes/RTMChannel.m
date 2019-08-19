@@ -67,7 +67,7 @@
 }
 
 - (void)channel:(AgoraRtmChannel *)channel messageReceived:(AgoraRtmMessage *)message fromMember:(AgoraRtmMember *)member {
-[self sendChannelEvent:@"onMessageReceived" params:@{@"userId": member.userId,
+  [self sendChannelEvent:@"onMessageReceived" params:@{@"userId": member.userId,
            @"channelId": member.channelId,
            @"message":
               @{@"text":message.text,

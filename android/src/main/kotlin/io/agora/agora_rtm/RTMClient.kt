@@ -26,12 +26,14 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
         this.clientIndex = clientIndex
         this.messenger = messenger
         this.client = RtmClient.createInstance(context, this.appId, this)
-        this.callKit = client.getRtmCallManager()
         this.channels = HashMap<String, RtmChannel>()
         this.remoteInvitations = HashMap<String, RemoteInvitation>()
         this.eventChannel = EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}")
         this.eventChannel.setStreamHandler(this)
         this.eventSink = null
+
+        this.callKit = client.getRtmCallManager()
+        this.callKit.setEventListener(this)
         this.eventHandler = eventHandler
     }
 
@@ -104,7 +106,7 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
     override
     fun onLocalInvitationFailure(localInvitation: LocalInvitation, errorCode: Int) {
         sendClientEvent("onLocalInvitationFailure", hashMapOf(
-                "errorCoce" to errorCode,
+                "errorCode" to errorCode,
                 "localInvitation" to hashMapOf(
                         "calleeId" to localInvitation.calleeId,
                         "content" to localInvitation.content,

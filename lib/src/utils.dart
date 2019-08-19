@@ -50,7 +50,7 @@ class AgoraRtmLocalInvitation {
   String content;
   String response;
   String channelId;
-  String state;
+  int state;
 
   AgoraRtmLocalInvitation(
     this.calleeId,
@@ -59,7 +59,7 @@ class AgoraRtmLocalInvitation {
     this.channelId,
     this.state);
 
-  AgoraRtmLocalInvitation.fromJson(Map<String, String> json)
+  AgoraRtmLocalInvitation.fromJson(Map<dynamic, dynamic> json)
     : calleeId = json['calleeId'],
       content = json['content'],
       response = json['response'],
@@ -85,7 +85,7 @@ class AgoraRtmRemoteInvitation {
   String content;
   String response;
   String channelId;
-  String state;
+  int state;
 
   AgoraRtmRemoteInvitation(
     this.callerId,
@@ -94,7 +94,7 @@ class AgoraRtmRemoteInvitation {
     this.channelId,
     this.state);
 
-  AgoraRtmRemoteInvitation.fromJson(Map<String, String> json)
+  AgoraRtmRemoteInvitation.fromJson(Map<dynamic, dynamic> json)
     : callerId = json['callerId'],
       content = json['content'],
       response = json['response'],

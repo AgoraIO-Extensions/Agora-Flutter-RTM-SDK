@@ -389,12 +389,25 @@ class AgoraRtmPlugin: MethodCallHandler {
                 })
       }
       "sendLocalInvitation" -> {
-        val calleeId = args?.get("calleeId") as String
-        val content = args?.get("content") as String
-        val channelId = args?.get("channelId") as String
+        val calleeId = when {
+          args?.get("calleeId") is String -> args["calleeId"] as String
+          else -> null
+        }
+        val content = when {
+          args?.get("content") is String -> args["content"] as String
+          else -> null
+        }
+        val channelId = when {
+          args?.get("channelId") is String -> args["channelId"] as String
+          else -> null
+        }
         val localInvitation = agoraClient.callKit.createLocalInvitation(calleeId)
-        localInvitation.content = content
-        localInvitation.channelId = channelId
+        if (null != content) {
+          localInvitation.content = content
+        }
+        if (null != channelId) {
+          localInvitation.channelId = channelId
+        }
         agoraClient.callKit.sendLocalInvitation(localInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
@@ -411,12 +424,25 @@ class AgoraRtmPlugin: MethodCallHandler {
         })
       }
       "cancelLocalInvitation" -> {
-        val calleeId = args?.get("calleeId") as String
-        val content = args?.get("content") as String
-        val channelId = args?.get("channelId") as String
+        val calleeId = when {
+          args?.get("calleeId") is String -> args["calleeId"] as String
+          else -> null
+        }
+        val content = when {
+          args?.get("content") is String -> args["content"] as String
+          else -> null
+        }
+        val channelId = when {
+          args?.get("channelId") is String -> args["channelId"] as String
+          else -> null
+        }
         val localInvitation = agoraClient.callKit.createLocalInvitation(calleeId)
-        localInvitation.content = content
-        localInvitation.channelId = channelId
+        if (null != content) {
+          localInvitation.content = content
+        }
+        if (null != channelId) {
+          localInvitation.channelId = channelId
+        }
         agoraClient.callKit.cancelLocalInvitation(localInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
@@ -433,18 +459,31 @@ class AgoraRtmPlugin: MethodCallHandler {
         })
       }
       "acceptRemoteInvitation" -> {
-        val response = args?.get("response") as String
-        val callerId = args?.get("callerId") as String
-        var remoteInvitation = agoraClient.remoteInvitations[callerId]
+        val response = when {
+          args?.get("response") is String -> args?.get("response") as String
+          else -> null
+        }
+
+        val callerId = when {
+          args?.get("callerId") is String -> args?.get("callerId") as String
+          else -> null
+        }
+
+        var remoteInvitation: RemoteInvitation? = when {
+          agoraClient.remoteInvitations[callerId] is RemoteInvitation -> agoraClient.remoteInvitations[callerId]
+          else -> null
+        }
+
         if (null == remoteInvitation) {
           runMainThread {
-            result.success(hashMapOf(
-                    "errorCode" to -1
-            ))
+            result.success(hashMapOf("errorCode" to -1))
           }
           return
         }
-        remoteInvitation!!.response = response
+
+        if (null != response) {
+            remoteInvitation.response = response
+        }
         agoraClient.callKit.acceptRemoteInvitation(remoteInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
@@ -461,18 +500,32 @@ class AgoraRtmPlugin: MethodCallHandler {
         })
       }
       "refuseRemoteInvitation" -> {
-        val response = args?.get("response") as String
-        val callerId = args?.get("callerId") as String
-        var remoteInvitation = agoraClient.remoteInvitations[callerId]
+        val response = when {
+          args?.get("response") is String -> args?.get("response") as String
+          else -> null
+        }
+
+        val callerId = when {
+          args?.get("callerId") is String -> args?.get("callerId") as String
+          else -> null
+        }
+
+        var remoteInvitation: RemoteInvitation? = when {
+          agoraClient.remoteInvitations[callerId] is RemoteInvitation -> agoraClient.remoteInvitations[callerId]
+          else -> null
+        }
+
         if (null == remoteInvitation) {
           runMainThread {
-            result.success(hashMapOf(
-                    "errorCode" to -1
-            ))
+            result.success(hashMapOf("errorCode" to -1))
           }
           return
         }
-        remoteInvitation!!.response = response
+
+        if (null != response) {
+          remoteInvitation.response = response
+        }
+
         agoraClient.callKit.refuseRemoteInvitation(remoteInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
