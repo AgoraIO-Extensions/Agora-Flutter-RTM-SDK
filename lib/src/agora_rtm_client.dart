@@ -170,6 +170,13 @@ class AgoraRtmClient {
     );
   }
 
+  /// Allows a user set log
+  Future setLog(int level, int size, String path) async {
+    final res = await _callNative("setLog", {'level': level, 'size': size, 'path': path});
+    if (res["errorCode"] != 0) throw AgoraRtmClientException("login failed errorCode:${res['errorCode']}", res['errorCode']);
+    return res["result"];
+  }
+
   /// Allows a user to log in the Agora RTM system.
   ///
   /// The string length of userId must be less than 64 bytes with the following character scope:

@@ -13,6 +13,7 @@
            messenger:(NSObject<FlutterBinaryMessenger>*)messenger {
   if (self = [super init]) {
     _remoteInvitations = [[NSMutableDictionary alloc] init];
+    _localInvitations = [[NSMutableDictionary alloc] init];
     _channels = [[NSMutableDictionary alloc] init];
     _messenger = messenger;
     NSString *channelName = [NSString stringWithFormat:@"io.agora.rtm.client%@", [clientIndex stringValue]];
@@ -31,6 +32,7 @@
 
 - (void) dealloc {
   [_remoteInvitations removeAllObjects];
+  [_localInvitations removeAllObjects];
   for (NSString *channelId in _channels) {
     [_channels removeObjectForKey:channelId];
     [_kit destroyChannelWithId:channelId];
@@ -81,6 +83,7 @@
 
 #pragma - AgoraRtmCallDelegate
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationReceivedByPeer:(AgoraRtmLocalInvitation *_Nonnull)localInvitation {
+  [_localInvitations setObject:localInvitation forKey:localInvitation.calleeId];
   NSString *calleeId = localInvitation.calleeId != nil ? localInvitation.calleeId : (id)[NSNull null];
   NSString *content = localInvitation.content != nil ? localInvitation.content : (id)[NSNull null];
   NSString *channelId = localInvitation.channelId != nil ? localInvitation.channelId : (id)[NSNull null];
@@ -180,7 +183,6 @@
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationRefused:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
-  [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
   NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
   NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
   NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
@@ -197,7 +199,6 @@
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationAccepted:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
-  [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
   NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
   NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
   NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
@@ -214,7 +215,6 @@
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationCanceled:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation {
-  [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
   NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
   NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
   NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];
@@ -231,7 +231,6 @@
 }
 
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit remoteInvitationFailure:(AgoraRtmRemoteInvitation *_Nonnull)remoteInvitation errorCode:(AgoraRtmRemoteInvitationErrorCode)errorCode {
-  [_remoteInvitations removeObjectForKey:remoteInvitation.callerId];
   NSString *callerId = remoteInvitation.callerId != nil ? remoteInvitation.callerId : (id)[NSNull null];
   NSString *content = remoteInvitation.content != nil ? remoteInvitation.content : (id)[NSNull null];
   NSString *channelId = remoteInvitation.channelId != nil ? remoteInvitation.channelId : (id)[NSNull null];

@@ -19,6 +19,7 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
     var channels: HashMap<String, RtmChannel>
     var eventSink: EventChannel.EventSink?
     var remoteInvitations: MutableMap<String, RemoteInvitation>
+    var localInvitations: MutableMap<String, LocalInvitation>
 
 
     constructor(context: Context, appId: String, clientIndex: Long, messenger: BinaryMessenger, eventHandler: Handler) {
@@ -28,6 +29,7 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
         this.client = RtmClient.createInstance(context, this.appId, this)
         this.channels = HashMap<String, RtmChannel>()
         this.remoteInvitations = HashMap<String, RemoteInvitation>()
+        this.localInvitations = HashMap<String, LocalInvitation>()
         this.eventChannel = EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}")
         this.eventChannel.setStreamHandler(this)
         this.eventSink = null
@@ -53,6 +55,7 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
 
     override
     fun onLocalInvitationReceivedByPeer(localInvitation: LocalInvitation) {
+        localInvitations[localInvitation.calleeId] = localInvitation
         sendClientEvent("onLocalInvitationReceivedByPeer", hashMapOf(
                 "localInvitation" to hashMapOf(
                         "calleeId" to localInvitation.calleeId,

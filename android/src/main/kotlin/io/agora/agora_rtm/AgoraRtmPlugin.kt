@@ -57,7 +57,7 @@ class AgoraRtmPlugin: MethodCallHandler {
       else -> null
     }
     val call: String? = when {
-      callArguments!!.get("call") is String -> callArguments!!.get("call") as String
+      callArguments!!.get("call") is String -> callArguments.get("call") as String
       else -> null
     }
 
@@ -107,23 +107,21 @@ class AgoraRtmPlugin: MethodCallHandler {
 
     val clientIndex = (params["clientIndex"] as Int).toLong()
     var args: Map<String, Any>? = when {
-      (params?.get("args") is Map<*,*>) -> (params["args"] as Map<String, Any>)
+      (params.get("args") is Map<*,*>) -> (params["args"] as Map<String, Any>)
       else -> null
     }
-    val agoraClient = clients[clientIndex] as RTMClient
+    val agoraClient = when {
+      clients[clientIndex] is RTMClient -> clients[clientIndex] as RTMClient
+      else -> null
+    }
     if (null == agoraClient) {
       runMainThread {
         result.success(hashMapOf("errorCode" to -1))
       }
       return
     }
-    var client = when {
-      agoraClient!!.client != null -> agoraClient!!.client
-      else -> {
-        runMainThread { result.success(hashMapOf("errorCode" to -1)) }
-        return
-      }
-    }
+
+    var client: RtmClient = agoraClient.client
 
     when (methodName) {
       "destroy" -> {
@@ -133,20 +131,49 @@ class AgoraRtmPlugin: MethodCallHandler {
         }
         agoraClient.channels.clear()
         clients.remove(clientIndex)
-        result.success(hashMapOf("errorCode" to 0))
+        runMainThread {
+          result.success(hashMapOf("errorCode" to 0))
+        }
+      }
+      "setLog" -> {
+        val relativePath = "/sdcard/${getActiveContext().packageName}"
+        val size: Int = when {
+          args?.get("size") is Int -> args.get("size") as Int
+          else -> 524288
+        }
+        val path: String? = when {
+          args?.get("path") is String -> "${relativePath}/${(args.get("path") as String)}"
+          else -> null
+        }
+
+        val level: Int = when {
+          args?.get("level") is Int -> args.get("level") as Int
+          else -> 0
+        }
+
+        runMainThread {
+          result.success(hashMapOf(
+                  "errorCode" to 0,
+                  "results" to hashMapOf(
+                          "setLogFileSize" to client.setLogFileSize(size),
+                          "setLogLevel" to client.setLogFilter(level),
+                          "setLogFile" to client.setLogFile(path)
+                  )
+          ))
+        }
       }
       "login" -> {
         var token = args?.get("token")
 
         token = when {
-          (token is String) -> token as String
+          (token is String) -> token
           else -> null
         }
 
         var userId = args?.get("userId")
 
         userId = when {
-          (userId is String) -> userId as String
+          (userId is String) -> userId
           else -> null
         }
 
@@ -187,7 +214,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         var token = args?.get("token")
 
         token = when {
-          (token is String) -> token as String
+          (token is String) -> token
           else -> null
         }
 
@@ -230,7 +257,7 @@ class AgoraRtmPlugin: MethodCallHandler {
       }
       "sendMessageToPeer" -> {
         var peerId: String? = args?.get("peerId") as String
-        var text = args?.get("message") as String
+        var text = args.get("message") as String
         val message = client.createMessage()
         message.text = text
         client.sendMessageToPeer(peerId,
@@ -341,7 +368,10 @@ class AgoraRtmPlugin: MethodCallHandler {
         )
       }
       "getUserAttributes" -> {
-        val userId: String? = args?.get("userId") as String
+        val userId: String? =  when {
+          args?.get("userId") is String -> args.get("userId") as String
+          else -> null
+        }
         client.getUserAttributes(userId,
           object : ResultCallback<List<RtmAttribute>> {
             override fun onSuccess(resp: List<RtmAttribute>) {
@@ -364,8 +394,15 @@ class AgoraRtmPlugin: MethodCallHandler {
           })
       }
       "getUserAttributesByKeys" -> {
-        val userId: String? = args?.get("userId") as String
-        var keys: List<String>? = args?.get("keys") as List<String>
+        val userId: String? =  when {
+          args?.get("userId") is String -> args.get("userId") as String
+          else -> null
+        }
+        var keys: List<String>? = when {
+          args?.get("keys") is List<*> -> args.get("keys") as List<String>
+          else -> null
+        }
+
         client.getUserAttributesByKeys(userId,
                 keys,
                 object : ResultCallback<List<RtmAttribute>> {
@@ -411,6 +448,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         agoraClient.callKit.sendLocalInvitation(localInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
+              agoraClient.localInvitations[localInvitation.calleeId] = localInvitation
               result.success(hashMapOf(
                       "errorCode" to 0
               ))
@@ -436,7 +474,18 @@ class AgoraRtmPlugin: MethodCallHandler {
           args?.get("channelId") is String -> args["channelId"] as String
           else -> null
         }
-        val localInvitation = agoraClient.callKit.createLocalInvitation(calleeId)
+        val localInvitation = when {
+          agoraClient.localInvitations[calleeId] is LocalInvitation -> agoraClient.localInvitations[calleeId]
+          else -> null
+        }
+
+        if (null == localInvitation) {
+          runMainThread {
+            result.success(hashMapOf("errorCode" to -1))
+          }
+          return
+        }
+
         if (null != content) {
           localInvitation.content = content
         }
@@ -446,6 +495,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         agoraClient.callKit.cancelLocalInvitation(localInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
+              agoraClient.localInvitations.remove(localInvitation.calleeId)
               result.success(hashMapOf(
                       "errorCode" to 0
               ))
@@ -460,12 +510,12 @@ class AgoraRtmPlugin: MethodCallHandler {
       }
       "acceptRemoteInvitation" -> {
         val response = when {
-          args?.get("response") is String -> args?.get("response") as String
+          args?.get("response") is String -> args.get("response") as String
           else -> null
         }
 
         val callerId = when {
-          args?.get("callerId") is String -> args?.get("callerId") as String
+          args?.get("callerId") is String -> args.get("callerId") as String
           else -> null
         }
 
@@ -487,6 +537,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         agoraClient.callKit.acceptRemoteInvitation(remoteInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
+              agoraClient.remoteInvitations.remove(remoteInvitation.callerId)
               result.success(hashMapOf(
                       "errorCode" to 0
               ))
@@ -501,12 +552,12 @@ class AgoraRtmPlugin: MethodCallHandler {
       }
       "refuseRemoteInvitation" -> {
         val response = when {
-          args?.get("response") is String -> args?.get("response") as String
+          args?.get("response") is String -> args.get("response") as String
           else -> null
         }
 
         val callerId = when {
-          args?.get("callerId") is String -> args?.get("callerId") as String
+          args?.get("callerId") is String -> args.get("callerId") as String
           else -> null
         }
 
@@ -529,6 +580,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         agoraClient.callKit.refuseRemoteInvitation(remoteInvitation, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
+              agoraClient.remoteInvitations.remove(remoteInvitation.callerId)
               result.success(hashMapOf(
                       "errorCode" to 0
               ))
@@ -565,7 +617,7 @@ class AgoraRtmPlugin: MethodCallHandler {
           }
           return
         }
-        rtmChannel!!.release()
+        rtmChannel.release()
         agoraClient.channels.remove(channelId)
         runMainThread {
           result.success(hashMapOf("errorCode" to 0))
@@ -582,7 +634,7 @@ class AgoraRtmPlugin: MethodCallHandler {
     val _clientIndex = (params["clientIndex"] as Int).toLong()
     val _channelId = params["channelId"] as String
     var args: Map<String, Any>? = when {
-      (params?.get("args") is Map<*,*>) -> params["args"] as Map<String, Any>
+      (params.get("args") is Map<*,*>) -> params["args"] as Map<String, Any>
       else -> null
     }
 
@@ -595,7 +647,7 @@ class AgoraRtmPlugin: MethodCallHandler {
       return
     }
 
-    val client: RtmClient? = agoraClient?.client
+    val client: RtmClient? = agoraClient.client
 
     if (null == client) {
       runMainThread {
@@ -604,7 +656,7 @@ class AgoraRtmPlugin: MethodCallHandler {
       return
     }
 
-    val rtmChannel = agoraClient?.channels[_channelId]
+    val rtmChannel = agoraClient.channels[_channelId]
 
     if (null == rtmChannel) {
       runMainThread {
@@ -616,7 +668,7 @@ class AgoraRtmPlugin: MethodCallHandler {
 
     when (methodName) {
       "join" -> {
-        rtmChannel!!.join(object : ResultCallback<Void> {
+        rtmChannel.join(object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
               result.success(hashMapOf(
@@ -634,7 +686,7 @@ class AgoraRtmPlugin: MethodCallHandler {
       "sendMessage" -> {
         val message = client.createMessage()
         message.text = args?.get("message") as String
-        rtmChannel!!.sendMessage(message, object : ResultCallback<Void> {
+        rtmChannel.sendMessage(message, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
               result.success(hashMapOf(
@@ -650,7 +702,7 @@ class AgoraRtmPlugin: MethodCallHandler {
         })
       }
       "leave" -> {
-        rtmChannel!!.leave(object : ResultCallback<Void> {
+        rtmChannel.leave(object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
               result.success(hashMapOf(
@@ -666,13 +718,11 @@ class AgoraRtmPlugin: MethodCallHandler {
         })
       }
       "getMembers" -> {
-        rtmChannel!!.getMembers(object : ResultCallback<List<RtmChannelMember>> {
+        rtmChannel.getMembers(object : ResultCallback<List<RtmChannelMember>> {
           override fun onSuccess(resp: List<RtmChannelMember>) {
             val membersList = ArrayList<Map<String, String>>()
-            if (null != resp) {
-              for (member in resp) {
-                membersList.add(hashMapOf("userId" to member.userId, "channelId" to member.channelId))
-              }
+            for (member in resp) {
+              membersList.add(hashMapOf("userId" to member.userId, "channelId" to member.channelId))
             }
             runMainThread {
               result.success(hashMapOf(

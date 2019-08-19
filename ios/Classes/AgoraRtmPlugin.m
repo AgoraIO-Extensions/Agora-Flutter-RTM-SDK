@@ -58,10 +58,24 @@
   RTMClient *rtmClient = _agoraClients[clientIndex];
   if (nil == rtmClient) return result(@{@"errorCode": @(-1)});
 
+  
   if ([@"destroy" isEqualToString:name]) {
     rtmClient = nil;
     [_agoraClients removeObjectForKey:clientIndex];
     result(@{@"errorCode": @(0)});
+  }
+  else if ([@"setLog" isEqualToString:name]) {
+    NSInteger size = args[@"size"] != [NSNull null] ? [args[@"size"] integerValue] : 524288;
+    NSString *path = args[@"path"] != [NSNull null] ? args[@"path"] : nil;
+    NSNumber *level = args[@"level"] != [NSNull null] ? args[@"level"] : nil;
+    result(@{
+             @"errorCode": @(0),
+             @"results": @{
+                 @"setLogFileSize": @([rtmClient.kit setLogFileSize:(int)size]),
+                 @"setLogLevel": @([rtmClient.kit setLogFilters:[level integerValue]]),
+                 @"setLogFile": @([rtmClient.kit setLogFile:path]),
+                 }
+             });
   }
   else if ([@"login" isEqualToString:name]) {
     NSString *token = args[@"token"] != [NSNull null] ? args[@"token"] : nil;
@@ -174,6 +188,9 @@
       invitation.channelId = channelId;
     }
     [rtmClient.callKit sendLocalInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
+      if (errorCode == 0) {
+        [rtmClient.localInvitations setObject:invitation forKey:invitation.calleeId];
+      }
       result(@{@"errorCode": @(errorCode)});
     }];
   }
@@ -181,7 +198,7 @@
     NSString *calleeId = args[@"calleeId"] != [NSNull null] ? args[@"calleeId"] : nil;
     NSString *content = args[@"content"] != [NSNull null] ? args[@"content"] : nil;
     NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
-    AgoraRtmLocalInvitation *invitation = [[AgoraRtmLocalInvitation new] initWithCalleeId:calleeId];
+    AgoraRtmLocalInvitation *invitation = rtmClient.localInvitations[calleeId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
     if (nil != content) {
       invitation.content = content;
@@ -190,6 +207,9 @@
       invitation.channelId = channelId;
     }
     [rtmClient.callKit cancelLocalInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
+      if (errorCode == 0 && rtmClient.localInvitations[invitation.calleeId] != nil) {
+        [rtmClient.localInvitations removeObjectForKey:invitation.calleeId];
+      }
       result(@{@"errorCode": @(errorCode)});
     }];
   }
@@ -202,7 +222,7 @@
       invitation.response = response;
     }
     [rtmClient.callKit acceptRemoteInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
-      if (rtmClient.remoteInvitations[callerId]) {
+      if (errorCode == 0 && rtmClient.remoteInvitations[callerId] != nil) {
         [rtmClient.remoteInvitations removeObjectForKey:callerId];
       }
       result(@{@"errorCode": @(errorCode)});
@@ -217,7 +237,7 @@
       invitation.response = response;
     }
     [rtmClient.callKit refuseRemoteInvitation:invitation completion:^(AgoraRtmInvitationApiCallErrorCode errorCode) {
-      if (rtmClient.remoteInvitations[callerId]) {
+      if (errorCode == 0 && rtmClient.remoteInvitations[callerId] != nil) {
         [rtmClient.remoteInvitations removeObjectForKey:callerId];
       }
       result(@{@"errorCode": @(errorCode)});
