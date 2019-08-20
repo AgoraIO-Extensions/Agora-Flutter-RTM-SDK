@@ -1,5 +1,10 @@
 # Change log
 
+## 0.9.6
+* upgrade to rtm 1.0.1: Support all agora_rtm native api.
+* refactor: ios & android, use FlutterEventChannel to serve agora_rtm event handler
+* fix multiple instance conflicts
+
 ## 0.9.5
 * upgrade to rtm 1.0.0
 * add method: setLocalUserAttributes, addOrUpdateLocalUserAttributes, deleteLocalUserAttributesByKeys clearLocalUserAttributes getUserAttributes getUserAttributesByKeys

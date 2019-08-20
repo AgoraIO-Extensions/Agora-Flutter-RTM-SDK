@@ -1,8 +1,9 @@
 name: agora_rtm
 description: Flutter plugin for Agora RTM SDK.
-version: 0.9.5
+version: 0.9.6
 author: Agora.io
 homepage: https://www.agora.io
+docs: https://docs.agora.io
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
