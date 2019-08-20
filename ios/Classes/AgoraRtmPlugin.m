@@ -67,6 +67,10 @@
   else if ([@"setLog" isEqualToString:name]) {
     NSInteger size = args[@"size"] != [NSNull null] ? [args[@"size"] integerValue] : 524288;
     NSString *path = args[@"path"] != [NSNull null] ? args[@"path"] : nil;
+    if (nil != path) {
+      NSString *dirPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+      path = [NSString stringWithFormat:@"%@/%@", dirPath, path];
+    }
     NSNumber *level = args[@"level"] != [NSNull null] ? args[@"level"] : nil;
     result(@{
              @"errorCode": @(0),
