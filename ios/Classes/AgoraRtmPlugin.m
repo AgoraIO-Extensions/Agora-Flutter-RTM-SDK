@@ -35,6 +35,10 @@
                     result:(FlutterResult)result {
   if ([@"createInstance" isEqualToString:name]) {
     NSString *appId = params[@"appId"];
+    if (nil == appId) return result(@{@"errorCode": @(-1)});
+    while (_agoraClients[@(self.nextClientIndex)] != nil) {
+      self.nextClientIndex++;
+    }
     RTMClient *rtmClient = [[RTMClient new] initWithAppId:appId clientIndex:@(self.nextClientIndex)
         messenger:_messenger];
     if (nil == rtmClient) {

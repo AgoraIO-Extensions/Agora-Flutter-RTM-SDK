@@ -82,7 +82,22 @@ class AgoraRtmPlugin: MethodCallHandler {
   private fun handleStaticMethod(methodName: String?, params: Map<String, Any>, result: MethodChannel.Result) {
     when (methodName) {
       "createInstance" -> {
-        val appId: String = params["appId"] as String
+        val appId: String? = when {
+          params["appId"] is String -> params["appId"] as String
+          else -> null
+        }
+
+        if (null == appId) {
+          runMainThread {
+            result.success(hashMapOf("errorCode" to -1))
+          }
+          return
+        }
+
+        while (null != clients[nextClientIndex]) {
+          nextClientIndex++
+        }
+
         val rtmClient = RTMClient(getActiveContext(), appId, nextClientIndex, registrar.messenger(), eventHandler)
         result.success(hashMapOf(
                 "errorCode" to 0,
