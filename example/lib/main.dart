@@ -268,7 +268,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      AgoraRtmMessage message = AgoraRtmMessage(text);
+      AgoraRtmMessage message = AgoraRtmMessage.fromText(text);
       _log(message.text);
       await _client.sendMessageToPeer(peerUid, message, false);
       _log('Send peer message success.');
@@ -328,7 +328,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
     try {
-      await _channel.sendMessage(AgoraRtmMessage(text));
+      await _channel.sendMessage(AgoraRtmMessage.fromText(text));
       _log('Send channel message success.');
     } catch (errorCode) {
       _log('Send channel message error: ' + errorCode.toString());
