@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'agora_rtm'
-  s.version          = '0.9.5'
+  s.version          = '0.9.8'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
 A new flutter plugin project.

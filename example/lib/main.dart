@@ -246,7 +246,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
     try {
-      Map<String, bool> result =
+      Map<dynamic, dynamic> result =
           await _client.queryPeersOnlineStatus([peerUid]);
       _log('Query result: ' + result.toString());
     } catch (errorCode) {
@@ -268,7 +268,9 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      await _client.sendMessageToPeer(peerUid, AgoraRtmMessage(text));
+      AgoraRtmMessage message = AgoraRtmMessage(text);
+      _log(message.text);
+      await _client.sendMessageToPeer(peerUid, message, false);
       _log('Send peer message success.');
     } catch (errorCode) {
       _log('Send peer message error: ' + errorCode.toString());
@@ -280,7 +282,7 @@ class _MyAppState extends State<MyApp> {
       try {
         await _channel.leave();
         _log('Leave channel success.');
-        _channel.release();
+        _client.releaseChannel(_channel.channelId);
         _channelMessageController.text = null;
 
         setState(() {
