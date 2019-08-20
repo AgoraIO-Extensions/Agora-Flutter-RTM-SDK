@@ -8,3 +8,4 @@ build/
 *.lock
 *.*~
 example/*.lock
+example/ios/Podfile.lock
