@@ -36,7 +36,7 @@
   if ([@"createInstance" isEqualToString:name]) {
     NSString *appId = params[@"appId"];
     if (nil == appId) return result(@{@"errorCode": @(-1)});
-    while (_agoraClients[@(self.nextClientIndex)] != nil) {
+    while (nil != _agoraClients[@(self.nextClientIndex)]) {
       self.nextClientIndex++;
     }
     RTMClient *rtmClient = [[RTMClient new] initWithAppId:appId clientIndex:@(self.nextClientIndex)
