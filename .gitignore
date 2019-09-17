@@ -9,3 +9,5 @@ build/
 *.*~
 example/*.lock
 example/ios/Podfile.lock
+.idea
+*.iml
