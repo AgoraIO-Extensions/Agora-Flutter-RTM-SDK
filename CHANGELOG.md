@@ -1,5 +1,8 @@
 # Change log
 
+## 0.9.7
+* fix iOS cocoapods `target has transitive dependencies that include static binaries`
+
 ## 0.9.6
 * upgrade to rtm 1.0.1: Support all agora_rtm native api.
 * refactor: ios & android, use FlutterEventChannel to serve agora_rtm event handler
