@@ -3,8 +3,6 @@ package io.agora.agorartm
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import io.agora.agora_rtm.RTMChannel
-import io.agora.agora_rtm.RTMClient
 import io.agora.rtm.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
