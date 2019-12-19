@@ -1,4 +1,4 @@
-package io.agora.agora_rtm
+package io.agora.agorartm
 
 import android.os.Handler
 import io.agora.rtm.*
