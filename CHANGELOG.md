@@ -1,5 +1,8 @@
 # Change log
 
+## 0.9.8
+* fix Android `flutter pub get` `Please verify that this file has read permission and try again`
+
 ## 0.9.7
 * fix iOS cocoapods `target has transitive dependencies that include static binaries`
 
