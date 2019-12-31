@@ -14,7 +14,31 @@ To use this plugin, add `agora_rtm` as a [dependency in your pubspec.yaml file](
 
 * See the [example](example) directory for a sample app using AgoraRtm.
 
+## Error handling
+
+### Release crash
+
+it causes by code obfuscation because of flutter set `android.enableR8=true` by the default
+
+Add the following line in the **app/proguard-rules.pro** file to prevent code obfuscation:
+```
+-keep class io.agora.**{*;}
+```
+
 ## Note
+
+### Flutter 1.12
+
+if your MainActivity extends `io.flutter.embedding.android.FlutterActivity`
+
+please remove this line
+```
+GeneratedPluginRegistrant.registerWith(this)
+```
+
+[you can refer to official documents](https://flutter.dev/docs/development/packages-and-plugins/plugin-api-migration)
+
+### abiFilters
 
 Agora RTM sdk contain arm64 architecture, but Flutter is not shipping “libflutter.so” in arm64 currently. You need add "abiFilters" in *build.gradle* if you need build release apk.
 
