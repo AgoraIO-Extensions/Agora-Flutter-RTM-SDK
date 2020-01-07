@@ -1,5 +1,8 @@
 # Change log
 
+## 0.9.9
+* fix Android `Kotlin Gradle plugin version` bug, now use your root project kotlin version
+
 ## 0.9.8
 * fix Android `flutter pub get` `Please verify that this file has read permission and try again`
 
