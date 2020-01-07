@@ -16,6 +16,12 @@ To use this plugin, add `agora_rtm` as a [dependency in your pubspec.yaml file](
 
 ## Error handling
 
+### Kotlin version
+
+if your version less than 0.9.9, remove `ext.kotlin_version = '1.3.0'` from `agora_rtm/build.gradle`
+
+from 0.9.9, the plugin will use your root project kotlin version, make sure your setting is correct
+
 ### Release crash
 
 it causes by code obfuscation because of flutter set `android.enableR8=true` by the default
