@@ -1,7 +1,10 @@
 package io.agora.agorartm
 
 import android.os.Handler
-import io.agora.rtm.*
+import io.agora.rtm.RtmChannelAttribute
+import io.agora.rtm.RtmChannelListener
+import io.agora.rtm.RtmChannelMember
+import io.agora.rtm.RtmMessage
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
@@ -26,6 +29,10 @@ class RTMChannel : RtmChannelListener, EventChannel.StreamHandler {
 
     private fun runMainThread(f: () -> Unit) {
         eventHandler.post(f)
+    }
+
+    override fun onAttributesUpdated(p0: MutableList<RtmChannelAttribute>?) {
+        
     }
 
     override
@@ -55,6 +62,10 @@ class RTMChannel : RtmChannelListener, EventChannel.StreamHandler {
                 "userId" to member.userId,
                 "channelId" to member.channelId
         ))
+    }
+
+    override fun onMemberCountUpdated(p0: Int) {
+
     }
 
     private fun sendChannelEvent(eventName: String, params: HashMap<Any, Any>) {
