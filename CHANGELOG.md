@@ -1,5 +1,8 @@
 # Change log
 
+## 0.9.10
+* fix iOS native crash
+
 ## 0.9.9
 * fix Android `Kotlin Gradle plugin version` bug, now use your root project kotlin version
 
