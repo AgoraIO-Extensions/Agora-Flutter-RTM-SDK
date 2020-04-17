@@ -220,4 +220,9 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
     fun onCancel(params: Any?) {
         this.eventSink = null
     }
+
+    override
+    fun onPeersOnlineStatusChanged(p0: MutableMap<String, Int>) {
+
+    }
 }

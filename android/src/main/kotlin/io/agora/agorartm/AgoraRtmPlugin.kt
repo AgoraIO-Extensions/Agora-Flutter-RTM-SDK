@@ -438,6 +438,200 @@ class AgoraRtmPlugin: MethodCallHandler {
                   }
                 })
       }
+      "setChannelAttributes" -> {
+        val channelId: String? =  when {
+          args?.get("channelId") is String -> args.get("channelId") as String
+          else -> null
+        }
+        val enableNotificationToChannelMembers: Boolean =  when {
+          args?.get("enableNotificationToChannelMembers") is Boolean -> args.get("enableNotificationToChannelMembers") as Boolean
+          else -> false
+        }
+        val attributes: List<Map<String, String>>? = args?.get("attributes") as List<Map<String, String>>
+        var channelAttributes = ArrayList<RtmChannelAttribute>()
+        attributes!!.forEach {
+          var rtmChannelAttribute = RtmChannelAttribute()
+          rtmChannelAttribute.key = it["key"]
+          rtmChannelAttribute.value = it["value"]
+          channelAttributes.add(rtmChannelAttribute)
+        }
+
+        client.setChannelAttributes(channelId, channelAttributes,
+                ChannelAttributeOptions(enableNotificationToChannelMembers),
+                object : ResultCallback<Void> {
+                  override fun onSuccess(resp: Void?) {
+                    runMainThread {
+                      result.success(hashMapOf(
+                              "errorCode" to 0
+                      ))
+                    }
+                  }
+                  override fun onFailure(code: ErrorInfo) {
+                    runMainThread {
+                      result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                    }
+                  }
+                }
+        )
+      }
+      "addOrUpdateChannelAttributes" -> {
+        val channelId: String? =  when {
+          args?.get("channelId") is String -> args.get("channelId") as String
+          else -> null
+        }
+        val enableNotificationToChannelMembers: Boolean =  when {
+          args?.get("enableNotificationToChannelMembers") is Boolean -> args.get("enableNotificationToChannelMembers") as Boolean
+          else -> false
+        }
+        val attributes: List<Map<String, String>>? = args?.get("attributes") as List<Map<String, String>>
+        var channelAttributes = ArrayList<RtmChannelAttribute>()
+        attributes!!.forEach {
+          var rtmChannelAttribute = RtmChannelAttribute()
+          rtmChannelAttribute.key = it["key"]
+          rtmChannelAttribute.value = it["value"]
+          channelAttributes.add(rtmChannelAttribute)
+        }
+        client.addOrUpdateChannelAttributes(channelId, channelAttributes,
+                ChannelAttributeOptions(enableNotificationToChannelMembers),
+                object : ResultCallback<Void> {
+                  override fun onSuccess(resp: Void?) {
+                    runMainThread {
+                      result.success(hashMapOf(
+                              "errorCode" to 0
+                      ))
+                    }
+                  }
+                  override fun onFailure(code: ErrorInfo) {
+                    runMainThread {
+                      result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                    }
+                  }
+                }
+        )
+      }
+      "deleteChannelAttributesByKeys" -> {
+        val channelId: String? =  when {
+          args?.get("channelId") is String -> args.get("channelId") as String
+          else -> null
+        }
+        val enableNotificationToChannelMembers: Boolean =  when {
+          args?.get("enableNotificationToChannelMembers") is Boolean -> args.get("enableNotificationToChannelMembers") as Boolean
+          else -> false
+        }
+        val keys: List<String>? = args?.get("keys") as List<String>
+        client.deleteChannelAttributesByKeys(channelId, keys,
+                ChannelAttributeOptions(enableNotificationToChannelMembers),
+                object : ResultCallback<Void> {
+                  override fun onSuccess(resp: Void?) {
+                    runMainThread {
+                      result.success(hashMapOf(
+                              "errorCode" to 0
+                      ))
+                    }
+                  }
+                  override fun onFailure(code: ErrorInfo) {
+                    runMainThread {
+                      result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                    }
+                  }
+                }
+        )
+      }
+      "clearChannelAttributes" -> {
+        val channelId: String? =  when {
+          args?.get("channelId") is String -> args.get("channelId") as String
+          else -> null
+        }
+        val enableNotificationToChannelMembers: Boolean =  when {
+          args?.get("enableNotificationToChannelMembers") is Boolean -> args.get("enableNotificationToChannelMembers") as Boolean
+          else -> false
+        }
+        client.clearChannelAttributes(channelId,
+                ChannelAttributeOptions(enableNotificationToChannelMembers),
+                object : ResultCallback<Void> {
+                  override fun onSuccess(resp: Void?) {
+                    runMainThread {
+                      result.success(hashMapOf(
+                              "errorCode" to 0
+                      ))
+                    }
+                  }
+                  override fun onFailure(code: ErrorInfo) {
+                    runMainThread {
+                      result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                    }
+                  }
+                }
+        )
+      }
+      "getChannelAttributes" -> {
+        val channelId: String? =  when {
+          args?.get("channelId") is String -> args.get("channelId") as String
+          else -> null
+        }
+        client.getChannelAttributes(channelId,
+                object : ResultCallback<List<RtmChannelAttribute>> {
+                  override fun onSuccess(resp: List<RtmChannelAttribute>) {
+                    var attributes = ArrayList<Map<String, Any>>()
+                    for(attribute in resp.orEmpty()){
+                      attributes.add(hashMapOf(
+                              "key" to attribute.key,
+                              "value" to attribute.value,
+                              "userId" to attribute.getLastUpdateUserId(),
+                              "updateTs" to attribute.getLastUpdateTs()
+                      ))
+                    }
+                    runMainThread {
+                      result.success(hashMapOf(
+                              "errorCode" to 0,
+                              "attributes" to attributes
+                      ))
+                    }
+                  }
+                  override fun onFailure(code: ErrorInfo) {
+                    runMainThread {
+                      result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                    }
+                  }
+                })
+      }
+      "getChannelAttributesByKeys" -> {
+        val channelId: String? =  when {
+          args?.get("channelId") is String -> args.get("channelId") as String
+          else -> null
+        }
+        var keys: List<String>? = when {
+          args?.get("keys") is List<*> -> args.get("keys") as List<String>
+          else -> null
+        }
+
+        client.getChannelAttributesByKeys(channelId,
+                keys,
+                object : ResultCallback<List<RtmChannelAttribute>> {
+                  override fun onSuccess(resp: List<RtmChannelAttribute>) {
+                    var attributes = ArrayList<Map<String, Any>>()
+                    for(attribute in resp.orEmpty()){
+                      attributes.add(hashMapOf(
+                              "key" to attribute.key,
+                              "value" to attribute.value,
+                              "userId" to attribute.getLastUpdateUserId(),
+                              "updateTs" to attribute.getLastUpdateTs()
+                      ))
+                    }
+                    runMainThread {
+                      result.success(hashMapOf(
+                              "errorCode" to 0,
+                              "attributes" to attributes
+                      ))
+                    }
+                  }
+                  override fun onFailure(code: ErrorInfo) {
+                    runMainThread {
+                      result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                    }
+                  }
+                })
+      }
       "sendLocalInvitation" -> {
         val calleeId = when {
           args?.get("calleeId") is String -> args["calleeId"] as String

@@ -31,8 +31,19 @@ class RTMChannel : RtmChannelListener, EventChannel.StreamHandler {
         eventHandler.post(f)
     }
 
-    override fun onAttributesUpdated(p0: MutableList<RtmChannelAttribute>?) {
-        
+    override fun onAttributesUpdated(attributes: MutableList<RtmChannelAttribute>?) {
+        var attributeList = ArrayList<Map<String, Any>>()
+        for(attribute in attributes.orEmpty()){
+            attributeList.add(hashMapOf(
+                    "key" to attribute.key,
+                    "value" to attribute.value,
+                    "userId" to attribute.getLastUpdateUserId(),
+                    "updateTs" to attribute.getLastUpdateTs()
+            ))
+        }
+        sendChannelEvent("onAttributesUpdated", hashMapOf(
+                "attributes" to attributeList
+        ))
     }
 
     override
@@ -64,8 +75,8 @@ class RTMChannel : RtmChannelListener, EventChannel.StreamHandler {
         ))
     }
 
-    override fun onMemberCountUpdated(p0: Int) {
-
+    override fun onMemberCountUpdated(count: Int) {
+        sendChannelEvent("onMemberCountUpdated", hashMapOf("count" to count))
     }
 
     private fun sendChannelEvent(eventName: String, params: HashMap<Any, Any>) {
