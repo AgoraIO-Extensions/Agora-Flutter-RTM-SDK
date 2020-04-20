@@ -183,6 +183,92 @@
                @"attributes": userAttributes});
     }];
   }
+  else if ([@"setChannelAttributes" isEqualToString:name]) {
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSArray *attributes = args[@"attributes"];
+    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    NSMutableArray *rtmChannelAttributes = [[NSMutableArray alloc] init];
+    for (NSDictionary* item in attributes) {
+      AgoraRtmChannelAttribute *attribute = [[AgoraRtmChannelAttribute alloc] init];
+      attribute.key = item[@"key"];
+      attribute.value = item[@"value"];
+      [rtmChannelAttributes addObject:attribute];
+    }
+    AgoraRtmChannelAttributeOptions *channelAttributeOption = [[AgoraRtmChannelAttributeOptions alloc] init];
+    channelAttributeOption.enableNotificationToChannelMembers = notify;
+    [rtmClient.kit setChannel:channelId Attributes:rtmChannelAttributes Options:channelAttributeOption  completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      result(@{@"errorCode": @(errorCode)});
+    }];
+  }
+  else if ([@"addOrUpdateChannelAttributes" isEqualToString:name]) {
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSArray *attributes = args[@"attributes"];
+    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    NSMutableArray *rtmChannelAttributes = [[NSMutableArray alloc] init];
+    for (NSDictionary* item in attributes) {
+      AgoraRtmChannelAttribute *attribute = [[AgoraRtmChannelAttribute alloc] init];
+      attribute.key = item[@"key"];
+      attribute.value = item[@"value"];
+      [rtmChannelAttributes addObject:attribute];
+    }
+    AgoraRtmChannelAttributeOptions *channelAttributeOption = [[AgoraRtmChannelAttributeOptions alloc] init];
+    channelAttributeOption.enableNotificationToChannelMembers = notify;
+    [rtmClient.kit addOrUpdateChannel:channelId Attributes:rtmChannelAttributes Options:channelAttributeOption  completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      result(@{@"errorCode": @(errorCode)});
+    }];
+  }
+  else if ([@"deleteChannelAttributesByKeys" isEqualToString:name]) {
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
+    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    AgoraRtmChannelAttributeOptions *channelAttributeOption = [[AgoraRtmChannelAttributeOptions alloc] init];
+    channelAttributeOption.enableNotificationToChannelMembers = notify;
+    [rtmClient.kit deleteChannel:channelId AttributesByKeys:keys Options:channelAttributeOption  completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      result(@{@"errorCode": @(errorCode)});
+    }];
+  }
+  else if ([@"clearChannelAttributes" isEqualToString:name]) {
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    AgoraRtmChannelAttributeOptions *channelAttributeOption = [[AgoraRtmChannelAttributeOptions alloc] init];
+    channelAttributeOption.enableNotificationToChannelMembers = notify;
+    [rtmClient.kit clearChannel:channelId Options:channelAttributeOption  AttributesWithCompletion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
+      result(@{@"errorCode": @(errorCode)});
+    }];
+  }
+  else if ([@"getChannelAttributes" isEqualToString:name]) {
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    [rtmClient.kit getChannelAllAttributes:channelId completion:^(NSArray<AgoraRtmChannelAttribute *> * _Nullable attributes, AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSMutableArray<NSDictionary*> *channelAttributes = [NSMutableArray new];
+      for(AgoraRtmChannelAttribute *attribute in attributes) {
+        [channelAttributes addObject:@{
+                                   @"key": attribute.key,
+                                   @"value": attribute.value,
+                                   @"userId": attribute.lastUpdateUserId,
+                                   @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
+                                   }];
+      }
+      result(@{@"errorCode": @(errorCode),
+               @"attributes": channelAttributes});
+    }];
+  }
+  else if ([@"getChannelAttributesByKeys" isEqualToString:name]) {
+    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
+    [rtmClient.kit getChannelAttributes:channelId ByKeys:keys completion:^(NSArray<AgoraRtmChannelAttribute *> * _Nullable attributes, AgoraRtmProcessAttributeErrorCode errorCode) {
+      NSMutableArray<NSDictionary*> *channelAttributes = [NSMutableArray new];
+      for(AgoraRtmChannelAttribute *attribute in attributes) {
+        [channelAttributes addObject:@{
+                                   @"key": attribute.key,
+                                   @"value": attribute.value,
+                                   @"userId": attribute.lastUpdateUserId,
+                                   @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
+                                   }];
+      }
+      result(@{@"errorCode": @(errorCode),
+               @"attributes": channelAttributes});
+    }];
+  }
   else if ([@"sendLocalInvitation" isEqualToString:name]) {
     NSString *calleeId = args[@"calleeId"] != [NSNull null] ? args[@"calleeId"] : nil;
     NSString *content = args[@"content"] != [NSNull null] ? args[@"content"] : nil;

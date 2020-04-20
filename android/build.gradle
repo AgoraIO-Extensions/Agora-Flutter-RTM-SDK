@@ -1,5 +1,5 @@
 group 'io.agora.agora_rtm'
-version '0.9.10'
+version '0.9.11'
 
 buildscript {
     repositories {

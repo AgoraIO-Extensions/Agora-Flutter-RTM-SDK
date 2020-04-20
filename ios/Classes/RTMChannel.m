@@ -76,4 +76,21 @@
                                                      }];
 }
 
+- (void)channel:(AgoraRtmChannel *)channel attributeUpdate:(NSArray< AgoraRtmChannelAttribute *> * _Nonnull)attributes {
+    NSMutableArray<NSDictionary*> *channelAttributes = [NSMutableArray new];
+    for(AgoraRtmChannelAttribute *attribute in attributes) {
+      [channelAttributes addObject:@{
+                                 @"key": attribute.key,
+                                 @"value": attribute.value,
+                                 @"userId": attribute.lastUpdateUserId,
+                                 @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
+                                 }];
+    }
+    [self sendChannelEvent:@"onAttributesUpdated" params:@{@"attributes": channelAttributes}];
+}
+
+- (void)channel:(AgoraRtmChannel *)channel memberCount:(int)count {
+    [self sendChannelEvent:@"onMemberCountUpdated" params:@{@"count": [NSNumber numberWithInt:count]}];
+}
+
 @end
