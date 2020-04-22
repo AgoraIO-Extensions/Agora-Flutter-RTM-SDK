@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.dependency 'Flutter'
   s.static_framework = true
 
-  s.dependency 'AgoraRtm_iOS', '1.1.0'
+  s.dependency 'AgoraRtm_iOS', '1.2.2'
   s.ios.deployment_target = '8.0'
 end
 

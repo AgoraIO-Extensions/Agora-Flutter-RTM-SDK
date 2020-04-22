@@ -1,5 +1,5 @@
 group 'io.agora.agora_rtm'
-version '0.9.10'
+version '0.9.11'
 
 buildscript {
     repositories {
@@ -40,5 +40,5 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'io.agora.rtm:rtm-sdk:1.1.0'
+    implementation 'io.agora.rtm:rtm-sdk:1.2.2'
 }
