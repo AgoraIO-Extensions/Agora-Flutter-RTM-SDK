@@ -56,26 +56,26 @@ class AgoraRtmChannel {
       case 'onMessageReceived':
         AgoraRtmMessage message = AgoraRtmMessage.fromJson(map['message']);
         AgoraRtmMember member = AgoraRtmMember.fromJson(map);
-        this?.onMessageReceived(message, member);
+        this?.onMessageReceived?.call(message, member);
         break;
       case 'onMemberJoined':
         AgoraRtmMember member = AgoraRtmMember.fromJson(map);
-        this?.onMemberJoined(member);
+        this?.onMemberJoined?.call(member);
         break;
       case 'onMemberLeft':
         AgoraRtmMember member = AgoraRtmMember.fromJson(map);
-        this?.onMemberLeft(member);
+        this?.onMemberLeft?.call(member);
         break;
       case 'onAttributesUpdated':
         List<Map<dynamic, dynamic>> attributes =
             List<Map<dynamic, dynamic>>.from(map['attributes']);
-        this?.onAttributesUpdated(attributes
+        this?.onAttributesUpdated?.call(attributes
             .map((attr) => AgoraRtmChannelAttribute.fromJson(attr))
             .toList());
         break;
       case 'onMemberCountUpdated':
         int count = map['count'];
-        this?.onMemberCountUpdated(count);
+        this?.onMemberCountUpdated?.call(count);
         break;
     }
   }

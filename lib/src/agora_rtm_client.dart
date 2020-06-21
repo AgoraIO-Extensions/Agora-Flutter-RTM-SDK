@@ -110,55 +110,55 @@ class AgoraRtmClient {
       case 'onConnectionStateChanged':
         int state = map['state'];
         int reason = map['reason'];
-        this?.onConnectionStateChanged(state, reason);
+        this?.onConnectionStateChanged?.call(state, reason);
         break;
       case 'onMessageReceived':
         AgoraRtmMessage message = AgoraRtmMessage.fromJson(map["message"]);
         String peerId = map["peerId"];
-        this?.onMessageReceived(message, peerId);
+        this?.onMessageReceived?.call(message, peerId);
         break;
       case 'onTokenExpired':
-        this?.onTokenExpired();
+        this?.onTokenExpired?.call();
         break;
       case 'onLocalInvitationReceivedByPeer':
-        this?.onLocalInvitationReceivedByPeer(
+        this?.onLocalInvitationReceivedByPeer?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationAccepted':
-        this?.onLocalInvitationAccepted(
+        this?.onLocalInvitationAccepted?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationRefused':
-        this?.onLocalInvitationRefused(
+        this?.onLocalInvitationRefused?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationCanceled':
-        this?.onLocalInvitationCanceled(
+        this?.onLocalInvitationCanceled?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationFailure':
-        this?.onLocalInvitationFailure(
+        this?.onLocalInvitationFailure?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']),
             map['errorCode']);
         break;
       case 'onRemoteInvitationReceivedByPeer':
-        this?.onRemoteInvitationReceivedByPeer(
+        this?.onRemoteInvitationReceivedByPeer?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationAccepted':
-        this?.onRemoteInvitationAccepted(
+        this?.onRemoteInvitationAccepted?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationRefused':
-        this?.onRemoteInvitationRefused(
+        this?.onRemoteInvitationRefused?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationCanceled':
-        this?.onRemoteInvitationCanceled(
+        this?.onRemoteInvitationCanceled?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationFailure':
-        this?.onRemoteInvitationFailure(
+        this?.onRemoteInvitationFailure?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']),
             map['errorCode']);
         break;
