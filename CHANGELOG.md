@@ -1,5 +1,8 @@
 # Change log
 
+## 0.9.12
+* make channel and client listeners null-safe
+
 ## 0.9.11
 * upgrade to rtm 1.2.2
 * support channel attributes
