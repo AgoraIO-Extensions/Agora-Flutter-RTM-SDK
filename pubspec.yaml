@@ -1,13 +1,12 @@
 name: agora_rtm
 description: Flutter plugin for Agora RTM SDK.
-version: 0.9.11
-author: Agora.io
+version: 0.9.13
 homepage: https://www.agora.io
 repository: https://github.com/AgoraIO/Flutter-RTM
-docs: https://docs.agora.io
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.12.13+hotfix.6"
 
 dependencies:
   flutter:
@@ -19,5 +18,9 @@ dev_dependencies:
 
 flutter:
   plugin:
-    androidPackage: io.agora.agorartm
-    pluginClass: AgoraRtmPlugin
+    platforms:
+      android:
+        package: io.agora.agorartm
+        pluginClass: AgoraRtmPlugin
+      ios:
+        pluginClass: AgoraRtmPlugin

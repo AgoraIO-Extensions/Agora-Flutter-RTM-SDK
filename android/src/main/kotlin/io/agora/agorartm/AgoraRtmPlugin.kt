@@ -273,8 +273,17 @@ class AgoraRtmPlugin: MethodCallHandler {
         var text = args.get("message") as String
         val message = client.createMessage()
         message.text = text
+        val options = SendMessageOptions().apply {
+          (args["historical"] as? Boolean)?.let {
+            enableHistoricalMessaging = it
+          }
+          (args["offline"] as? Boolean)?.let {
+            enableOfflineMessaging = it
+          }
+        }
         client.sendMessageToPeer(peerId,
                 message,
+                options,
                 object : ResultCallback<Void> {
                   override fun onSuccess(resp: Void?) {
                     runMainThread {
@@ -893,7 +902,15 @@ class AgoraRtmPlugin: MethodCallHandler {
       "sendMessage" -> {
         val message = client.createMessage()
         message.text = args?.get("message") as String
-        rtmChannel.sendMessage(message, object : ResultCallback<Void> {
+        val options = SendMessageOptions().apply {
+          (args["historical"] as? Boolean)?.let {
+            enableHistoricalMessaging = it
+          }
+          (args["offline"] as? Boolean)?.let {
+            enableOfflineMessaging = it
+          }
+        }
+        rtmChannel.sendMessage(message, options, object : ResultCallback<Void> {
           override fun onSuccess(resp: Void?) {
             runMainThread {
               result.success(hashMapOf(
