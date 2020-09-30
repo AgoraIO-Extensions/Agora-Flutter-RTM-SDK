@@ -64,4 +64,4 @@ android {
 
 ## How to contribute
 
-To help work on this sdk, see our [contributor guide](CONTRIBUTING.md).
+To help work on this sdk, see our [contributor guide](https://github.com/AgoraIO/Flutter-RTM/blob/master/CONTRIBUTING.md).
