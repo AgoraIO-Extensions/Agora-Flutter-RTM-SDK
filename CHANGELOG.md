@@ -1,10 +1,10 @@
 # Change log
 
+## 0.9.13
+* add `offline` and `historical` for `sendMessage` and `sendMessageToPeer`
+
 ## 0.9.12
 * make channel and client listeners null-safe
-
-## 0.9.11
-* add `offline` and `historical` for `sendMessage` and `sendMessageToPeer`
 
 ## 0.9.11
 * upgrade to rtm 1.2.2
