@@ -1,6 +1,9 @@
 # Change log
 
 ## 0.9.11
+* add `offline` and `historical` for `sendMessage` and `sendMessageToPeer`
+
+## 0.9.11
 * upgrade to rtm 1.2.2
 * support channel attributes
 

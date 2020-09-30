@@ -9,6 +9,7 @@ import 'utils.dart';
 class AgoraRtmClientException implements Exception {
   final reason;
   final code;
+
   AgoraRtmClientException(this.reason, this.code) : super();
 
   Map<String, dynamic> toJson() => {"reason": reason, "code": code};
@@ -121,20 +122,24 @@ class AgoraRtmClient {
         this?.onTokenExpired?.call();
         break;
       case 'onLocalInvitationReceivedByPeer':
-        this?.onLocalInvitationReceivedByPeer?.call(
-            AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
+        this
+            ?.onLocalInvitationReceivedByPeer
+            ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationAccepted':
-        this?.onLocalInvitationAccepted?.call(
-            AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
+        this
+            ?.onLocalInvitationAccepted
+            ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationRefused':
-        this?.onLocalInvitationRefused?.call(
-            AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
+        this
+            ?.onLocalInvitationRefused
+            ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationCanceled':
-        this?.onLocalInvitationCanceled?.call(
-            AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
+        this
+            ?.onLocalInvitationCanceled
+            ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationFailure':
         this?.onLocalInvitationFailure?.call(
@@ -142,20 +147,24 @@ class AgoraRtmClient {
             map['errorCode']);
         break;
       case 'onRemoteInvitationReceivedByPeer':
-        this?.onRemoteInvitationReceivedByPeer?.call(
-            AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
+        this
+            ?.onRemoteInvitationReceivedByPeer
+            ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationAccepted':
-        this?.onRemoteInvitationAccepted?.call(
-            AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
+        this
+            ?.onRemoteInvitationAccepted
+            ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationRefused':
-        this?.onRemoteInvitationRefused?.call(
-            AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
+        this
+            ?.onRemoteInvitationRefused
+            ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationCanceled':
-        this?.onRemoteInvitationCanceled?.call(
-            AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
+        this
+            ?.onRemoteInvitationCanceled
+            ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationFailure':
         this?.onRemoteInvitationFailure?.call(
@@ -249,10 +258,14 @@ class AgoraRtmClient {
   }
 
   /// Allows a user to send a peer-to-peer message to a specific peer user.
-  Future<void> sendMessageToPeer(
-      String peerId, AgoraRtmMessage message, bool offline) async {
-    final res = await _callNative("sendMessageToPeer",
-        {"peerId": peerId, "message": message.text, "offline": offline});
+  Future<void> sendMessageToPeer(String peerId, AgoraRtmMessage message,
+      [bool offline, bool historical]) async {
+    final res = await _callNative("sendMessageToPeer", {
+      "peerId": peerId,
+      "message": message.text,
+      "offline": offline,
+      "historical": historical
+    });
     if (res["errorCode"] != 0)
       throw AgoraRtmClientException(
           "sendMessageToPeer failed errorCode:${res['errorCode']}",

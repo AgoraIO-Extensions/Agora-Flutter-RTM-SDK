@@ -8,6 +8,7 @@ import 'utils.dart';
 class AgoraRtmChannelException implements Exception {
   final reason;
   final code;
+
   AgoraRtmChannelException(this.reason, this.code) : super();
 
   Map<String, dynamic> toJson() => {"reason": reason, "code": code};
@@ -102,8 +103,13 @@ class AgoraRtmChannel {
           "join failed errorCode:${res['errorCode']}", res['errorCode']);
   }
 
-  Future<void> sendMessage(AgoraRtmMessage message) async {
-    final res = await _callNative("sendMessage", {'message': message.text});
+  Future<void> sendMessage(AgoraRtmMessage message,
+      [bool offline, bool historical]) async {
+    final res = await _callNative("sendMessage", {
+      'message': message.text,
+      "offline": offline,
+      "historical": historical
+    });
     if (res["errorCode"] != 0)
       throw AgoraRtmChannelException(
           "sendMessage failed errorCode:${res['errorCode']}", res['errorCode']);
