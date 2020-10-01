@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.version          = project.version
   s.summary          = 'A new flutter plugin project.'
   s.description      = project.description
-  s.homepage         = project.docs
+  s.homepage         = project.homepage
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Agora' => 'developer@agora.io' }
   s.source           = { :path => '.' }
