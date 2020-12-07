@@ -1,5 +1,8 @@
 # Change log
 
+## 0.9.14
+* fix iOS build error
+
 ## 0.9.13
 * add `offline` and `historical` for `sendMessage` and `sendMessageToPeer`
 
