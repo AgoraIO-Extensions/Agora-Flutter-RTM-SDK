@@ -4,12 +4,12 @@
 #import <AgoraRtmKit/AgoraRtmKit.h>
 
 @interface AgoraRtmPlugin() <AgoraRtmDelegate>
-  @property (strong, nonatomic) FlutterMethodChannel *methodChannel;
-  @property (assign, nonatomic) NSInteger nextClientIndex;
-  @property (assign, nonatomic) NSInteger nextChannelIndex;
-  @property (strong, nonatomic) NSMutableDictionary<NSNumber *, RTMClient *> *agoraClients;
-  @property (strong, nonatomic) id registrar;
-  @property (strong, nonatomic) id messenger;
+@property (strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property (assign, nonatomic) NSInteger nextClientIndex;
+@property (assign, nonatomic) NSInteger nextChannelIndex;
+@property (strong, nonatomic) NSMutableDictionary<NSNumber *, RTMClient *> *agoraClients;
+@property (strong, nonatomic) id registrar;
+@property (strong, nonatomic) id messenger;
 @end
 
 @implementation AgoraRtmPlugin
@@ -40,7 +40,7 @@
       self.nextClientIndex++;
     }
     RTMClient *rtmClient = [[RTMClient new] initWithAppId:appId clientIndex:@(self.nextClientIndex)
-        messenger:_messenger];
+                                                messenger:_messenger];
     if (nil == rtmClient) {
       return result(@{@"errorCode": @(-1)});
     }
@@ -55,13 +55,13 @@
 }
 
 - (void)handleAgoraRtmClientMethod:(NSString *)name
-                    params:(NSDictionary *)params
-                    result:(FlutterResult)result {
+                            params:(NSDictionary *)params
+                            result:(FlutterResult)result {
   NSNumber *clientIndex = params[@"clientIndex"];
   NSDictionary *args = params[@"args"];
   RTMClient *rtmClient = _agoraClients[clientIndex];
   if (nil == rtmClient) return result(@{@"errorCode": @(-1)});
-
+  
   
   if ([@"destroy" isEqualToString:name]) {
     rtmClient = nil;
@@ -70,24 +70,24 @@
   }
   else if ([@"setLog" isEqualToString:name]) {
     NSInteger size = args[@"size"] != [NSNull null] ? [args[@"size"] integerValue] : 524288;
-    NSString *path = args[@"path"] != [NSNull null] ? args[@"path"] : nil;
+    NSString *path = [[args objectForKey:@"path"] stringValue];
     if (nil != path) {
       NSString *dirPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
       path = [NSString stringWithFormat:@"%@/%@", dirPath, path];
     }
     NSNumber *level = args[@"level"] != [NSNull null] ? args[@"level"] : nil;
     result(@{
-             @"errorCode": @(0),
-             @"results": @{
-                 @"setLogFileSize": @([rtmClient.kit setLogFileSize:(int)size]),
-                 @"setLogLevel": @([rtmClient.kit setLogFilters:[level integerValue]]),
-                 @"setLogFile": @([rtmClient.kit setLogFile:path]),
-                 }
-             });
+      @"errorCode": @(0),
+      @"results": @{
+          @"setLogFileSize": @([rtmClient.kit setLogFileSize:(int)size]),
+          @"setLogLevel": @([rtmClient.kit setLogFilters:[level integerValue]]),
+          @"setLogFile": @([rtmClient.kit setLogFile:path]),
+      }
+           });
   }
   else if ([@"login" isEqualToString:name]) {
-    NSString *token = args[@"token"] != [NSNull null] ? args[@"token"] : nil;
-    NSString *userId = args[@"userId"];
+    NSString *token = [[args objectForKey:@"token"] stringValue];
+    NSString *userId = [[args objectForKey:@"userId"] stringValue];
     [rtmClient.kit loginByToken:token user:userId completion:^(AgoraRtmLoginErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
@@ -98,7 +98,7 @@
     }];
   }
   else if ([@"renewToken" isEqualToString:name]) {
-    NSString *token = args[@"token"] != [NSNull null] ? args[@"token"] : nil;
+    NSString *token = [[args objectForKey:@"token"] stringValue];
     [rtmClient.kit renewToken:token completion:^(NSString *token, AgoraRtmRenewTokenErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
@@ -114,10 +114,10 @@
     }];
   }
   else if ([@"sendMessageToPeer" isEqualToString:name]) {
-    NSString *peerId = args[@"peerId"] != [NSNull null] ? args[@"peerId"] : nil;
-    NSString *text = args[@"message"] != [NSNull null] ? args[@"message"] : nil;
-    BOOL offline = args[@"offline"] != [NSNull null] ? args[@"offline"] : false;
-    BOOL historical = args[@"historical"] != [NSNull null] ? args[@"historical"] : false;
+    NSString *peerId = [[args objectForKey:@"peerId"] stringValue];
+    NSString *text = [[args objectForKey:@"message"] stringValue];
+    BOOL offline = [[args objectForKey:@"offline"] boolValue];
+    BOOL historical = [[args objectForKey:@"historical"] boolValue];
     AgoraRtmSendMessageOptions *sendMessageOption = [[AgoraRtmSendMessageOptions alloc] init];
     sendMessageOption.enableOfflineMessaging = offline;
     sendMessageOption.enableHistoricalMessaging = historical;
@@ -163,7 +163,7 @@
     }];
   }
   else if ([@"getUserAttributes" isEqualToString:name]) {
-    NSString *userId = args[@"userId"] != [NSNull null] ? args[@"userId"] : nil;
+    NSString *userId = [[args objectForKey:@"userId"] stringValue];
     [rtmClient.kit getUserAllAttributes:userId completion:^(NSArray<AgoraRtmAttribute *> * _Nullable attributes, NSString *userId, AgoraRtmProcessAttributeErrorCode errorCode) {
       NSMutableDictionary *userAttributes = [[NSMutableDictionary alloc] init];
       for (AgoraRtmAttribute *item in attributes) {
@@ -174,7 +174,7 @@
     }];
   }
   else if ([@"getUserAttributesByKeys" isEqualToString:name]) {
-    NSString *userId = args[@"userId"] != [NSNull null] ? args[@"userId"] : nil;
+    NSString *userId = [[args objectForKey:@"userId"] stringValue];
     NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
     [rtmClient.kit getUserAttributes:userId ByKeys:keys completion:^(NSArray<AgoraRtmAttribute *> * _Nullable attributes, NSString *userId, AgoraRtmProcessAttributeErrorCode errorCode) {
       NSMutableDictionary *userAttributes = [[NSMutableDictionary alloc] init];
@@ -186,9 +186,9 @@
     }];
   }
   else if ([@"setChannelAttributes" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     NSArray *attributes = args[@"attributes"];
-    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    BOOL notify = [[args objectForKey:@"enableNotificationToChannelMembers"] boolValue];
     NSMutableArray *rtmChannelAttributes = [[NSMutableArray alloc] init];
     for (NSDictionary* item in attributes) {
       AgoraRtmChannelAttribute *attribute = [[AgoraRtmChannelAttribute alloc] init];
@@ -203,9 +203,9 @@
     }];
   }
   else if ([@"addOrUpdateChannelAttributes" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     NSArray *attributes = args[@"attributes"];
-    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    BOOL notify = [[args objectForKey:@"enableNotificationToChannelMembers"] boolValue];
     NSMutableArray *rtmChannelAttributes = [[NSMutableArray alloc] init];
     for (NSDictionary* item in attributes) {
       AgoraRtmChannelAttribute *attribute = [[AgoraRtmChannelAttribute alloc] init];
@@ -220,9 +220,9 @@
     }];
   }
   else if ([@"deleteChannelAttributesByKeys" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
-    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    BOOL notify = [[args objectForKey:@"enableNotificationToChannelMembers"] boolValue];
     AgoraRtmChannelAttributeOptions *channelAttributeOption = [[AgoraRtmChannelAttributeOptions alloc] init];
     channelAttributeOption.enableNotificationToChannelMembers = notify;
     [rtmClient.kit deleteChannel:channelId AttributesByKeys:keys Options:channelAttributeOption  completion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
@@ -230,8 +230,8 @@
     }];
   }
   else if ([@"clearChannelAttributes" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
-    BOOL notify = args[@"enableNotificationToChannelMembers"] != [NSNull null] ? args[@"enableNotificationToChannelMembers"] : false;
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
+    BOOL notify = [[args objectForKey:@"enableNotificationToChannelMembers"] boolValue];
     AgoraRtmChannelAttributeOptions *channelAttributeOption = [[AgoraRtmChannelAttributeOptions alloc] init];
     channelAttributeOption.enableNotificationToChannelMembers = notify;
     [rtmClient.kit clearChannel:channelId Options:channelAttributeOption  AttributesWithCompletion:^(AgoraRtmProcessAttributeErrorCode errorCode) {
@@ -239,42 +239,42 @@
     }];
   }
   else if ([@"getChannelAttributes" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     [rtmClient.kit getChannelAllAttributes:channelId completion:^(NSArray<AgoraRtmChannelAttribute *> * _Nullable attributes, AgoraRtmProcessAttributeErrorCode errorCode) {
       NSMutableArray<NSDictionary*> *channelAttributes = [NSMutableArray new];
       for(AgoraRtmChannelAttribute *attribute in attributes) {
         [channelAttributes addObject:@{
-                                   @"key": attribute.key,
-                                   @"value": attribute.value,
-                                   @"userId": attribute.lastUpdateUserId,
-                                   @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
-                                   }];
+          @"key": attribute.key,
+          @"value": attribute.value,
+          @"userId": attribute.lastUpdateUserId,
+          @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
+        }];
       }
       result(@{@"errorCode": @(errorCode),
                @"attributes": channelAttributes});
     }];
   }
   else if ([@"getChannelAttributesByKeys" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     NSArray *keys = args[@"keys"] != [NSNull null] ? args[@"keys"] : nil;
     [rtmClient.kit getChannelAttributes:channelId ByKeys:keys completion:^(NSArray<AgoraRtmChannelAttribute *> * _Nullable attributes, AgoraRtmProcessAttributeErrorCode errorCode) {
       NSMutableArray<NSDictionary*> *channelAttributes = [NSMutableArray new];
       for(AgoraRtmChannelAttribute *attribute in attributes) {
         [channelAttributes addObject:@{
-                                   @"key": attribute.key,
-                                   @"value": attribute.value,
-                                   @"userId": attribute.lastUpdateUserId,
-                                   @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
-                                   }];
+          @"key": attribute.key,
+          @"value": attribute.value,
+          @"userId": attribute.lastUpdateUserId,
+          @"updateTs": [NSNumber numberWithLongLong:attribute.lastUpdateTs]
+        }];
       }
       result(@{@"errorCode": @(errorCode),
                @"attributes": channelAttributes});
     }];
   }
   else if ([@"sendLocalInvitation" isEqualToString:name]) {
-    NSString *calleeId = args[@"calleeId"] != [NSNull null] ? args[@"calleeId"] : nil;
-    NSString *content = args[@"content"] != [NSNull null] ? args[@"content"] : nil;
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *calleeId = [[args objectForKey:@"calleeId"] stringValue];
+    NSString *content = [[args objectForKey:@"content"] stringValue];
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     AgoraRtmLocalInvitation *invitation = [[AgoraRtmLocalInvitation new] initWithCalleeId:calleeId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
     if (nil != content) {
@@ -291,9 +291,9 @@
     }];
   }
   else if ([@"cancelLocalInvitation" isEqualToString:name]) {
-    NSString *calleeId = args[@"calleeId"] != [NSNull null] ? args[@"calleeId"] : nil;
-    NSString *content = args[@"content"] != [NSNull null] ? args[@"content"] : nil;
-    NSString *channelId = args[@"channelId"] != [NSNull null] ? args[@"channelId"] : nil;
+    NSString *calleeId = [[args objectForKey:@"calleeId"] stringValue];
+    NSString *content = [[args objectForKey:@"content"] stringValue];
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     AgoraRtmLocalInvitation *invitation = rtmClient.localInvitations[calleeId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
     if (nil != content) {
@@ -310,8 +310,8 @@
     }];
   }
   else if ([@"acceptRemoteInvitation" isEqualToString:name]) {
-    NSString *response = args[@"response"] != [NSNull null] ? args[@"response"] : nil;
-    NSString *callerId = args[@"callerId"] != [NSNull null] ? args[@"callerId"] : nil;
+    NSString *response = [[args objectForKey:@"response"] stringValue];
+    NSString *callerId = [[args objectForKey:@"callerId"] stringValue];
     AgoraRtmRemoteInvitation *invitation = rtmClient.remoteInvitations[callerId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
     if (response != nil) {
@@ -325,8 +325,8 @@
     }];
   }
   else if ([@"refuseRemoteInvitation" isEqualToString:name]) {
-    NSString *response = args[@"response"] != [NSNull null] ? args[@"response"] : nil;
-    NSString *callerId = args[@"callerId"] != [NSNull null] ? args[@"callerId"] : nil;
+    NSString *response = [[args objectForKey:@"response"] stringValue];
+    NSString *callerId = [[args objectForKey:@"callerId"] stringValue];
     AgoraRtmRemoteInvitation *invitation = rtmClient.remoteInvitations[callerId];
     if (nil == invitation) return result(@{@"errorCode": @(-1)});
     if (response != nil) {
@@ -340,14 +340,14 @@
     }];
   }
   else if ([@"createChannel" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"];
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     RTMChannel *rtmChannel = [[RTMChannel alloc] initWithClientIndex:clientIndex channelId:channelId messenger:_messenger kit:rtmClient.kit];
     if (nil == rtmChannel) return result(@{@"errorCode": @(-1)});
     rtmClient.channels[channelId] = rtmChannel;
     result(@{@"errorCode": @(0)});
   }
   else if ([@"releaseChannel" isEqualToString:name]) {
-    NSString *channelId = args[@"channelId"];
+    NSString *channelId = [[args objectForKey:@"channelId"] stringValue];
     if (nil == rtmClient.channels[channelId]) return result(@{@"errorCode": @(-1)});
     [rtmClient.kit destroyChannelWithId:channelId];
     [rtmClient.channels removeObjectForKey:channelId];
@@ -360,8 +360,8 @@
 
 
 - (void)handleAgoraRtmChannelMethod:(NSString *)name
-                    params:(NSDictionary *)params
-                    result:(FlutterResult)result {
+                             params:(NSDictionary *)params
+                             result:(FlutterResult)result {
   NSNumber *clientIndex = params[@"clientIndex"];
   NSString *channelId = params[@"channelId"];
   NSDictionary *args = params[@"args"];
@@ -370,7 +370,7 @@
   RTMChannel *rtmChannel = rtmClient.channels[channelId];
   
   if (nil == rtmChannel) return result(@{@"errorCode": @(-1)});
-
+  
   AgoraRtmChannel *channel = rtmChannel.channel;
   if ([@"join" isEqualToString:name]) {
     [channel joinWithCompletion:^(AgoraRtmJoinChannelErrorCode errorCode) {
@@ -378,15 +378,15 @@
     }];
   }
   else if ([@"sendMessage" isEqualToString:name]) {
-    NSString *text = args[@"message"] != [NSNull null] ? args[@"message"] : nil;
+    NSString *text = [[args objectForKey:@"message"] stringValue];
     AgoraRtmMessage *message = [[AgoraRtmMessage new] initWithText:text];
-    BOOL offline = args[@"offline"] != [NSNull null] ? args[@"offline"] : false;
-    BOOL historical = args[@"historical"] != [NSNull null] ? args[@"historical"] : false;
+    BOOL offline = [[args objectForKey:@"offline"] boolValue];
+    BOOL historical = [[args objectForKey:@"historical"] boolValue];
     AgoraRtmSendMessageOptions *sendMessageOption = [[AgoraRtmSendMessageOptions alloc] init];
     sendMessageOption.enableOfflineMessaging = offline;
     sendMessageOption.enableHistoricalMessaging = historical;
     [channel sendMessage:message sendMessageOptions: sendMessageOption completion:^(AgoraRtmSendChannelMessageErrorCode errorCode) {
-        result(@{@"errorCode": @(errorCode)});
+      result(@{@"errorCode": @(errorCode)});
     }];
   }
   else if ([@"leave" isEqualToString:name]) {
@@ -399,9 +399,9 @@
       NSMutableArray<NSDictionary*> *exportMembers = [NSMutableArray new];
       for(AgoraRtmMember *member in members) {
         [exportMembers addObject:@{
-                                   @"userId": member.userId,
-                                   @"channelId": member.channelId
-                                   }];
+          @"userId": member.userId,
+          @"channelId": member.channelId
+        }];
       }
       result(@{@"errorCode": @(errorCode), @"members": exportMembers});
     }];
