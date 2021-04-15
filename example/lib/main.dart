@@ -22,8 +22,8 @@ class _MyAppState extends State<MyApp> {
 
   final _infoStrings = <String>[];
 
-  AgoraRtmClient _client;
-  AgoraRtmChannel _channel;
+  AgoraRtmClient? _client;
+  AgoraRtmChannel? _channel;
 
   @override
   void initState() {
@@ -58,16 +58,16 @@ class _MyAppState extends State<MyApp> {
   void _createClient() async {
     _client =
         await AgoraRtmClient.createInstance(YOUR_APP_ID);
-    _client.onMessageReceived = (AgoraRtmMessage message, String peerId) {
-      _log("Peer msg: " + peerId + ", msg: " + message.text);
+    _client?.onMessageReceived = (AgoraRtmMessage message, String peerId) {
+      _log("Peer msg: " + peerId + ", msg: " + (message.text??""));
     };
-    _client.onConnectionStateChanged = (int state, int reason) {
+    _client?.onConnectionStateChanged = (int state, int reason) {
       _log('Connection state changed: ' +
           state.toString() +
           ', reason: ' +
           reason.toString());
       if (state == 5) {
-        _client.logout();
+        _client?.logout();
         _log('Logout.');
         setState(() {
           _isLogin = false;
@@ -76,19 +76,24 @@ class _MyAppState extends State<MyApp> {
     };
   }
 
-  Future<AgoraRtmChannel> _createChannel(String name) async {
-    AgoraRtmChannel channel = await _client.createChannel(name);
-    channel.onMemberJoined = (AgoraRtmMember member) {
-      _log(
-          "Member joined: " + member.userId + ', channel: ' + member.channelId);
-    };
-    channel.onMemberLeft = (AgoraRtmMember member) {
-      _log("Member left: " + member.userId + ', channel: ' + member.channelId);
-    };
-    channel.onMessageReceived =
-        (AgoraRtmMessage message, AgoraRtmMember member) {
-      _log("Channel msg: " + member.userId + ", msg: " + message.text);
-    };
+  Future<AgoraRtmChannel?> _createChannel(String name) async {
+    AgoraRtmChannel? channel = await _client?.createChannel(name);
+    if(channel != null) {
+      channel.onMemberJoined = (AgoraRtmMember member) {
+        _log("Member joined: " +
+            member.userId +
+            ', channel: ' +
+            member.channelId);
+      };
+      channel.onMemberLeft = (AgoraRtmMember member) {
+        _log(
+            "Member left: " + member.userId + ', channel: ' + member.channelId);
+      };
+      channel.onMessageReceived =
+          (AgoraRtmMessage message, AgoraRtmMember member) {
+        _log("Channel msg: " + member.userId + ", msg: " + (message.text??""));
+      };
+    }
     return channel;
   }
 
@@ -210,7 +215,7 @@ class _MyAppState extends State<MyApp> {
   void _toggleLogin() async {
     if (_isLogin) {
       try {
-        await _client.logout();
+        await _client?.logout();
         _log('Logout success.');
 
         setState(() {
@@ -228,7 +233,7 @@ class _MyAppState extends State<MyApp> {
       }
 
       try {
-        await _client.login(null, userId);
+        await _client?.login(null, userId);
         _log('Login success: ' + userId);
         setState(() {
           _isLogin = true;
@@ -246,8 +251,8 @@ class _MyAppState extends State<MyApp> {
       return;
     }
     try {
-      Map<dynamic, dynamic> result =
-          await _client.queryPeersOnlineStatus([peerUid]);
+      Map<dynamic, dynamic>? result =
+          await _client?.queryPeersOnlineStatus([peerUid]);
       _log('Query result: ' + result.toString());
     } catch (errorCode) {
       _log('Query error: ' + errorCode.toString());
@@ -269,8 +274,8 @@ class _MyAppState extends State<MyApp> {
 
     try {
       AgoraRtmMessage message = AgoraRtmMessage.fromText(text);
-      _log(message.text);
-      await _client.sendMessageToPeer(peerUid, message, false);
+      _log(message.text??"Empty");
+      await _client?.sendMessageToPeer(peerUid, message, false);
       _log('Send peer message success.');
     } catch (errorCode) {
       _log('Send peer message error: ' + errorCode.toString());
@@ -280,10 +285,12 @@ class _MyAppState extends State<MyApp> {
   void _toggleJoinChannel() async {
     if (_isInChannel) {
       try {
-        await _channel.leave();
+        await _channel?.leave();
         _log('Leave channel success.');
-        _client.releaseChannel(_channel.channelId);
-        _channelMessageController.text = null;
+        if(_channel != null) {
+          _client?.releaseChannel(_channel!.channelId!);
+        }
+        _channelMessageController.clear();
 
         setState(() {
           _isInChannel = false;
@@ -300,7 +307,7 @@ class _MyAppState extends State<MyApp> {
 
       try {
         _channel = await _createChannel(channelId);
-        await _channel.join();
+        await _channel?.join();
         _log('Join channel success.');
 
         setState(() {
@@ -314,7 +321,7 @@ class _MyAppState extends State<MyApp> {
 
   void _toggleGetMembers() async {
     try {
-      List<AgoraRtmMember> members = await _channel.getMembers();
+      List<AgoraRtmMember>? members = await _channel?.getMembers();
       _log('Members: ' + members.toString());
     } catch (errorCode) {
       _log('GetMembers failed: ' + errorCode.toString());
@@ -328,7 +335,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
     try {
-      await _channel.sendMessage(AgoraRtmMessage.fromText(text));
+      await _channel?.sendMessage(AgoraRtmMessage.fromText(text));
       _log('Send channel message success.');
     } catch (errorCode) {
       _log('Send channel message error: ' + errorCode.toString());
