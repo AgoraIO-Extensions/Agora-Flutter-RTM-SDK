@@ -26,7 +26,7 @@ class AgoraRtmClient {
   /// Initializes an [AgoraRtmClient] instance
   ///
   /// The Agora RTM SDK supports multiple [AgoraRtmClient] instances.
-  static Future<AgoraRtmClient> createInstance(String appId) async {
+  static Future<AgoraRtmClient?> createInstance(String appId) async {
     final res = await AgoraRtmPlugin.callMethodForStatic(
         "createInstance", {'appId': appId});
     if (res["errorCode"] != 0)
@@ -50,56 +50,56 @@ class AgoraRtmClient {
   }
 
   /// Occurs when the connection state between the SDK and the Agora RTM system changes.
-  void Function(int state, int reason) onConnectionStateChanged;
+  void Function(int state, int reason)? onConnectionStateChanged;
 
   /// Occurs when the local user receives a peer-to-peer message.
-  void Function(AgoraRtmMessage message, String peerId) onMessageReceived;
+  void Function(AgoraRtmMessage message, String peerId)? onMessageReceived;
 
   /// Occurs when your token expires.
-  void Function() onTokenExpired;
+  void Function()? onTokenExpired;
 
   /// Occurs when you receive error events.
-  void Function() onError;
+  void Function()? onError;
 
   /// Callback to the caller: occurs when the caller receives the call invitation.
-  void Function(AgoraRtmLocalInvitation invite) onLocalInvitationReceivedByPeer;
+  void Function(AgoraRtmLocalInvitation invite)? onLocalInvitationReceivedByPeer;
 
   /// Callback to the caller: occurs when the caller accepts the call invitation.
-  void Function(AgoraRtmLocalInvitation invite) onLocalInvitationAccepted;
+  void Function(AgoraRtmLocalInvitation invite)? onLocalInvitationAccepted;
 
   /// Callback to the caller: occurs when the caller declines the call invitation.
-  void Function(AgoraRtmLocalInvitation invite) onLocalInvitationRefused;
+  void Function(AgoraRtmLocalInvitation invite)? onLocalInvitationRefused;
 
   /// Callback to the caller: occurs when the caller cancels a call invitation.
-  void Function(AgoraRtmLocalInvitation invite) onLocalInvitationCanceled;
+  void Function(AgoraRtmLocalInvitation invite)? onLocalInvitationCanceled;
 
   /// Callback to the caller: occurs when the life cycle of the outgoing call invitation ends in failure.
-  void Function(AgoraRtmLocalInvitation invite, int errorCode)
+  void Function(AgoraRtmLocalInvitation invite, int errorCode)?
       onLocalInvitationFailure;
 
   /// Callback to the caller: occurs when the callee receives the call invitation.
-  void Function(AgoraRtmRemoteInvitation invite)
+  void Function(AgoraRtmRemoteInvitation invite)?
       onRemoteInvitationReceivedByPeer;
 
   /// Callback to the caller: occurs when the callee accepts the call invitation.
-  void Function(AgoraRtmRemoteInvitation invite) onRemoteInvitationAccepted;
+  void Function(AgoraRtmRemoteInvitation invite)? onRemoteInvitationAccepted;
 
   /// Callback to the caller: occurs when the callee declines the call invitation.
-  void Function(AgoraRtmRemoteInvitation invite) onRemoteInvitationRefused;
+  void Function(AgoraRtmRemoteInvitation invite)? onRemoteInvitationRefused;
 
   /// Callback to the caller: occurs when the caller cancels a call invitation.
-  void Function(AgoraRtmRemoteInvitation invite) onRemoteInvitationCanceled;
+  void Function(AgoraRtmRemoteInvitation invite)? onRemoteInvitationCanceled;
 
   /// Callback to the caller: occurs when the life cycle of the outgoing call invitation ends in failure.
-  void Function(AgoraRtmRemoteInvitation invite, int errorCode)
+  void Function(AgoraRtmRemoteInvitation invite, int errorCode)?
       onRemoteInvitationFailure;
 
   var _channels = <String, AgoraRtmChannel>{};
 
-  bool _closed;
+  bool? _closed;
 
   final int _clientIndex;
-  StreamSubscription<dynamic> _clientSubscription;
+  StreamSubscription<dynamic>? _clientSubscription;
 
   EventChannel _addEventChannel(name) {
     return new EventChannel(name);
@@ -111,63 +111,63 @@ class AgoraRtmClient {
       case 'onConnectionStateChanged':
         int state = map['state'];
         int reason = map['reason'];
-        this?.onConnectionStateChanged?.call(state, reason);
+        this.onConnectionStateChanged?.call(state, reason);
         break;
       case 'onMessageReceived':
         AgoraRtmMessage message = AgoraRtmMessage.fromJson(map["message"]);
         String peerId = map["peerId"];
-        this?.onMessageReceived?.call(message, peerId);
+        this.onMessageReceived?.call(message, peerId);
         break;
       case 'onTokenExpired':
-        this?.onTokenExpired?.call();
+        this.onTokenExpired?.call();
         break;
       case 'onLocalInvitationReceivedByPeer':
         this
-            ?.onLocalInvitationReceivedByPeer
+            .onLocalInvitationReceivedByPeer
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationAccepted':
         this
-            ?.onLocalInvitationAccepted
+            .onLocalInvitationAccepted
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationRefused':
         this
-            ?.onLocalInvitationRefused
+            .onLocalInvitationRefused
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationCanceled':
         this
-            ?.onLocalInvitationCanceled
+            .onLocalInvitationCanceled
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationFailure':
-        this?.onLocalInvitationFailure?.call(
+        this.onLocalInvitationFailure?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']),
             map['errorCode']);
         break;
       case 'onRemoteInvitationReceivedByPeer':
         this
-            ?.onRemoteInvitationReceivedByPeer
+            .onRemoteInvitationReceivedByPeer
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationAccepted':
         this
-            ?.onRemoteInvitationAccepted
+            .onRemoteInvitationAccepted
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationRefused':
         this
-            ?.onRemoteInvitationRefused
+            .onRemoteInvitationRefused
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationCanceled':
         this
-            ?.onRemoteInvitationCanceled
+            .onRemoteInvitationCanceled
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationFailure':
-        this?.onRemoteInvitationFailure?.call(
+        this.onRemoteInvitationFailure?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']),
             map['errorCode']);
         break;
@@ -188,8 +188,8 @@ class AgoraRtmClient {
 
   /// Destroy and stop event to the client with related channels.
   Future<void> destroy() async {
-    if (_closed) return null;
-    await _clientSubscription.cancel();
+    if (_closed??true) return null;
+    await _clientSubscription?.cancel();
     _closed = true;
     for (String channelId in _channels.keys) {
       await releaseChannel(channelId);
@@ -222,7 +222,7 @@ class AgoraRtmClient {
   /// - "!", "#", "$", "%", "&", "(", ")", "+", "-", ":", ";", "<", "=", ".", ">", "?", "@", "]", "[", "^", "_", " {", "}", "|", "~", ","
   /// Do not set userId as null and do not start with a space.
   /// If you log in with the same user ID from a different instance, you will be kicked out of your previous login and removed from previously joined channels.
-  Future login(String token, String userId) async {
+  Future login(String? token, String userId) async {
     final res = await _callNative("login", {'token': token, 'userId': userId});
     if (res["errorCode"] != 0)
       throw AgoraRtmClientException(
@@ -259,7 +259,7 @@ class AgoraRtmClient {
 
   /// Allows a user to send a peer-to-peer message to a specific peer user.
   Future<void> sendMessageToPeer(String peerId, AgoraRtmMessage message,
-      [bool offline, bool historical]) async {
+      [bool? offline, bool? historical]) async {
     final res = await _callNative("sendMessageToPeer", {
       "peerId": peerId,
       "message": message.text,
@@ -479,7 +479,7 @@ class AgoraRtmClient {
   /// - Space
   /// - "!", "#", "$", "%", "&", "(", ")", "+", "-", ":", ";", "<", "=", ".", ">", "?", "@", "]", "[", "^", "_", " {", "}", "|", "~", ","
   /// channelId cannot be empty or set as nil.
-  Future<AgoraRtmChannel> createChannel(String channelId) async {
+  Future<AgoraRtmChannel?> createChannel(String channelId) async {
     final res = await _callNative("createChannel", {'channelId': channelId});
     if (res['errorCode'] != 0)
       throw AgoraRtmClientException(
