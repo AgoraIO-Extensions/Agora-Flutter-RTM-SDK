@@ -1,7 +1,7 @@
 class AgoraRtmMessage {
-  String text;
-  int ts;
-  bool offline;
+  String? text;
+  int? ts;
+  bool? offline;
 
   AgoraRtmMessage(this.text, this.ts, this.offline);
 
@@ -44,8 +44,8 @@ class AgoraRtmMember {
 class AgoraRtmChannelAttribute {
   String key;
   String value;
-  String userId;
-  int updateTs;
+  String? userId;
+  int? updateTs;
 
   AgoraRtmChannelAttribute(this.key, this.value, {this.userId, this.updateTs});
 
