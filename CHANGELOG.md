@@ -1,5 +1,8 @@
 # Change log
 
+## 1.0.0-rc.0
+* support null safety
+
 ## 0.9.14
 * fix iOS build error
 
