@@ -438,7 +438,7 @@
 }
 -(BOOL)getBool:(id)obj{
     if ([obj isEqual:[NSNull null]]) {
-        return nil;
+        return NO;
     }
     return obj;
 }
