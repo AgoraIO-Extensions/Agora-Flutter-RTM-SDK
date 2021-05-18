@@ -1,5 +1,8 @@
 # Change log
 
+## 1.0.0-rc.1
+* fix error of get value
+
 ## 1.0.0-rc.0
 * support null safety
 
