@@ -53,7 +53,7 @@ android {
     ..
     defaultConfig {
         ..
-         ndk {
+        ndk {
              abiFilters 'armeabi-v7a'
         }
         ..
