@@ -44,24 +44,6 @@ GeneratedPluginRegistrant.registerWith(this)
 
 [you can refer to official documents](https://flutter.dev/docs/development/packages-and-plugins/plugin-api-migration)
 
-### abiFilters
-
-Agora RTM sdk contain arm64 architecture, but Flutter is not shipping “libflutter.so” in arm64 currently. You need add "abiFilters" in *build.gradle* if you need build release apk.
-
-```
-android {
-    ..
-    defaultConfig {
-        ..
-        ndk {
-             abiFilters 'armeabi-v7a'
-        }
-        ..
-    }
-    ..
-}
-```
-
 ## How to contribute
 
 To help work on this sdk, see our [contributor guide](https://github.com/AgoraIO/Flutter-RTM/blob/master/CONTRIBUTING.md).
