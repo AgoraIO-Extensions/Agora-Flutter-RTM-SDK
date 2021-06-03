@@ -26,7 +26,7 @@ class AgoraRtmClient {
   /// Initializes an [AgoraRtmClient] instance
   ///
   /// The Agora RTM SDK supports multiple [AgoraRtmClient] instances.
-  static Future<AgoraRtmClient?> createInstance(String appId) async {
+  static Future<AgoraRtmClient> createInstance(String appId) async {
     final res = await AgoraRtmPlugin.callMethodForStatic(
         "createInstance", {'appId': appId});
     if (res["errorCode"] != 0)
@@ -36,7 +36,7 @@ class AgoraRtmClient {
     final index = res['index'];
     AgoraRtmClient client = AgoraRtmClient._(index);
     _clients[index] = client;
-    return _clients[index];
+    return client;
   }
 
   /// get the agora native sdk version
@@ -62,7 +62,8 @@ class AgoraRtmClient {
   void Function()? onError;
 
   /// Callback to the caller: occurs when the caller receives the call invitation.
-  void Function(AgoraRtmLocalInvitation invite)? onLocalInvitationReceivedByPeer;
+  void Function(AgoraRtmLocalInvitation invite)?
+      onLocalInvitationReceivedByPeer;
 
   /// Callback to the caller: occurs when the caller accepts the call invitation.
   void Function(AgoraRtmLocalInvitation invite)? onLocalInvitationAccepted;
@@ -188,7 +189,7 @@ class AgoraRtmClient {
 
   /// Destroy and stop event to the client with related channels.
   Future<void> destroy() async {
-    if (_closed??true) return null;
+    if (_closed ?? true) return null;
     await _clientSubscription?.cancel();
     _closed = true;
     for (String channelId in _channels.keys) {
