@@ -206,6 +206,22 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
                 )))
     }
 
+    override fun onImageMessageReceivedFromPeer(p0: RtmImageMessage?, p1: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onFileMessageReceivedFromPeer(p0: RtmFileMessage?, p1: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onMediaUploadingProgress(p0: RtmMediaOperationProgress?, p1: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onMediaDownloadingProgress(p0: RtmMediaOperationProgress?, p1: Long) {
+        TODO("Not yet implemented")
+    }
+
     override
     fun onTokenExpired() {
         sendClientEvent("onTokenExpired", hashMapOf())
