@@ -1,3 +1,19 @@
+# [1.0.0](https://github.com/AgoraIO/Flutter-RTM/compare/v1.0.0-rc.1...v1.0.0) (2021-08-25)
+
+
+### Bug Fixes
+
+* Removed unnecessary blank in `README.md` ([0e64bc3](https://github.com/AgoraIO/Flutter-RTM/commit/0e64bc352952ca0fb04f062352462bb4375251a9))
+
+
+### Features
+
+* upgrade to native 1.4.+ ([39dda38](https://github.com/AgoraIO/Flutter-RTM/commit/39dda380a23b94b077e3bd19b2c830b6bd816501))
+
+
+
+# [1.0.0-rc.0](https://github.com/AgoraIO/Flutter-RTM/compare/v1.0.0-rc.1...v1.0.0) (2021-04-21)
+
 # Change log
 
 ## 1.0.0-rc.1
