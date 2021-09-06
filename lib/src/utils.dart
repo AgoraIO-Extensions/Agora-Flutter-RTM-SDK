@@ -1,11 +1,12 @@
 class AgoraRtmMessage {
-  String? text;
-  int? ts;
-  bool? offline;
+  String text;
+  int ts;
+  bool offline;
 
   AgoraRtmMessage(this.text, this.ts, this.offline);
 
-  AgoraRtmMessage.fromText(String text) : text = text;
+  AgoraRtmMessage.fromText(String text, {this.ts = 0, this.offline = false})
+      : text = text;
 
   AgoraRtmMessage.fromJson(Map<dynamic, dynamic> json)
       : text = json['text'],
@@ -44,10 +45,11 @@ class AgoraRtmMember {
 class AgoraRtmChannelAttribute {
   String key;
   String value;
-  String? userId;
-  int? updateTs;
+  String userId;
+  int updateTs;
 
-  AgoraRtmChannelAttribute(this.key, this.value, {this.userId, this.updateTs});
+  AgoraRtmChannelAttribute(this.key, this.value,
+      {this.userId = "", this.updateTs = 0});
 
   AgoraRtmChannelAttribute.fromJson(Map<dynamic, dynamic> json)
       : key = json['key'],
@@ -70,13 +72,13 @@ class AgoraRtmChannelAttribute {
 
 class AgoraRtmLocalInvitation {
   String calleeId;
-  String content;
-  String response;
-  String channelId;
+  String? content;
+  String? response;
+  String? channelId;
   int state;
 
-  AgoraRtmLocalInvitation(
-      this.calleeId, this.content, this.response, this.channelId, this.state);
+  AgoraRtmLocalInvitation(this.calleeId,
+      {this.content, this.response, this.channelId, this.state = 0});
 
   AgoraRtmLocalInvitation.fromJson(Map<dynamic, dynamic> json)
       : calleeId = json['calleeId'],
@@ -101,13 +103,13 @@ class AgoraRtmLocalInvitation {
 
 class AgoraRtmRemoteInvitation {
   String callerId;
-  String content;
-  String response;
-  String channelId;
+  String? content;
+  String? response;
+  String? channelId;
   int state;
 
-  AgoraRtmRemoteInvitation(
-      this.callerId, this.content, this.response, this.channelId, this.state);
+  AgoraRtmRemoteInvitation(this.callerId,
+      {this.content, this.response, this.channelId, this.state = 0});
 
   AgoraRtmRemoteInvitation.fromJson(Map<dynamic, dynamic> json)
       : callerId = json['callerId'],
