@@ -7,7 +7,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
 class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventListener {
-
     val messenger: BinaryMessenger
     val eventChannel: EventChannel
     val appId: String
@@ -21,8 +20,13 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
     var remoteInvitations: MutableMap<String, RemoteInvitation>
     var localInvitations: MutableMap<String, LocalInvitation>
 
-
-    constructor(context: Context, appId: String, clientIndex: Long, messenger: BinaryMessenger, eventHandler: Handler) {
+    constructor(
+        context: Context,
+        appId: String,
+        clientIndex: Long,
+        messenger: BinaryMessenger,
+        eventHandler: Handler
+    ) {
         this.appId = appId
         this.clientIndex = clientIndex
         this.messenger = messenger
@@ -56,139 +60,159 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
     override
     fun onLocalInvitationReceivedByPeer(localInvitation: LocalInvitation) {
         localInvitations[localInvitation.calleeId] = localInvitation
-        sendClientEvent("onLocalInvitationReceivedByPeer", hashMapOf(
+        sendClientEvent(
+            "onLocalInvitationReceivedByPeer", hashMapOf(
                 "localInvitation" to hashMapOf(
-                        "calleeId" to localInvitation.calleeId,
-                        "content" to localInvitation.content,
-                        "channelId" to localInvitation.channelId,
-                        "state" to localInvitation.state,
-                        "response" to localInvitation.response
+                    "calleeId" to localInvitation.calleeId,
+                    "content" to localInvitation.content,
+                    "channelId" to localInvitation.channelId,
+                    "state" to localInvitation.state,
+                    "response" to localInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onLocalInvitationAccepted(localInvitation: LocalInvitation, response: String) {
-        sendClientEvent("onLocalInvitationAccepted", hashMapOf(
+        sendClientEvent(
+            "onLocalInvitationAccepted", hashMapOf(
                 "localInvitation" to hashMapOf(
-                        "calleeId" to localInvitation.calleeId,
-                        "content" to localInvitation.content,
-                        "channelId" to localInvitation.channelId,
-                        "state" to localInvitation.state,
-                        "response" to localInvitation.response
+                    "calleeId" to localInvitation.calleeId,
+                    "content" to localInvitation.content,
+                    "channelId" to localInvitation.channelId,
+                    "state" to localInvitation.state,
+                    "response" to localInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onLocalInvitationRefused(localInvitation: LocalInvitation, response: String) {
-        sendClientEvent("onLocalInvitationRefused", hashMapOf(
+        sendClientEvent(
+            "onLocalInvitationRefused", hashMapOf(
                 "localInvitation" to hashMapOf(
-                        "calleeId" to localInvitation.calleeId,
-                        "content" to localInvitation.content,
-                        "channelId" to localInvitation.channelId,
-                        "state" to localInvitation.state,
-                        "response" to localInvitation.response
+                    "calleeId" to localInvitation.calleeId,
+                    "content" to localInvitation.content,
+                    "channelId" to localInvitation.channelId,
+                    "state" to localInvitation.state,
+                    "response" to localInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onLocalInvitationCanceled(localInvitation: LocalInvitation) {
-        sendClientEvent("onLocalInvitationCanceled", hashMapOf(
+        sendClientEvent(
+            "onLocalInvitationCanceled", hashMapOf(
                 "localInvitation" to hashMapOf(
-                        "calleeId" to localInvitation.calleeId,
-                        "content" to localInvitation.content,
-                        "channelId" to localInvitation.channelId,
-                        "state" to localInvitation.state,
-                        "response" to localInvitation.response
+                    "calleeId" to localInvitation.calleeId,
+                    "content" to localInvitation.content,
+                    "channelId" to localInvitation.channelId,
+                    "state" to localInvitation.state,
+                    "response" to localInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onLocalInvitationFailure(localInvitation: LocalInvitation, errorCode: Int) {
-        sendClientEvent("onLocalInvitationFailure", hashMapOf(
+        sendClientEvent(
+            "onLocalInvitationFailure", hashMapOf(
                 "errorCode" to errorCode,
                 "localInvitation" to hashMapOf(
-                        "calleeId" to localInvitation.calleeId,
-                        "content" to localInvitation.content,
-                        "channelId" to localInvitation.channelId,
-                        "state" to localInvitation.state,
-                        "response" to localInvitation.response
+                    "calleeId" to localInvitation.calleeId,
+                    "content" to localInvitation.content,
+                    "channelId" to localInvitation.channelId,
+                    "state" to localInvitation.state,
+                    "response" to localInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onRemoteInvitationReceived(remoteInvitation: RemoteInvitation) {
         remoteInvitations[remoteInvitation.callerId] = remoteInvitation
-        sendClientEvent("onRemoteInvitationReceivedByPeer", hashMapOf(
+        sendClientEvent(
+            "onRemoteInvitationReceivedByPeer", hashMapOf(
                 "remoteInvitation" to hashMapOf(
-                        "callerId" to remoteInvitation.callerId,
-                        "content" to remoteInvitation.content,
-                        "channelId" to remoteInvitation.channelId,
-                        "state" to remoteInvitation.state,
-                        "response" to remoteInvitation.response
+                    "callerId" to remoteInvitation.callerId,
+                    "content" to remoteInvitation.content,
+                    "channelId" to remoteInvitation.channelId,
+                    "state" to remoteInvitation.state,
+                    "response" to remoteInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onRemoteInvitationAccepted(remoteInvitation: RemoteInvitation) {
         remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent("onRemoteInvitationAccepted", hashMapOf(
+        sendClientEvent(
+            "onRemoteInvitationAccepted", hashMapOf(
                 "remoteInvitation" to hashMapOf(
-                        "callerId" to remoteInvitation.callerId,
-                        "content" to remoteInvitation.content,
-                        "channelId" to remoteInvitation.channelId,
-                        "state" to remoteInvitation.state,
-                        "response" to remoteInvitation.response
+                    "callerId" to remoteInvitation.callerId,
+                    "content" to remoteInvitation.content,
+                    "channelId" to remoteInvitation.channelId,
+                    "state" to remoteInvitation.state,
+                    "response" to remoteInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onRemoteInvitationRefused(remoteInvitation: RemoteInvitation) {
         remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent("onRemoteInvitationRefused", hashMapOf(
+        sendClientEvent(
+            "onRemoteInvitationRefused", hashMapOf(
                 "remoteInvitation" to hashMapOf(
-                        "callerId" to remoteInvitation.callerId,
-                        "content" to remoteInvitation.content,
-                        "channelId" to remoteInvitation.channelId,
-                        "state" to remoteInvitation.state,
-                        "response" to remoteInvitation.response
+                    "callerId" to remoteInvitation.callerId,
+                    "content" to remoteInvitation.content,
+                    "channelId" to remoteInvitation.channelId,
+                    "state" to remoteInvitation.state,
+                    "response" to remoteInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onRemoteInvitationCanceled(remoteInvitation: RemoteInvitation) {
         remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent("onRemoteInvitationCanceled", hashMapOf(
+        sendClientEvent(
+            "onRemoteInvitationCanceled", hashMapOf(
                 "remoteInvitation" to hashMapOf(
-                        "callerId" to remoteInvitation.callerId,
-                        "content" to remoteInvitation.content,
-                        "channelId" to remoteInvitation.channelId,
-                        "state" to remoteInvitation.state,
-                        "response" to remoteInvitation.response
+                    "callerId" to remoteInvitation.callerId,
+                    "content" to remoteInvitation.content,
+                    "channelId" to remoteInvitation.channelId,
+                    "state" to remoteInvitation.state,
+                    "response" to remoteInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
     fun onRemoteInvitationFailure(remoteInvitation: RemoteInvitation, errorCode: Int) {
         remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent("onRemoteInvitationFailure", hashMapOf(
+        sendClientEvent(
+            "onRemoteInvitationFailure", hashMapOf(
                 "errorCode" to errorCode,
                 "remoteInvitation" to hashMapOf(
-                        "callerId" to remoteInvitation.callerId,
-                        "content" to remoteInvitation.content,
-                        "channelId" to remoteInvitation.channelId,
-                        "state" to remoteInvitation.state,
-                        "response" to remoteInvitation.response
+                    "callerId" to remoteInvitation.callerId,
+                    "content" to remoteInvitation.content,
+                    "channelId" to remoteInvitation.channelId,
+                    "state" to remoteInvitation.state,
+                    "response" to remoteInvitation.response
                 )
-        ))
+            )
+        )
     }
 
     override
@@ -198,12 +222,16 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
 
     override
     fun onMessageReceived(message: RtmMessage, peerId: String) {
-        sendClientEvent("onMessageReceived", hashMapOf("peerId" to peerId,
+        sendClientEvent(
+            "onMessageReceived", hashMapOf(
+                "peerId" to peerId,
                 "message" to hashMapOf(
-                        "text" to message.text,
-                        "offline" to message.isOfflineMessage,
-                        "ts" to message.serverReceivedTs
-                )))
+                    "text" to message.text,
+                    "offline" to message.isOfflineMessage,
+                    "ts" to message.serverReceivedTs
+                )
+            )
+        )
     }
 
     override fun onImageMessageReceivedFromPeer(p0: RtmImageMessage?, p1: String?) {

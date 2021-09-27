@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:agora_rtm/agora_rtm.dart';
+import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
@@ -56,10 +56,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _createClient() async {
-    _client =
-        await AgoraRtmClient.createInstance(YOUR_APP_ID);
+    _client = await AgoraRtmClient.createInstance(YOUR_APP_ID);
     _client?.onMessageReceived = (AgoraRtmMessage message, String peerId) {
-      _log("Peer msg: " + peerId + ", msg: " + (message.text??""));
+      _log("Peer msg: " + peerId + ", msg: " + (message.text));
     };
     _client?.onConnectionStateChanged = (int state, int reason) {
       _log('Connection state changed: ' +
@@ -78,7 +77,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<AgoraRtmChannel?> _createChannel(String name) async {
     AgoraRtmChannel? channel = await _client?.createChannel(name);
-    if(channel != null) {
+    if (channel != null) {
       channel.onMemberJoined = (AgoraRtmMember member) {
         _log("Member joined: " +
             member.userId +
@@ -91,7 +90,8 @@ class _MyAppState extends State<MyApp> {
       };
       channel.onMessageReceived =
           (AgoraRtmMessage message, AgoraRtmMember member) {
-        _log("Channel msg: " + member.userId + ", msg: " + (message.text??""));
+        _log(
+            "Channel msg: " + member.userId + ", msg: " + (message.text ?? ""));
       };
     }
     return channel;
@@ -274,7 +274,7 @@ class _MyAppState extends State<MyApp> {
 
     try {
       AgoraRtmMessage message = AgoraRtmMessage.fromText(text);
-      _log(message.text??"Empty");
+      _log(message.text);
       await _client?.sendMessageToPeer(peerUid, message, false);
       _log('Send peer message success.');
     } catch (errorCode) {
@@ -287,7 +287,7 @@ class _MyAppState extends State<MyApp> {
       try {
         await _channel?.leave();
         _log('Leave channel success.');
-        if(_channel != null) {
+        if (_channel != null) {
           _client?.releaseChannel(_channel!.channelId!);
         }
         _channelMessageController.clear();
