@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/AgoraIO/Flutter-RTM/compare/v1.0.0...v1.0.1) (2021-09-27)
+
+
+### Bug Fixes
+
+* null-safety error [#96](https://github.com/AgoraIO/Flutter-RTM/issues/96) ([62ab0f4](https://github.com/AgoraIO/Flutter-RTM/commit/62ab0f45feafc4d6b0bee9d588f90f996956e80b))
+* pub get error on flutter 2.5 [#98](https://github.com/AgoraIO/Flutter-RTM/issues/98) ([5beb5f7](https://github.com/AgoraIO/Flutter-RTM/commit/5beb5f7e23684785ec28eaca38aeb1b6e0131f9f))
+
 # [1.0.0](https://github.com/AgoraIO/Flutter-RTM/compare/v1.0.0-rc.1...v1.0.0) (2021-08-25)
 
 
