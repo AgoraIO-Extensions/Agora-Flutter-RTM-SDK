@@ -17,6 +17,7 @@ class _MyAppState extends State<MyApp> {
   final _userNameController = TextEditingController();
   final _peerUserIdController = TextEditingController();
   final _peerMessageController = TextEditingController();
+  final _invitationController = TextEditingController();
   final _channelNameController = TextEditingController();
   final _channelMessageController = TextEditingController();
 
@@ -45,6 +46,7 @@ class _MyAppState extends State<MyApp> {
                 _buildLogin(),
                 _buildQueryOnlineStatus(),
                 _buildSendPeerMessage(),
+                _buildSendLocalInvitation(),
                 _buildJoinChannel(),
                 _buildGetMembers(),
                 _buildSendChannelMessage(),
@@ -73,6 +75,16 @@ class _MyAppState extends State<MyApp> {
         });
       }
     };
+    _client?.onLocalInvitationReceivedByPeer =
+        (AgoraRtmLocalInvitation invite) {
+      _log(
+          'Local invitation received by peer: ${invite.calleeId}, content: ${invite.content}');
+    };
+    _client?.onRemoteInvitationReceivedByPeer =
+        (AgoraRtmRemoteInvitation invite) {
+      _log(
+          'Remote invitation received by peer: ${invite.callerId}, content: ${invite.content}');
+    };
   }
 
   Future<AgoraRtmChannel?> _createChannel(String name) async {
@@ -90,8 +102,7 @@ class _MyAppState extends State<MyApp> {
       };
       channel.onMessageReceived =
           (AgoraRtmMessage message, AgoraRtmMember member) {
-        _log(
-            "Channel msg: " + member.userId + ", msg: " + (message.text ?? ""));
+        _log("Channel msg: " + member.userId + ", msg: " + message.text);
       };
     }
     return channel;
@@ -144,6 +155,23 @@ class _MyAppState extends State<MyApp> {
       new OutlineButton(
         child: Text('Send to Peer', style: textStyle),
         onPressed: _toggleSendPeerMessage,
+      )
+    ]);
+  }
+
+  Widget _buildSendLocalInvitation() {
+    if (!_isLogin) {
+      return Container();
+    }
+    return Row(children: <Widget>[
+      new Expanded(
+          child: new TextField(
+              controller: _invitationController,
+              decoration:
+                  InputDecoration(hintText: 'Input invitation content'))),
+      new OutlineButton(
+        child: Text('Send local invitation', style: textStyle),
+        onPressed: _toggleSendLocalInvitation,
       )
     ]);
   }
@@ -279,6 +307,30 @@ class _MyAppState extends State<MyApp> {
       _log('Send peer message success.');
     } catch (errorCode) {
       _log('Send peer message error: ' + errorCode.toString());
+    }
+  }
+
+  void _toggleSendLocalInvitation() async {
+    String peerUid = _peerUserIdController.text;
+    if (peerUid.isEmpty) {
+      _log('Please input peer user id to send invitation.');
+      return;
+    }
+
+    String text = _invitationController.text;
+    if (text.isEmpty) {
+      _log('Please input content to send.');
+      return;
+    }
+
+    try {
+      AgoraRtmLocalInvitation invitation =
+          AgoraRtmLocalInvitation(peerUid, content: text);
+      _log(invitation.content ?? '');
+      await _client?.sendLocalInvitation(invitation.toJson());
+      _log('Send local invitation success.');
+    } catch (errorCode) {
+      _log('Send local invitation error: ' + errorCode.toString());
     }
   }
 
