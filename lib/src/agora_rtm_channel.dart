@@ -135,7 +135,7 @@ class AgoraRtmChannel {
   }
 
   Future<void> close() async {
-    if (_closed??true) return null;
+    if (_closed ?? true) return null;
     await _eventSubscription?.cancel();
     _closed = true;
   }
