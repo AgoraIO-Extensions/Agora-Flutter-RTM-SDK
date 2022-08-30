@@ -2,6 +2,19 @@
 
 This Flutter plugin is a wapper for [Agora RTM SDK](https://docs.agora.io/en).
 
+<p align="center">
+    <a href="https://pub.dev/packages/agora_rtm"><img src="https://img.shields.io/pub/likes/agora_rtm?logo=dart" alt="Pub.dev likes"/></a>
+    <a href="https://pub.dev/packages/agora_rtm" alt="Pub.dev popularity"><img src="https://img.shields.io/pub/popularity/agora_rtm?logo=dart"/></a>
+    <a href="https://pub.dev/packages/agora_rtm"><img src="https://img.shields.io/pub/points/agora_rtm?logo=dart" alt="Pub.dev points"/></a><br/>
+    <a href="https://pub.dev/packages/agora_rtm"><img src="https://img.shields.io/pub/v/agora_rtm.svg" alt="latest version"/></a>
+    <a href="https://pub.dev/packages/agora_rtm"><img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue?logo=flutter" alt="Platform"/></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/github/license/AgoraIO/Agora-Flutter-RTM-SDK?color=lightgray" alt="License"/></a>
+    <a href="https://www.agora.io/en/join-slack/">
+        <img src="https://img.shields.io/badge/slack-@RTE%20Dev-blue.svg?logo=slack" alt="RTE Dev Slack Link"/>
+    </a>
+</p>
+
+
 Agora.io provides building blocks for you to add real-time messaging through a simple and powerful SDK. You can integrate the Agora RTM SDK to enable real-time messaging in your own application quickly.
 
 *Note*: This plugin is still under development, and some APIs might not be available yet.
