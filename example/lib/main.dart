@@ -113,14 +113,14 @@ class _MyAppState extends State<MyApp> {
   Widget _buildLogin() {
     return Row(children: <Widget>[
       _isLogin
-          ? new Expanded(
-              child: new Text('User Id: ' + _userNameController.text,
+          ?  Expanded(
+              child:  Text('User Id: ' + _userNameController.text,
                   style: textStyle))
-          : new Expanded(
-              child: new TextField(
+          :  Expanded(
+              child:  TextField(
                   controller: _userNameController,
                   decoration: InputDecoration(hintText: 'Input your user id'))),
-      new OutlineButton(
+       ElevatedButton(
         child: Text(_isLogin ? 'Logout' : 'Login', style: textStyle),
         onPressed: _toggleLogin,
       )
@@ -132,11 +132,11 @@ class _MyAppState extends State<MyApp> {
       return Container();
     }
     return Row(children: <Widget>[
-      new Expanded(
-          child: new TextField(
+       Expanded(
+          child:  TextField(
               controller: _peerUserIdController,
               decoration: InputDecoration(hintText: 'Input peer user id'))),
-      new OutlineButton(
+       ElevatedButton(
         child: Text('Query Online', style: textStyle),
         onPressed: _toggleQuery,
       )
@@ -148,11 +148,11 @@ class _MyAppState extends State<MyApp> {
       return Container();
     }
     return Row(children: <Widget>[
-      new Expanded(
-          child: new TextField(
+       Expanded(
+          child:  TextField(
               controller: _peerMessageController,
               decoration: InputDecoration(hintText: 'Input peer message'))),
-      new OutlineButton(
+       ElevatedButton(
         child: Text('Send to Peer', style: textStyle),
         onPressed: _toggleSendPeerMessage,
       )
@@ -164,12 +164,12 @@ class _MyAppState extends State<MyApp> {
       return Container();
     }
     return Row(children: <Widget>[
-      new Expanded(
-          child: new TextField(
+       Expanded(
+          child:  TextField(
               controller: _invitationController,
               decoration:
                   InputDecoration(hintText: 'Input invitation content'))),
-      new OutlineButton(
+       ElevatedButton(
         child: Text('Send local invitation', style: textStyle),
         onPressed: _toggleSendLocalInvitation,
       )
@@ -182,14 +182,14 @@ class _MyAppState extends State<MyApp> {
     }
     return Row(children: <Widget>[
       _isInChannel
-          ? new Expanded(
-              child: new Text('Channel: ' + _channelNameController.text,
+          ?  Expanded(
+              child:  Text('Channel: ' + _channelNameController.text,
                   style: textStyle))
-          : new Expanded(
-              child: new TextField(
+          :  Expanded(
+              child:  TextField(
                   controller: _channelNameController,
                   decoration: InputDecoration(hintText: 'Input channel id'))),
-      new OutlineButton(
+       ElevatedButton(
         child: Text(_isInChannel ? 'Leave Channel' : 'Join Channel',
             style: textStyle),
         onPressed: _toggleJoinChannel,
@@ -202,11 +202,11 @@ class _MyAppState extends State<MyApp> {
       return Container();
     }
     return Row(children: <Widget>[
-      new Expanded(
-          child: new TextField(
+       Expanded(
+          child:  TextField(
               controller: _channelMessageController,
               decoration: InputDecoration(hintText: 'Input channel message'))),
-      new OutlineButton(
+       ElevatedButton(
         child: Text('Send to Channel', style: textStyle),
         onPressed: _toggleSendChannelMessage,
       )
@@ -218,7 +218,7 @@ class _MyAppState extends State<MyApp> {
       return Container();
     }
     return Row(children: <Widget>[
-      new OutlineButton(
+       ElevatedButton(
         child: Text('Get Members in Channel', style: textStyle),
         onPressed: _toggleGetMembers,
       )
