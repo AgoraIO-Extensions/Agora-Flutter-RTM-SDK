@@ -119,8 +119,8 @@
     BOOL offline = [self getBool:[args objectForKey:@"offline"]];
     BOOL historical = [self getBool:[args objectForKey:@"historical"]];
     AgoraRtmSendMessageOptions *sendMessageOption = [[AgoraRtmSendMessageOptions alloc] init];
-    sendMessageOption.enableOfflineMessaging = offline;
-    sendMessageOption.enableHistoricalMessaging = historical;
+//    sendMessageOption.enableOfflineMessaging = offline;
+//    sendMessageOption.enableHistoricalMessaging = historical;
     [rtmClient.kit sendMessage:[[AgoraRtmMessage new] initWithText:text]  toPeer:peerId sendMessageOptions:sendMessageOption completion:^(AgoraRtmSendPeerMessageErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];
@@ -383,8 +383,8 @@
     BOOL offline = [self getBool:[args objectForKey:@"offline"]];
     BOOL historical = [self getBool:[args objectForKey:@"historical"]];
     AgoraRtmSendMessageOptions *sendMessageOption = [[AgoraRtmSendMessageOptions alloc] init];
-    sendMessageOption.enableOfflineMessaging = offline;
-    sendMessageOption.enableHistoricalMessaging = historical;
+//    sendMessageOption.enableOfflineMessaging = offline;
+//    sendMessageOption.enableHistoricalMessaging = historical;
     [channel sendMessage:message sendMessageOptions: sendMessageOption completion:^(AgoraRtmSendChannelMessageErrorCode errorCode) {
       result(@{@"errorCode": @(errorCode)});
     }];

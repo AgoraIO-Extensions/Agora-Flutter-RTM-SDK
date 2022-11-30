@@ -306,12 +306,12 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                 val message = client.createMessage()
                 message.text = text
                 val options = SendMessageOptions().apply {
-                    (args["historical"] as? Boolean)?.let {
-                        enableHistoricalMessaging = it
-                    }
-                    (args["offline"] as? Boolean)?.let {
-                        enableOfflineMessaging = it
-                    }
+//                    (args["historical"] as? Boolean)?.let {
+//                        enableHistoricalMessaging = it
+//                    }
+//                    (args["offline"] as? Boolean)?.let {
+//                        enableOfflineMessaging = it
+//                    }
                 }
                 client.sendMessageToPeer(peerId,
                     message,
@@ -1016,12 +1016,12 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                 val message = client.createMessage()
                 message.text = args?.get("message") as String
                 val options = SendMessageOptions().apply {
-                    (args["historical"] as? Boolean)?.let {
-                        enableHistoricalMessaging = it
-                    }
-                    (args["offline"] as? Boolean)?.let {
-                        enableOfflineMessaging = it
-                    }
+//                    (args["historical"] as? Boolean)?.let {
+//                        enableHistoricalMessaging = it
+//                    }
+//                    (args["offline"] as? Boolean)?.let {
+//                        enableOfflineMessaging = it
+//                    }
                 }
                 rtmChannel.sendMessage(message, options, object : ResultCallback<Void> {
                     override fun onSuccess(resp: Void?) {
