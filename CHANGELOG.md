@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/AgoraIO/Flutter-RTM/compare/v1.1.1...v1.5.0) (2022-11-30)
+
+
+### Features
+
+* upgrade native to 1.5.x ([69738fc](https://github.com/AgoraIO/Flutter-RTM/commit/69738fcd67324256bf2c5a67be0b4eb97a22d4aa))
+
 # [1.1.1](https://github.com/AgoraIO/Flutter-RTM/compare/v1.1.0...v1.1.1) (2022-03-08)
 
 * Update package contents to pass all pub.dev\'s checks
