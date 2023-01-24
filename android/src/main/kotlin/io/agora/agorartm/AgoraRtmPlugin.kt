@@ -300,6 +300,52 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                     }
                 )
             }
+            "subscribePeersOnlineStatus" -> {
+                var peerIds: Set<String>? = (args?.get("peerIds") as ArrayList<String>).toSet()
+
+                client.subscribePeersOnlineStatus(peerIds,
+                        object : ResultCallback<Void> {
+                            override fun onSuccess(resp: Void?) {
+                                runMainThread {
+                                    result.success(
+                                            hashMapOf(
+                                                "errorCode" to 0
+                                            )
+                                    )
+                                }
+                            }
+
+                            override fun onFailure(code: ErrorInfo) {
+                                runMainThread {
+                                    result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                                }
+                            }
+                        }
+                )
+            }
+            "unsubscribePeersOnlineStatus" -> {
+                var peerIds: Set<String>? = (args?.get("peerIds") as ArrayList<String>).toSet()
+
+                client.unsubscribePeersOnlineStatus(peerIds,
+                        object : ResultCallback<Void> {
+                            override fun onSuccess(resp: Void?) {
+                                runMainThread {
+                                    result.success(
+                                            hashMapOf(
+                                                    "errorCode" to 0
+                                            )
+                                    )
+                                }
+                            }
+
+                            override fun onFailure(code: ErrorInfo) {
+                                runMainThread {
+                                    result.success(hashMapOf("errorCode" to code.getErrorCode()))
+                                }
+                            }
+                        }
+                )
+            }
             "sendMessageToPeer" -> {
                 var peerId: String? = args?.get("peerId") as String
                 var text = args.get("message") as String

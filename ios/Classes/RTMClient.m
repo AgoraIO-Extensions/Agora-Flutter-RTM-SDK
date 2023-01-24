@@ -81,6 +81,16 @@
   [self sendClientEvent:@"onTokenExpired" params:@{}];
 }
 
+- (void)rtmKit:(AgoraRtmKit * _Nonnull)kit PeersOnlineStatusChanged:(NSArray< AgoraRtmPeerOnlineStatus *> * _Nonnull) onlineStatus {
+    NSMutableDictionary<NSString*, NSNumber*> *members = [[NSMutableDictionary alloc] init];
+    for (AgoraRtmPeerOnlineStatus *status in onlineStatus) {
+      members[status.peerId] = [NSNumber numberWithBool:status.isOnline];
+    }
+    [self sendClientEvent:@"onPeersOnlineStatusChanged" params:@{
+        @"peersOnlineStatus": members
+    }];
+}
+
 #pragma - AgoraRtmCallDelegate
 - (void)rtmCallKit:(AgoraRtmCallKit *_Nonnull)callKit localInvitationReceivedByPeer:(AgoraRtmLocalInvitation *_Nonnull)localInvitation {
   [_localInvitations setObject:localInvitation forKey:localInvitation.calleeId];

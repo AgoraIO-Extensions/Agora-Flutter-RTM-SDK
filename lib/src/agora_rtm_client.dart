@@ -58,6 +58,9 @@ class AgoraRtmClient {
   /// Occurs when your token expires.
   void Function()? onTokenExpired;
 
+  /// Occurs when peer online status changes.
+  void Function(Map<String, bool> peersOnlineStatus)? onPeersOnlineStatusChanged;
+
   /// Occurs when you receive error events.
   void Function(dynamic error)? onError;
 
@@ -121,6 +124,9 @@ class AgoraRtmClient {
         break;
       case 'onTokenExpired':
         this.onTokenExpired?.call();
+        break;
+      case 'onPeersOnlineStatusChanged':
+        this.onPeersOnlineStatusChanged?.call(Map<String, bool>.from(map['peersOnlineStatus']));
         break;
       case 'onLocalInvitationReceivedByPeer':
         this
@@ -256,6 +262,28 @@ class AgoraRtmClient {
           "queryPeersOnlineStatus failed errorCode:${res['errorCode']}",
           res['errorCode']);
     return Map<String, dynamic>.from(res["results"]);
+  }
+
+  /// Subscribes to the online status of the specified user(s).
+  Future<void> subscribePeersOnlineStatus(
+      List<String> peerIds) async {
+    final res =
+    await _callNative("subscribePeersOnlineStatus", {'peerIds': peerIds});
+    if (res["errorCode"] != 0)
+      throw AgoraRtmClientException(
+          "subscribePeersOnlineStatus failed errorCode:${res['errorCode']}",
+          res['errorCode']);
+  }
+
+  /// Unsubscribes to the online status of the specified user(s).
+  Future<void> unsubscribePeersOnlineStatus(
+      List<String> peerIds) async {
+    final res =
+    await _callNative("unsubscribePeersOnlineStatus", {'peerIds': peerIds});
+    if (res["errorCode"] != 0)
+      throw AgoraRtmClientException(
+          "unsubscribePeersOnlineStatus failed errorCode:${res['errorCode']}",
+          res['errorCode']);
   }
 
   /// Allows a user to send a peer-to-peer message to a specific peer user.

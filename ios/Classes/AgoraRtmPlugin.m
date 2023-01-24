@@ -103,6 +103,20 @@
       result(@{@"errorCode": @(errorCode)});
     }];
   }
+  else if ([@"subscribePeersOnlineStatus"isEqualToString:name]) {
+      NSArray *peerIds = args[@"peerIds"] != [NSNull null] ? args[@"peerIds"] : nil;
+      
+      [rtmClient.kit subscribePeersOnlineStatus:peerIds completion:^(AgoraRtmPeerSubscriptionStatusErrorCode errorCode) {
+          result(@{@"errorCode": @(errorCode)});
+      }];
+  }
+  else if ([@"unsubscribePeersOnlineStatus"isEqualToString:name]) {
+      NSArray *peerIds = args[@"peerIds"] != [NSNull null] ? args[@"peerIds"] : nil;
+      
+      [rtmClient.kit unsubscribePeersOnlineStatus:peerIds completion:^(AgoraRtmPeerSubscriptionStatusErrorCode errorCode) {
+          result(@{@"errorCode": @(errorCode)});
+      }];
+  }
   else if ([@"queryPeersOnlineStatus" isEqualToString:name]) {
     NSArray *peerIds = args[@"peerIds"] != [NSNull null] ? args[@"peerIds"] : nil;
     [rtmClient.kit queryPeersOnlineStatus:peerIds completion:^(NSArray<AgoraRtmPeerOnlineStatus *> *peerOnlineStatus, AgoraRtmQueryPeersOnlineErrorCode errorCode) {
