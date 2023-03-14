@@ -41,7 +41,7 @@ class AgoraRtmClient {
 
   /// get the agora native sdk version
   static Future<String> getSdkVersion() async {
-    final res = await AgoraRtmPlugin.callMethodForStatic("getSdkVersion", null);
+    final res = await AgoraRtmPlugin.callMethodForStatic("getSdkVersion", {});
     if (res["errorCode"] != 0)
       throw AgoraRtmClientException(
           "getSdkVersion failed errorCode:${res['errorCode']}",
