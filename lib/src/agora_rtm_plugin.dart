@@ -1,8 +1,7 @@
 import 'package:flutter/services.dart';
 
 mixin AgoraRtmPlugin {
-  static const MethodChannel _methodChannel =
-      const MethodChannel("io.agora.rtm");
+  static const MethodChannel _methodChannel = MethodChannel("io.agora.rtm");
 
   static Future<dynamic> _sendMethodMessage(
       String call, String method, Map? arguments) {

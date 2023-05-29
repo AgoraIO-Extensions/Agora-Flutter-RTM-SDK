@@ -5,8 +5,7 @@ class AgoraRtmMessage {
 
   AgoraRtmMessage(this.text, this.ts, this.offline);
 
-  AgoraRtmMessage.fromText(String text, {this.ts = 0, this.offline = false})
-      : text = text;
+  AgoraRtmMessage.fromText(this.text, {this.ts = 0, this.offline = false});
 
   AgoraRtmMessage.fromJson(Map<dynamic, dynamic> json)
       : text = json['text'],

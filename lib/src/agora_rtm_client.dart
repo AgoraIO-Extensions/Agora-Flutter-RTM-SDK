@@ -7,8 +7,8 @@ import 'agora_rtm_plugin.dart';
 import 'utils.dart';
 
 class AgoraRtmClientException implements Exception {
-  final reason;
-  final code;
+  final String reason;
+  final int code;
 
   AgoraRtmClientException(this.reason, this.code) : super();
 
@@ -16,12 +16,12 @@ class AgoraRtmClientException implements Exception {
 
   @override
   String toString() {
-    return this.reason;
+    return reason;
   }
 }
 
 class AgoraRtmClient {
-  static var _clients = <int, AgoraRtmClient>{};
+  static final _clients = <int, AgoraRtmClient>{};
 
   /// Initializes an [AgoraRtmClient] instance
   ///
@@ -29,10 +29,11 @@ class AgoraRtmClient {
   static Future<AgoraRtmClient> createInstance(String appId) async {
     final res = await AgoraRtmPlugin.callMethodForStatic(
         "createInstance", {'appId': appId});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "Create client failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     final index = res['index'];
     AgoraRtmClient client = AgoraRtmClient._(index);
     _clients[index] = client;
@@ -42,10 +43,11 @@ class AgoraRtmClient {
   /// get the agora native sdk version
   static Future<String> getSdkVersion() async {
     final res = await AgoraRtmPlugin.callMethodForStatic("getSdkVersion", null);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "getSdkVersion failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     return res["version"];
   }
 
@@ -95,7 +97,7 @@ class AgoraRtmClient {
   void Function(AgoraRtmRemoteInvitation invite, int errorCode)?
       onRemoteInvitationFailure;
 
-  var _channels = <String, AgoraRtmChannel>{};
+  final _channels = <String, AgoraRtmChannel>{};
 
   bool? _closed;
 
@@ -103,7 +105,7 @@ class AgoraRtmClient {
   StreamSubscription<dynamic>? _clientSubscription;
 
   EventChannel _addEventChannel(name) {
-    return new EventChannel(name);
+    return EventChannel(name);
   }
 
   _eventListener(dynamic event) {
@@ -112,63 +114,55 @@ class AgoraRtmClient {
       case 'onConnectionStateChanged':
         int state = map['state'];
         int reason = map['reason'];
-        this.onConnectionStateChanged?.call(state, reason);
+        onConnectionStateChanged?.call(state, reason);
         break;
       case 'onMessageReceived':
         AgoraRtmMessage message = AgoraRtmMessage.fromJson(map["message"]);
         String peerId = map["peerId"];
-        this.onMessageReceived?.call(message, peerId);
+        onMessageReceived?.call(message, peerId);
         break;
       case 'onTokenExpired':
-        this.onTokenExpired?.call();
+        onTokenExpired?.call();
         break;
       case 'onLocalInvitationReceivedByPeer':
-        this
-            .onLocalInvitationReceivedByPeer
+        onLocalInvitationReceivedByPeer
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationAccepted':
-        this
-            .onLocalInvitationAccepted
+        onLocalInvitationAccepted
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationRefused':
-        this
-            .onLocalInvitationRefused
+        onLocalInvitationRefused
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationCanceled':
-        this
-            .onLocalInvitationCanceled
+        onLocalInvitationCanceled
             ?.call(AgoraRtmLocalInvitation.fromJson(map['localInvitation']));
         break;
       case 'onLocalInvitationFailure':
-        this.onLocalInvitationFailure?.call(
+        onLocalInvitationFailure?.call(
             AgoraRtmLocalInvitation.fromJson(map['localInvitation']),
             map['errorCode']);
         break;
       case 'onRemoteInvitationReceivedByPeer':
-        this
-            .onRemoteInvitationReceivedByPeer
+        onRemoteInvitationReceivedByPeer
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationAccepted':
-        this
-            .onRemoteInvitationAccepted
+        onRemoteInvitationAccepted
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationRefused':
-        this
-            .onRemoteInvitationRefused
+        onRemoteInvitationRefused
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationCanceled':
-        this
-            .onRemoteInvitationCanceled
+        onRemoteInvitationCanceled
             ?.call(AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']));
         break;
       case 'onRemoteInvitationFailure':
-        this.onRemoteInvitationFailure?.call(
+        onRemoteInvitationFailure?.call(
             AgoraRtmRemoteInvitation.fromJson(map['remoteInvitation']),
             map['errorCode']);
         break;
@@ -187,18 +181,23 @@ class AgoraRtmClient {
         methodName, {'clientIndex': _clientIndex, 'args': arguments});
   }
 
-  /// Destroy and stop event to the client with related channels.
   Future<void> destroy() async {
-    if (_closed ?? true) return null;
+    await release();
+  }
+
+  /// Destroy and stop event to the client with related channels.
+  Future<void> release() async {
+    if (_closed ?? true) return;
     await _clientSubscription?.cancel();
     _closed = true;
     for (String channelId in _channels.keys) {
       await releaseChannel(channelId);
     }
     final res = await _callNative("destroy", null);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
-          "destroy failed ${res['errorCode']}", res["errorCode"]);
+          "release failed ${res['errorCode']}", res["errorCode"]);
+    }
     _clients.removeWhere((int clientIndex, AgoraRtmClient client) =>
         [_clientIndex].contains(clientIndex));
   }
@@ -207,9 +206,10 @@ class AgoraRtmClient {
   Future setLog(int level, int size, String path) async {
     final res = await _callNative(
         "setLog", {'level': level, 'size': size, 'path': path});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "login failed errorCode:${res['errorCode']}", res['errorCode']);
+    }
     return res["result"];
   }
 
@@ -225,25 +225,28 @@ class AgoraRtmClient {
   /// If you log in with the same user ID from a different instance, you will be kicked out of your previous login and removed from previously joined channels.
   Future login(String? token, String userId) async {
     final res = await _callNative("login", {'token': token, 'userId': userId});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "login failed errorCode:${res['errorCode']}", res['errorCode']);
+    }
   }
 
   /// Allows a user to log out of the Agora RTM system.
   Future logout() async {
     final res = await _callNative("logout", null);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "logout failed errorCode:${res['errorCode']}", res['errorCode']);
+    }
   }
 
   /// Renews the token.
   Future renewToken(String token) async {
     final res = await _callNative("renewToken", {"token": token});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "renewToken failed errorCode:${res['errorCode']}", res['errorCode']);
+    }
   }
 
   /// Queries the online status of the specified user(s).
@@ -251,10 +254,11 @@ class AgoraRtmClient {
       List<String> peerIds) async {
     final res =
         await _callNative("queryPeersOnlineStatus", {'peerIds': peerIds});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "queryPeersOnlineStatus failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     return Map<String, dynamic>.from(res["results"]);
   }
 
@@ -267,10 +271,11 @@ class AgoraRtmClient {
       "offline": offline,
       "historical": historical
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "sendMessageToPeer failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Substitutes the local user’s attributes with new ones.
@@ -279,10 +284,11 @@ class AgoraRtmClient {
     final res = await _callNative("setLocalUserAttributes", {
       "attributes": attributes,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "setLocalUserAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Adds or updates the local user’s attribute(s).
@@ -291,10 +297,11 @@ class AgoraRtmClient {
     final res = await _callNative("addOrUpdateLocalUserAttributes", {
       "attributes": attributes,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "addOrUpdateLocalUserAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Deletes the local user’s attributes using attribute keys.
@@ -302,28 +309,31 @@ class AgoraRtmClient {
     final res = await _callNative("deleteLocalUserAttributesByKeys", {
       "keys": keys,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "deleteLocalUserAttributesByKeys failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Clears all attributes of the local user.
   Future<void> clearLocalUserAttributes() async {
     final res = await _callNative("clearLocalUserAttributes", null);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "clearLocalUserAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Gets all attributes of a specified user.
   Future<Map<String, dynamic>> getUserAttributes(String userId) async {
     final res = await _callNative("getUserAttributes", {'userId': userId});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "getUserAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     return Map<String, dynamic>.from(res["attributes"]);
   }
 
@@ -332,10 +342,11 @@ class AgoraRtmClient {
       String userId, List<String> keys) async {
     final res = await _callNative(
         "getUserAttributesByKeys", {'userId': userId, 'keys': keys});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "getUserAttributesByKeys failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     return Map<String, dynamic>.from(res["attributes"]);
   }
 
@@ -353,10 +364,11 @@ class AgoraRtmClient {
       "attributes": attributeList,
       "enableNotificationToChannelMembers": enableNotificationToChannelMembers,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "setChannelAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Adds or updates the channel's attribute(s).
@@ -373,10 +385,11 @@ class AgoraRtmClient {
       "attributes": attributeList,
       "enableNotificationToChannelMembers": enableNotificationToChannelMembers,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "addOrUpdateChannelAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Deletes the channel's attributes using attribute keys.
@@ -387,10 +400,11 @@ class AgoraRtmClient {
       "keys": keys,
       "enableNotificationToChannelMembers": enableNotificationToChannelMembers,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "deleteChannelAttributesByKeys failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Clears all attributes of the channel.
@@ -400,10 +414,11 @@ class AgoraRtmClient {
       "channelId": channelId,
       "enableNotificationToChannelMembers": enableNotificationToChannelMembers,
     });
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "clearChannelAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Gets all attributes of a specified channel.
@@ -411,10 +426,11 @@ class AgoraRtmClient {
       String channelId) async {
     final res =
         await _callNative("getChannelAttributes", {'channelId': channelId});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "getChannelAttributes failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
 
     return (List<Map<dynamic, dynamic>>.from(res["attributes"]))
         .map((attr) => AgoraRtmChannelAttribute.fromJson(attr))
@@ -426,10 +442,11 @@ class AgoraRtmClient {
       String channelId, List<String> keys) async {
     final res = await _callNative(
         "getChannelAttributesByKeys", {'channelId': channelId, 'keys': keys});
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "getChannelAttributesByKeys failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     return List<Map<dynamic, dynamic>>.from(res["attributes"])
         .map((attr) => AgoraRtmChannelAttribute.fromJson(attr))
         .toList();
@@ -438,37 +455,41 @@ class AgoraRtmClient {
   /// Allows the caller to send a call invitation to the callee.
   Future<void> sendLocalInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("sendLocalInvitation", arguments);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "sendLocalInvitation failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Allows the caller to cancel a call invitation.
   Future<void> cancelLocalInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("cancelLocalInvitation", arguments);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "cancelLocalInvitation failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Allows the callee to accept a call invitation.
   Future<void> acceptRemoteInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("acceptRemoteInvitation", arguments);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "acceptRemoteInvitation failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Allows the callee to decline a call invitation.
   Future<void> refuseRemoteInvitation(Map<dynamic, dynamic> arguments) async {
     final res = await _callNative("refuseRemoteInvitation", arguments);
-    if (res["errorCode"] != 0)
+    if (res["errorCode"] != 0) {
       throw AgoraRtmClientException(
           "refuseRemoteInvitation failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
   }
 
   /// Creates an [AgoraRtmChannel].
@@ -482,10 +503,11 @@ class AgoraRtmClient {
   /// channelId cannot be empty or set as nil.
   Future<AgoraRtmChannel?> createChannel(String channelId) async {
     final res = await _callNative("createChannel", {'channelId': channelId});
-    if (res['errorCode'] != 0)
+    if (res['errorCode'] != 0) {
       throw AgoraRtmClientException(
           "createChannel failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     AgoraRtmChannel channel = AgoraRtmChannel(_clientIndex, channelId);
     _channels[channelId] = channel;
     return _channels[channelId];
@@ -494,12 +516,13 @@ class AgoraRtmClient {
   /// Releases an [AgoraRtmChannel].
   Future<void> releaseChannel(String channelId) async {
     final res = await _callNative("releaseChannel", {'channelId': channelId});
-    if (res['errorCode'] != 0)
+    if (res['errorCode'] != 0) {
       throw AgoraRtmClientException(
           "releaseChannel failed errorCode:${res['errorCode']}",
           res['errorCode']);
+    }
     _channels[channelId]?.close();
     _channels.removeWhere((String channelId, AgoraRtmChannel channel) =>
-        [channelId].contains(channel));
+        channelId == channel.channelId);
   }
 }
