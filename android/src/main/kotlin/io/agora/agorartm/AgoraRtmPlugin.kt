@@ -286,7 +286,6 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
 
             "queryPeersOnlineStatus" -> {
                 val peerIds = (args?.get("peerIds") as? ArrayList<*>)?.toSet()
-
                 client?.queryPeersOnlineStatus(peerIds,
                     object : Callback<Map<String, Boolean>>(result) {
                         override fun toJson(responseInfo: Map<String, Boolean>): Any {
@@ -381,7 +380,6 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                         })
                     }
                 }
-
                 client?.setChannelAttributes(channelId, channelAttributes,
                     ChannelAttributeOptions(enableNotificationToChannelMembers),
                     object : Callback<Void>(result) {})

@@ -56,19 +56,20 @@ class RTMClient(
 
     override
     fun onConnectionStateChanged(state: Int, reason: Int) {
-        sendEvent("onConnectionStateChanged", hashMapOf("state" to state, "reason" to reason))
+        sendEvent(
+            "onConnectionStateChanged", hashMapOf(
+                "state" to state,
+                "reason" to reason,
+            )
+        )
     }
 
     override
     fun onMessageReceived(message: RtmMessage, peerId: String) {
         sendEvent(
             "onMessageReceived", hashMapOf(
+                "message" to message.toJson(),
                 "peerId" to peerId,
-                "message" to hashMapOf(
-                    "text" to message.text,
-                    "offline" to message.isOfflineMessage,
-                    "ts" to message.serverReceivedTs
-                )
             )
         )
     }
@@ -83,7 +84,11 @@ class RTMClient(
     }
 
     override
-    fun onPeersOnlineStatusChanged(p0: MutableMap<String, Int>) {
-
+    fun onPeersOnlineStatusChanged(peersStatus: Map<String, Int>) {
+        sendEvent(
+            "onPeersOnlineStatusChanged", hashMapOf(
+                "peersStatus" to peersStatus
+            )
+        )
     }
 }
