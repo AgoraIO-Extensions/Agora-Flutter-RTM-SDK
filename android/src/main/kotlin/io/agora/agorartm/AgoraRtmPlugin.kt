@@ -4,8 +4,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import io.agora.rtm.ChannelAttributeOptions
-import io.agora.rtm.LocalInvitation
-import io.agora.rtm.RemoteInvitation
 import io.agora.rtm.RtmAttribute
 import io.agora.rtm.RtmChannelAttribute
 import io.agora.rtm.RtmChannelMember
@@ -61,35 +59,25 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onMethodCall(methodCall: MethodCall, result: Result) {
-        val methodName = when (methodCall.method) {
-            is String -> methodCall.method as String
-            else -> null
-        }
-        val callArguments = when (methodCall.arguments) {
-            is Map<*, *> -> methodCall.arguments as Map<*, *>
-            else -> null
-        }
-        val call = when {
-            callArguments!!["call"] is String -> callArguments["call"] as String
-            else -> null
-        }
-
-        val params = callArguments["params"] as Map<*, *>
-        when (call) {
+        val methodName = methodCall.method
+        val callArguments = methodCall.arguments as? Map<*, *>
+        val caller = callArguments?.get("caller") as? String
+        val arguments = callArguments?.get("arguments") as? Map<*, *>
+        when (caller) {
             "AgoraRtmClient#static" -> {
-                handleStaticMethod(methodName, params, result)
+                handleStaticMethod(methodName, arguments, result)
             }
 
             "AgoraRtmClient" -> {
-                handleClientMethod(methodName, params, result)
+                handleClientMethod(methodName, arguments, result)
             }
 
             "AgoraRtmChannel" -> {
-                handleChannelMethod(methodName, params, result)
+                handleChannelMethod(methodName, arguments, result)
             }
 
             "AgoraRtmCallManager" -> {
-                handleCallManagerMethod(methodName, params, result)
+                handleCallManagerMethod(methodName, arguments, result)
             }
 
             else -> {
@@ -98,46 +86,29 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun handleCallManagerMethod(
-        methodName: String?, params: Map<String, Any>, result: Result
-    ) {
-        val clientIndex = (params["clientIndex"] as Int).toLong()
-        val args = when {
-            (params["args"] is Map<*, *>) -> params["args"] as Map<*, *>
-            else -> null
-        }
-        val agoraClient = when {
-            clients[clientIndex] is RTMClient -> clients[clientIndex] as RTMClient
-            else -> null
-        }
-        if (null == agoraClient) {
+    private fun handleCallManagerMethod(methodName: String?, params: Map<*, *>?, result: Result) {
+        val clientIndex = (params?.get("clientIndex") as? Int)?.toLong()
+        val agoraClient = clients[clientIndex]
+        if (agoraClient == null) {
             runMainThread {
                 result.success(hashMapOf("errorCode" to -1))
             }
             return
         }
 
+        val args = params?.get("args") as? Map<*, *>
         when (methodName) {
             "sendLocalInvitation" -> {
-                val calleeId = when {
-                    args?.get("calleeId") is String -> args["calleeId"] as String
-                    else -> null
-                }
-                val content = when {
-                    args?.get("content") is String -> args["content"] as String
-                    else -> null
-                }
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val localInvitation = agoraClient.call.manager.createLocalInvitation(calleeId)
-                if (null != content) {
-                    localInvitation.content = content
-                }
-                if (null != channelId) {
-                    localInvitation.channelId = channelId
-                }
+                val calleeId = args?.get("calleeId") as? String
+                val content = args?.get("content") as? String
+                val channelId = args?.get("channelId") as? String
+
+                val localInvitation =
+                    agoraClient.call.manager.createLocalInvitation(calleeId).apply {
+                        this.content = content
+                        this.channelId = channelId
+                    }
+
                 agoraClient.call.manager.sendLocalInvitation(localInvitation,
                     object : Callback<Void>(result) {
                         override fun toJson(responseInfo: Void): Any {
@@ -149,36 +120,22 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "cancelLocalInvitation" -> {
-                val calleeId = when {
-                    args?.get("calleeId") is String -> args["calleeId"] as String
-                    else -> null
-                }
-                val content = when {
-                    args?.get("content") is String -> args["content"] as String
-                    else -> null
-                }
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val localInvitation = when {
-                    agoraClient.call.localInvitations[calleeId] is LocalInvitation -> agoraClient.call.localInvitations[calleeId]
-                    else -> null
+                val calleeId = args?.get("calleeId") as? String
+                val content = args?.get("content") as? String
+                val channelId = args?.get("channelId") as? String
+
+                val localInvitation = agoraClient.call.localInvitations[calleeId]?.apply {
+                    this.content = content
+                    this.channelId = channelId
                 }
 
-                if (null == localInvitation) {
+                if (localInvitation == null) {
                     runMainThread {
                         result.success(hashMapOf("errorCode" to -1))
                     }
                     return
                 }
 
-                if (null != content) {
-                    localInvitation.content = content
-                }
-                if (null != channelId) {
-                    localInvitation.channelId = channelId
-                }
                 agoraClient.call.manager.cancelLocalInvitation(localInvitation,
                     object : Callback<Void>(result) {
                         override fun toJson(responseInfo: Void): Any {
@@ -189,31 +146,19 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "acceptRemoteInvitation" -> {
-                val response = when {
-                    args?.get("response") is String -> args["response"] as String
-                    else -> null
+                val response = args?.get("response") as? String
+                val callerId = args?.get("callerId") as? String
+                val remoteInvitation = agoraClient.call.remoteInvitations[callerId]?.apply {
+                    this.response = response
                 }
 
-                val callerId = when {
-                    args?.get("callerId") is String -> args["callerId"] as String
-                    else -> null
-                }
-
-                val remoteInvitation = when {
-                    agoraClient.call.remoteInvitations[callerId] is RemoteInvitation -> agoraClient.call.remoteInvitations[callerId]
-                    else -> null
-                }
-
-                if (null == remoteInvitation) {
+                if (remoteInvitation == null) {
                     runMainThread {
                         result.success(hashMapOf("errorCode" to -1))
                     }
                     return
                 }
 
-                if (null != response) {
-                    remoteInvitation.response = response
-                }
                 agoraClient.call.manager.acceptRemoteInvitation(remoteInvitation,
                     object : Callback<Void>(result) {
                         override fun toJson(responseInfo: Void): Any {
@@ -224,30 +169,17 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "refuseRemoteInvitation" -> {
-                val response = when {
-                    args?.get("response") is String -> args["response"] as String
-                    else -> null
+                val response = args?.get("response") as? String
+                val callerId = args?.get("callerId") as? String
+                val remoteInvitation = agoraClient.call.remoteInvitations[callerId]?.apply {
+                    this.response = response
                 }
 
-                val callerId = when {
-                    args?.get("callerId") is String -> args["callerId"] as String
-                    else -> null
-                }
-
-                val remoteInvitation = when {
-                    agoraClient.call.remoteInvitations[callerId] is RemoteInvitation -> agoraClient.call.remoteInvitations[callerId]
-                    else -> null
-                }
-
-                if (null == remoteInvitation) {
+                if (remoteInvitation == null) {
                     runMainThread {
                         result.success(hashMapOf("errorCode" to -1))
                     }
                     return
-                }
-
-                if (null != response) {
-                    remoteInvitation.response = response
                 }
 
                 agoraClient.call.manager.refuseRemoteInvitation(remoteInvitation,
@@ -265,17 +197,12 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun handleStaticMethod(
-        methodName: String?, params: Map<String, Any>, result: Result
-    ) {
+    private fun handleStaticMethod(methodName: String?, params: Map<*, *>?, result: Result) {
         when (methodName) {
             "createInstance" -> {
-                val appId = when {
-                    params["appId"] is String -> params["appId"] as String
-                    else -> null
-                }
+                val appId = params?.get("appId") as? String
 
-                if (null == appId) {
+                if (appId == null) {
                     runMainThread {
                         result.success(hashMapOf("errorCode" to -1))
                     }
@@ -295,7 +222,8 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                 )
                 result.success(
                     hashMapOf(
-                        "errorCode" to 0, "result" to nextClientIndex
+                        "errorCode" to 0,
+                        "result" to nextClientIndex,
                     )
                 )
                 clients[nextClientIndex] = rtmClient
@@ -316,17 +244,10 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun handleClientMethod(methodName: String?, params: Map<String, Any>, result: Result) {
-        val clientIndex = (params["clientIndex"] as Int).toLong()
-        val args = when {
-            (params["args"] is Map<*, *>) -> params["args"] as Map<*, *>
-            else -> null
-        }
-        val agoraClient = when {
-            clients[clientIndex] is RTMClient -> clients[clientIndex] as RTMClient
-            else -> null
-        }
-        if (null == agoraClient) {
+    private fun handleClientMethod(methodName: String?, params: Map<*, *>?, result: Result) {
+        val clientIndex = (params?.get("clientIndex") as? Int)?.toLong()
+        val agoraClient = clients[clientIndex]
+        if (agoraClient == null) {
             runMainThread {
                 result.success(hashMapOf("errorCode" to -1))
             }
@@ -334,7 +255,7 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         val client = agoraClient.client
-
+        val args = params?.get("args") as? Map<*, *>
         when (methodName) {
             "release" -> {
                 agoraClient.channels.forEach {
@@ -349,20 +270,8 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "login" -> {
-                var token = args?.get("token")
-
-                token = when {
-                    (token is String) -> token
-                    else -> null
-                }
-
-                var userId = args?.get("userId")
-
-                userId = when {
-                    (userId is String) -> userId
-                    else -> null
-                }
-
+                val token = args?.get("token") as? String
+                val userId = args?.get("userId") as? String
                 client?.login(token, userId, object : Callback<Void>(result) {})
             }
 
@@ -371,21 +280,14 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "renewToken" -> {
-                var token = args?.get("token")
-
-                token = when {
-                    (token is String) -> token
-                    else -> null
-                }
-
+                val token = args?.get("token") as? String
                 client?.renewToken(token, object : Callback<Void>(result) {})
             }
 
             "queryPeersOnlineStatus" -> {
-                val peerIds = (args?.get("peerIds") as ArrayList<*>).toSet()
+                val peerIds = (args?.get("peerIds") as? ArrayList<*>)?.toSet()
 
-                client?.queryPeersOnlineStatus(
-                    peerIds,
+                client?.queryPeersOnlineStatus(peerIds,
                     object : Callback<Map<String, Boolean>>(result) {
                         override fun toJson(responseInfo: Map<String, Boolean>): Any {
                             return responseInfo
@@ -398,8 +300,7 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                 val text = args?.get("message") as? String
                 val message = client?.createMessage(text)
                 val options = SendMessageOptions()
-                client?.sendMessageToPeer(
-                    peerId,
+                client?.sendMessageToPeer(peerId,
                     message,
                     options,
                     object : Callback<Void>(result) {})
@@ -416,8 +317,7 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                         })
                     }
                 }
-                client?.setLocalUserAttributes(
-                    localUserAttributes,
+                client?.setLocalUserAttributes(localUserAttributes,
                     object : Callback<Void>(result) {})
             }
 
@@ -432,12 +332,13 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                         })
                     }
                 }
-                client?.addOrUpdateLocalUserAttributes(localUserAttributes,
+                client?.addOrUpdateLocalUserAttributes(
+                    localUserAttributes,
                     object : Callback<Void>(result) {})
             }
 
             "deleteLocalUserAttributesByKeys" -> {
-                val keys = args?.get("keys") as List<*>
+                val keys = args?.get("keys") as? List<*>
                 client?.deleteLocalUserAttributesByKeys(keys, object : Callback<Void>(result) {})
             }
 
@@ -446,10 +347,7 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "getUserAttributes" -> {
-                val userId = when {
-                    args?.get("userId") is String -> args["userId"] as String
-                    else -> null
-                }
+                val userId = args?.get("userId") as? String
                 client?.getUserAttributes(userId, object : Callback<List<RtmAttribute>>(result) {
                     override fun toJson(responseInfo: List<RtmAttribute>): Any {
                         return responseInfo.toJson()
@@ -458,37 +356,24 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "getUserAttributesByKeys" -> {
-                val userId = when {
-                    args?.get("userId") is String -> args["userId"] as String
-                    else -> null
-                }
-                val keys = when {
-                    args?.get("keys") is List<*> -> args["keys"] as List<*>
-                    else -> null
-                }
-
-                client?.getUserAttributesByKeys(
-                    userId,
-                    keys,
+                val userId = args?.get("userId") as? String
+                val keys = args?.get("keys") as? List<*>
+                client?.getUserAttributesByKeys(userId, keys,
                     object : Callback<List<RtmAttribute>>(result) {
                         override fun toJson(responseInfo: List<RtmAttribute>): Any {
                             return responseInfo.toJson()
                         }
-                    })
+                    }
+                )
             }
 
             "setChannelAttributes" -> {
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val enableNotificationToChannelMembers: Boolean = when {
-                    args?.get("enableNotificationToChannelMembers") is Boolean -> args["enableNotificationToChannelMembers"] as Boolean
-                    else -> false
-                }
-                val attributes = args?.get("attributes") as List<*>
+                val channelId = args?.get("channelId") as? String
+                val enableNotificationToChannelMembers =
+                    args?.get("enableNotificationToChannelMembers") as? Boolean
+                val attributes = args?.get("attributes") as? List<*>
                 val channelAttributes = ArrayList<RtmChannelAttribute>()
-                attributes.forEach {
+                attributes?.forEach {
                     (it as? Map<*, *>)?.let {
                         channelAttributes.add(RtmChannelAttribute().apply {
                             key = it["key"] as String
@@ -497,24 +382,18 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                     }
                 }
 
-                client?.setChannelAttributes(channelId,
-                    channelAttributes,
+                client?.setChannelAttributes(channelId, channelAttributes,
                     ChannelAttributeOptions(enableNotificationToChannelMembers),
                     object : Callback<Void>(result) {})
             }
 
             "addOrUpdateChannelAttributes" -> {
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val enableNotificationToChannelMembers: Boolean = when {
-                    args?.get("enableNotificationToChannelMembers") is Boolean -> args["enableNotificationToChannelMembers"] as Boolean
-                    else -> false
-                }
-                val attributes = args?.get("attributes") as List<*>
+                val channelId = args?.get("channelId") as? String
+                val enableNotificationToChannelMembers =
+                    args?.get("enableNotificationToChannelMembers") as? Boolean
+                val attributes = args?.get("attributes") as? List<*>
                 val channelAttributes = ArrayList<RtmChannelAttribute>()
-                attributes.forEach {
+                attributes?.forEach {
                     (it as? Map<*, *>)?.let {
                         channelAttributes.add(RtmChannelAttribute().apply {
                             key = it["key"] as String
@@ -522,49 +401,33 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                         })
                     }
                 }
-                client?.addOrUpdateChannelAttributes(channelId,
-                    channelAttributes,
+                client?.addOrUpdateChannelAttributes(channelId, channelAttributes,
                     ChannelAttributeOptions(enableNotificationToChannelMembers),
                     object : Callback<Void>(result) {})
             }
 
             "deleteChannelAttributesByKeys" -> {
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val enableNotificationToChannelMembers: Boolean = when {
-                    args?.get("enableNotificationToChannelMembers") is Boolean -> args["enableNotificationToChannelMembers"] as Boolean
-                    else -> false
-                }
-                val keys = args?.get("keys") as List<*>
-                client?.deleteChannelAttributesByKeys(channelId,
-                    keys,
+                val channelId = args?.get("channelId") as? String
+                val enableNotificationToChannelMembers =
+                    args?.get("enableNotificationToChannelMembers") as? Boolean
+                val keys = args?.get("keys") as? List<*>
+                client?.deleteChannelAttributesByKeys(channelId, keys,
                     ChannelAttributeOptions(enableNotificationToChannelMembers),
                     object : Callback<Void>(result) {})
             }
 
             "clearChannelAttributes" -> {
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val enableNotificationToChannelMembers: Boolean = when {
-                    args?.get("enableNotificationToChannelMembers") is Boolean -> args["enableNotificationToChannelMembers"] as Boolean
-                    else -> false
-                }
+                val channelId = args?.get("channelId") as? String
+                val enableNotificationToChannelMembers =
+                    args?.get("enableNotificationToChannelMembers") as? Boolean
                 client?.clearChannelAttributes(channelId,
                     ChannelAttributeOptions(enableNotificationToChannelMembers),
                     object : Callback<Void>(result) {})
             }
 
             "getChannelAttributes" -> {
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                client?.getChannelAttributes(
-                    channelId,
+                val channelId = args?.get("channelId") as? String
+                client?.getChannelAttributes(channelId,
                     object : Callback<List<RtmChannelAttribute>>(result) {
                         override fun toJson(responseInfo: List<RtmChannelAttribute>): Any {
                             return responseInfo.toJson()
@@ -573,27 +436,19 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "getChannelAttributesByKeys" -> {
-                val channelId = when {
-                    args?.get("channelId") is String -> args["channelId"] as String
-                    else -> null
-                }
-                val keys = when {
-                    args?.get("keys") is List<*> -> args["keys"] as List<*>
-                    else -> null
-                }
-
-                client?.getChannelAttributesByKeys(
-                    channelId,
-                    keys,
+                val channelId = args?.get("channelId") as? String
+                val keys = args?.get("keys") as? List<*>
+                client?.getChannelAttributesByKeys(channelId, keys,
                     object : Callback<List<RtmChannelAttribute>>(result) {
                         override fun toJson(responseInfo: List<RtmChannelAttribute>): Any {
                             return responseInfo.toJson()
                         }
-                    })
+                    }
+                )
             }
 
             "createChannel" -> {
-                val channelId = args?.get("channelId") as String
+                val channelId = args?.get("channelId") as? String
                 val agoraRtmChannel = RTMChannel(
                     clientIndex,
                     channelId,
@@ -614,7 +469,7 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "releaseChannel" -> {
-                val channelId = args?.get("channelId") as String
+                val channelId = args?.get("channelId") as? String
                 val rtmChannel = agoraClient.channels[channelId]
                 if (null == rtmChannel) {
                     runMainThread {
@@ -636,17 +491,10 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun handleChannelMethod(
-        methodName: String?, params: Map<String, Any>, result: Result
+        methodName: String?, params: Map<*, *>?, result: Result
     ) {
-        val clientIndex = (params["clientIndex"] as Int).toLong()
-        val channelId = params["channelId"] as String
-        val args = when {
-            (params["args"] is Map<*, *>) -> params["args"] as Map<*, *>
-            else -> null
-        }
-
+        val clientIndex = (params?.get("clientIndex") as? Int)?.toLong()
         val agoraClient = clients[clientIndex]
-
         if (null == agoraClient) {
             runMainThread {
                 result.success(hashMapOf("errorCode" to -1))
@@ -655,7 +503,6 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         val client = agoraClient.client
-
         if (null == client) {
             runMainThread {
                 result.success(hashMapOf("errorCode" to -1))
@@ -663,8 +510,8 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
 
+        val channelId = params?.get("channelId") as? String
         val rtmChannel = agoraClient.channels[channelId]
-
         if (null == rtmChannel) {
             runMainThread {
                 result.success(hashMapOf("errorCode" to -1))
@@ -672,14 +519,16 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
             return
         }
 
+        val args = params?.get("args") as? Map<*, *>
         when (methodName) {
             "join" -> {
                 rtmChannel.join(object : Callback<Void>(result) {})
             }
 
             "sendMessage" -> {
-                val message = client.createMessage()
-                message.text = args?.get("message") as String
+                val message = client.createMessage().apply {
+                    text = args?.get("message") as? String
+                }
                 val options = SendMessageOptions()
                 rtmChannel.sendMessage(message, options, object : Callback<Void>(result) {})
             }
