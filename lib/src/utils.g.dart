@@ -53,20 +53,21 @@ Map<String, dynamic> _$RtmAttributeToJson(RtmAttribute instance) =>
       'value': instance.value,
     };
 
-RtmChannelAttribute _$RtmAttributeFromJson(Map<String, dynamic> json) =>
+RtmChannelAttribute _$RtmChannelAttributeFromJson(Map<String, dynamic> json) =>
     RtmChannelAttribute(
       json['key'] as String,
       json['value'] as String,
-      userId: json['userId'] as String? ?? "",
-      updateTs: json['updateTs'] as int? ?? 0,
+      lastUpdateUserId: json['lastUpdateUserId'] as String? ?? "",
+      lastUpdateTs: json['lastUpdateTs'] as int? ?? 0,
     );
 
-Map<String, dynamic> _$RtmAttributeToJson(RtmChannelAttribute instance) =>
+Map<String, dynamic> _$RtmChannelAttributeToJson(
+        RtmChannelAttribute instance) =>
     <String, dynamic>{
       'key': instance.key,
       'value': instance.value,
-      'userId': instance.userId,
-      'updateTs': instance.updateTs,
+      'lastUpdateUserId': instance.lastUpdateUserId,
+      'lastUpdateTs': instance.lastUpdateTs,
     };
 
 LocalInvitation _$LocalInvitationFromJson(Map<String, dynamic> json) =>
