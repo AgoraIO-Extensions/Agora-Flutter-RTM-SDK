@@ -3,18 +3,21 @@ description: >-
       Flutter wrapper around the Agora Real Time Message SDKs for Android and
       iOS.
 version: 1.5.0
-homepage: 'https://www.agora.io'
-repository: 'https://github.com/AgoraIO/Flutter-RTM'
+homepage: "https://www.agora.io"
+repository: "https://github.com/AgoraIO/Flutter-RTM"
 environment:
-      sdk: '>=2.12.0 <3.0.0'
-      flutter: '>=1.12.13+hotfix.6'
+      sdk: ">=2.13.0 <3.0.0"
+      flutter: ">=1.12.13+hotfix.6"
 dependencies:
       flutter:
             sdk: flutter
+      json_annotation: ^4.8.1
 dev_dependencies:
       flutter_test:
             sdk: flutter
       flutter_lints: ^2.0.0
+      build_runner: ^2.3.3
+      json_serializable: ^6.6.0
 flutter:
       plugin:
             platforms:
@@ -23,4 +26,3 @@ flutter:
                         pluginClass: AgoraRtmPlugin
                   ios:
                         pluginClass: AgoraRtmPlugin
-

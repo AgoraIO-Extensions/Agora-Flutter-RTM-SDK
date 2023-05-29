@@ -1,132 +1,208 @@
-class AgoraRtmMessage {
-  String text;
-  int ts;
-  bool offline;
+import 'dart:io';
 
-  AgoraRtmMessage(this.text, this.ts, this.offline);
+import 'package:flutter/services.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-  AgoraRtmMessage.fromText(this.text, {this.ts = 0, this.offline = false});
+part 'utils.g.dart';
 
-  AgoraRtmMessage.fromJson(Map<dynamic, dynamic> json)
-      : text = json['text'],
-        ts = json['ts'],
-        offline = json['offline'];
-
-  Map<String, dynamic> toJson() => {'text': text, 'ts': ts, 'offline': offline};
-
-  @override
-  String toString() {
-    return "{text: $text, ts: $ts, offline: $offline}";
-  }
+@JsonEnum()
+enum RtmMessageType {
+  @JsonValue(0)
+  undefined,
+  @JsonValue(1)
+  text,
+  @JsonValue(2)
+  raw
 }
 
-class AgoraRtmMember {
+@JsonSerializable()
+class RtmMessage {
+  String? text;
+  @JsonKey(fromJson: _rawMessage, toJson: _rawMessage)
+  Uint8List? rawMessage;
+  RtmMessageType? messageType;
+  int? serverReceivedTs;
+  bool? isOfflineMessage;
+
+  RtmMessage({
+    this.text,
+    this.rawMessage,
+    this.messageType,
+    this.serverReceivedTs,
+    this.isOfflineMessage,
+  });
+
+  RtmMessage.fromText(this.text) : messageType = RtmMessageType.text;
+
+  RtmMessage.fromRaw(this.rawMessage, this.text)
+      : messageType = RtmMessageType.raw;
+
+  factory RtmMessage.fromJson(Map<String, dynamic> json) =>
+      _$RtmMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmMessageToJson(this);
+
+  static Uint8List? _rawMessage(Uint8List? rawMessage) => rawMessage;
+}
+
+@JsonSerializable()
+class RtmChannelMember {
   String userId;
   String channelId;
 
-  AgoraRtmMember(this.userId, this.channelId);
+  RtmChannelMember(
+    this.userId,
+    this.channelId,
+  );
 
-  AgoraRtmMember.fromJson(Map<dynamic, dynamic> json)
-      : userId = json['userId'],
-        channelId = json['channelId'];
+  factory RtmChannelMember.fromJson(Map<String, dynamic> json) =>
+      _$RtmChannelMemberFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'channelId': channelId,
-      };
-
-  @override
-  String toString() {
-    return "{uid: $userId, cid: $channelId}";
-  }
+  Map<String, dynamic> toJson() => _$RtmChannelMemberToJson(this);
 }
 
-class AgoraRtmChannelAttribute {
+@JsonSerializable()
+class RtmAttribute {
   String key;
   String value;
-  String userId;
-  int updateTs;
 
-  AgoraRtmChannelAttribute(this.key, this.value,
-      {this.userId = "", this.updateTs = 0});
+  RtmAttribute(
+    this.key,
+    this.value,
+  );
 
-  AgoraRtmChannelAttribute.fromJson(Map<dynamic, dynamic> json)
-      : key = json['key'],
-        value = json['value'],
-        userId = json['userId'],
-        updateTs = json['updateTs'];
+  factory RtmAttribute.fromJson(Map<String, dynamic> json) =>
+      _$RtmAttributeFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'key': key,
-        'value': value,
-        'userId': userId,
-        'updateTs': updateTs,
-      };
-
-  @override
-  String toString() {
-    return "{key: $key, value: $value, userId: $userId, updateTs: $updateTs}";
-  }
+  Map<String, dynamic> toJson() => _$RtmAttributeToJson(this);
 }
 
-class AgoraRtmLocalInvitation {
+@JsonSerializable()
+class RtmChannelAttribute {
+  String key;
+  String value;
+  String lastUpdateUserId;
+  int lastUpdateTs;
+
+  RtmChannelAttribute(
+    this.key,
+    this.value, {
+    this.lastUpdateUserId = "",
+    this.lastUpdateTs = 0,
+  });
+
+  factory RtmChannelAttribute.fromJson(Map<String, dynamic> json) =>
+      _$RtmChannelAttributeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmChannelAttributeToJson(this);
+}
+
+@JsonSerializable()
+class LocalInvitation {
   String calleeId;
   String? content;
   String? response;
   String? channelId;
   int state;
 
-  AgoraRtmLocalInvitation(this.calleeId,
-      {this.content, this.response, this.channelId, this.state = 0});
+  LocalInvitation(
+    this.calleeId, {
+    this.content,
+    this.response,
+    this.channelId,
+    this.state = 0,
+  });
 
-  AgoraRtmLocalInvitation.fromJson(Map<dynamic, dynamic> json)
-      : calleeId = json['calleeId'],
-        content = json['content'],
-        response = json['response'],
-        channelId = json['channelId'],
-        state = json['state'];
+  factory LocalInvitation.fromJson(Map<String, dynamic> json) =>
+      _$LocalInvitationFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'calleeId': calleeId,
-        'content': content,
-        'response': response,
-        'channelId': channelId,
-        'state': state,
-      };
-
-  @override
-  String toString() {
-    return "{calleeId: $calleeId, content: $content, response: $response, channelId: $channelId, state: $state}";
-  }
+  Map<String, dynamic> toJson() => _$LocalInvitationToJson(this);
 }
 
-class AgoraRtmRemoteInvitation {
+@JsonSerializable()
+class RemoteInvitation {
   String callerId;
   String? content;
   String? response;
   String? channelId;
   int state;
 
-  AgoraRtmRemoteInvitation(this.callerId,
-      {this.content, this.response, this.channelId, this.state = 0});
+  RemoteInvitation(
+    this.callerId, {
+    this.content,
+    this.response,
+    this.channelId,
+    this.state = 0,
+  });
 
-  AgoraRtmRemoteInvitation.fromJson(Map<dynamic, dynamic> json)
-      : callerId = json['callerId'],
-        content = json['content'],
-        response = json['response'],
-        channelId = json['channelId'],
-        state = json['state'];
+  factory RemoteInvitation.fromJson(Map<String, dynamic> json) =>
+      _$RemoteInvitationFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'callerId': callerId,
-        'content': content,
-        'response': response,
-        'channelId': channelId,
-        'state': state,
-      };
-
-  @override
-  String toString() {
-    return "{callerId: $callerId, content: $content, response: $response, channelId: $channelId, state: $state}";
-  }
+  Map<String, dynamic> toJson() => _$RemoteInvitationToJson(this);
 }
+
+@JsonSerializable()
+class ChannelAttributeOptions {
+  bool enableNotificationToChannelMembers;
+
+  ChannelAttributeOptions(
+    this.enableNotificationToChannelMembers,
+  );
+
+  factory ChannelAttributeOptions.fromJson(Map<String, dynamic> json) =>
+      _$ChannelAttributeOptionsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChannelAttributeOptionsToJson(this);
+}
+
+@JsonSerializable()
+class SendMessageOptions {
+  bool? enableOfflineMessaging;
+  bool? enableHistoricalMessaging;
+
+  SendMessageOptions({
+    this.enableOfflineMessaging,
+    this.enableHistoricalMessaging,
+  });
+
+  factory SendMessageOptions.fromJson(Map<String, dynamic> json) =>
+      _$SendMessageOptionsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SendMessageOptionsToJson(this);
+}
+
+@JsonSerializable()
+class RtmChannelMemberCount {
+  String channelID;
+  int memberCount;
+
+  RtmChannelMemberCount(
+    this.channelID,
+    this.memberCount,
+  );
+
+  factory RtmChannelMemberCount.fromJson(Map<String, dynamic> json) =>
+      _$RtmChannelMemberCountFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmChannelMemberCountToJson(this);
+}
+
+/// [RtmMessage]
+@Deprecated('Use RtmMessage instead of.')
+typedef AgoraRtmMessage = RtmMessage;
+
+/// [RtmChannelMember]
+@Deprecated('Use RtmChannelMember instead of.')
+typedef AgoraRtmMember = RtmChannelMember;
+
+/// [RtmChannelAttribute]
+@Deprecated('Use RtmChannelAttribute instead of.')
+typedef AgoraRtmChannelAttribute = RtmChannelAttribute;
+
+/// [LocalInvitation]
+@Deprecated('Use LocalInvitation instead of.')
+typedef AgoraRtmLocalInvitation = LocalInvitation;
+
+/// [RemoteInvitation]
+@Deprecated('Use RemoteInvitation instead of.')
+typedef AgoraRtmRemoteInvitation = RemoteInvitation;

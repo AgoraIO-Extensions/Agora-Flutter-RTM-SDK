@@ -2,227 +2,66 @@ package io.agora.agorartm
 
 import android.content.Context
 import android.os.Handler
-import io.agora.rtm.*
+import io.agora.rtm.RtmChannel
+import io.agora.rtm.RtmClient
+import io.agora.rtm.RtmClientListener
+import io.agora.rtm.RtmMessage
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
-class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventListener {
-    val messenger: BinaryMessenger
-    val eventChannel: EventChannel
-    val appId: String
-    val clientIndex: Long
-    val client: RtmClient
-    val callKit: RtmCallManager
-    val eventHandler: Handler
+class RTMClient(
+    context: Context,
+    private val appId: String,
+    clientIndex: Long,
+    private val messenger: BinaryMessenger,
+    private val eventHandler: Handler
+) : RtmClientListener, EventChannel.StreamHandler {
+    private val eventChannel: EventChannel
+    private var eventSink: EventChannel.EventSink?
 
-    var channels: HashMap<String, RtmChannel>
-    var eventSink: EventChannel.EventSink?
-    var remoteInvitations: MutableMap<String, RemoteInvitation>
-    var localInvitations: MutableMap<String, LocalInvitation>
+    val client: RtmClient?
+    val call: RTMCallManager
+    val channels: HashMap<String, RtmChannel> = HashMap()
 
-    constructor(
-        context: Context,
-        appId: String,
-        clientIndex: Long,
-        messenger: BinaryMessenger,
-        eventHandler: Handler
-    ) {
-        this.appId = appId
-        this.clientIndex = clientIndex
-        this.messenger = messenger
-        this.client = RtmClient.createInstance(context, this.appId, this)
-        this.channels = HashMap<String, RtmChannel>()
-        this.remoteInvitations = HashMap<String, RemoteInvitation>()
-        this.localInvitations = HashMap<String, LocalInvitation>()
+    init {
         this.eventChannel = EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}")
         this.eventChannel.setStreamHandler(this)
         this.eventSink = null
 
-        this.callKit = client.getRtmCallManager()
-        this.callKit.setEventListener(this)
-        this.eventHandler = eventHandler
+        this.client = RtmClient.createInstance(context, this.appId, this)
+        this.call = RTMCallManager(clientIndex, client, messenger, eventHandler)
     }
 
     private fun runMainThread(f: () -> Unit) {
         eventHandler.post(f)
     }
 
-
-    private fun sendClientEvent(eventName: String, params: HashMap<Any, Any>) {
-        var map = params.toMutableMap()
+    private fun sendEvent(eventName: String, params: HashMap<Any, Any>) {
+        val map = params.toMutableMap()
         map["event"] = eventName
         runMainThread {
             this.eventSink?.success(map)
         }
     }
 
-
     override
-    fun onLocalInvitationReceivedByPeer(localInvitation: LocalInvitation) {
-        localInvitations[localInvitation.calleeId] = localInvitation
-        sendClientEvent(
-            "onLocalInvitationReceivedByPeer", hashMapOf(
-                "localInvitation" to hashMapOf(
-                    "calleeId" to localInvitation.calleeId,
-                    "content" to localInvitation.content,
-                    "channelId" to localInvitation.channelId,
-                    "state" to localInvitation.state,
-                    "response" to localInvitation.response
-                )
-            )
-        )
+    fun onListen(params: Any?, eventSink: EventChannel.EventSink) {
+        this.eventSink = eventSink
     }
 
     override
-    fun onLocalInvitationAccepted(localInvitation: LocalInvitation, response: String) {
-        sendClientEvent(
-            "onLocalInvitationAccepted", hashMapOf(
-                "localInvitation" to hashMapOf(
-                    "calleeId" to localInvitation.calleeId,
-                    "content" to localInvitation.content,
-                    "channelId" to localInvitation.channelId,
-                    "state" to localInvitation.state,
-                    "response" to localInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onLocalInvitationRefused(localInvitation: LocalInvitation, response: String) {
-        sendClientEvent(
-            "onLocalInvitationRefused", hashMapOf(
-                "localInvitation" to hashMapOf(
-                    "calleeId" to localInvitation.calleeId,
-                    "content" to localInvitation.content,
-                    "channelId" to localInvitation.channelId,
-                    "state" to localInvitation.state,
-                    "response" to localInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onLocalInvitationCanceled(localInvitation: LocalInvitation) {
-        sendClientEvent(
-            "onLocalInvitationCanceled", hashMapOf(
-                "localInvitation" to hashMapOf(
-                    "calleeId" to localInvitation.calleeId,
-                    "content" to localInvitation.content,
-                    "channelId" to localInvitation.channelId,
-                    "state" to localInvitation.state,
-                    "response" to localInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onLocalInvitationFailure(localInvitation: LocalInvitation, errorCode: Int) {
-        sendClientEvent(
-            "onLocalInvitationFailure", hashMapOf(
-                "errorCode" to errorCode,
-                "localInvitation" to hashMapOf(
-                    "calleeId" to localInvitation.calleeId,
-                    "content" to localInvitation.content,
-                    "channelId" to localInvitation.channelId,
-                    "state" to localInvitation.state,
-                    "response" to localInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onRemoteInvitationReceived(remoteInvitation: RemoteInvitation) {
-        remoteInvitations[remoteInvitation.callerId] = remoteInvitation
-        sendClientEvent(
-            "onRemoteInvitationReceivedByPeer", hashMapOf(
-                "remoteInvitation" to hashMapOf(
-                    "callerId" to remoteInvitation.callerId,
-                    "content" to remoteInvitation.content,
-                    "channelId" to remoteInvitation.channelId,
-                    "state" to remoteInvitation.state,
-                    "response" to remoteInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onRemoteInvitationAccepted(remoteInvitation: RemoteInvitation) {
-        remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent(
-            "onRemoteInvitationAccepted", hashMapOf(
-                "remoteInvitation" to hashMapOf(
-                    "callerId" to remoteInvitation.callerId,
-                    "content" to remoteInvitation.content,
-                    "channelId" to remoteInvitation.channelId,
-                    "state" to remoteInvitation.state,
-                    "response" to remoteInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onRemoteInvitationRefused(remoteInvitation: RemoteInvitation) {
-        remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent(
-            "onRemoteInvitationRefused", hashMapOf(
-                "remoteInvitation" to hashMapOf(
-                    "callerId" to remoteInvitation.callerId,
-                    "content" to remoteInvitation.content,
-                    "channelId" to remoteInvitation.channelId,
-                    "state" to remoteInvitation.state,
-                    "response" to remoteInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onRemoteInvitationCanceled(remoteInvitation: RemoteInvitation) {
-        remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent(
-            "onRemoteInvitationCanceled", hashMapOf(
-                "remoteInvitation" to hashMapOf(
-                    "callerId" to remoteInvitation.callerId,
-                    "content" to remoteInvitation.content,
-                    "channelId" to remoteInvitation.channelId,
-                    "state" to remoteInvitation.state,
-                    "response" to remoteInvitation.response
-                )
-            )
-        )
-    }
-
-    override
-    fun onRemoteInvitationFailure(remoteInvitation: RemoteInvitation, errorCode: Int) {
-        remoteInvitations.remove(remoteInvitation.callerId)
-        sendClientEvent(
-            "onRemoteInvitationFailure", hashMapOf(
-                "errorCode" to errorCode,
-                "remoteInvitation" to hashMapOf(
-                    "callerId" to remoteInvitation.callerId,
-                    "content" to remoteInvitation.content,
-                    "channelId" to remoteInvitation.channelId,
-                    "state" to remoteInvitation.state,
-                    "response" to remoteInvitation.response
-                )
-            )
-        )
+    fun onCancel(params: Any?) {
+        this.eventSink = null
     }
 
     override
     fun onConnectionStateChanged(state: Int, reason: Int) {
-        sendClientEvent("onConnectionStateChanged", hashMapOf("state" to state, "reason" to reason))
+        sendEvent("onConnectionStateChanged", hashMapOf("state" to state, "reason" to reason))
     }
 
     override
     fun onMessageReceived(message: RtmMessage, peerId: String) {
-        sendClientEvent(
+        sendEvent(
             "onMessageReceived", hashMapOf(
                 "peerId" to peerId,
                 "message" to hashMapOf(
@@ -236,21 +75,11 @@ class RTMClient : RtmClientListener, EventChannel.StreamHandler, RtmCallEventLis
 
     override
     fun onTokenExpired() {
-        sendClientEvent("onTokenExpired", hashMapOf())
+        sendEvent("onTokenExpired", hashMapOf())
     }
 
     override fun onTokenPrivilegeWillExpire() {
-        sendClientEvent("onTokenPrivilegeWillExpire", hashMapOf())
-    }
-
-    override
-    fun onListen(params: Any?, eventSink: EventChannel.EventSink) {
-        this.eventSink = eventSink
-    }
-
-    override
-    fun onCancel(params: Any?) {
-        this.eventSink = null
+        sendEvent("onTokenPrivilegeWillExpire", hashMapOf())
     }
 
     override
