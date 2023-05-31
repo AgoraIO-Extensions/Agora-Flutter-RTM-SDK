@@ -11,7 +11,7 @@ import io.flutter.plugin.common.EventChannel
 
 class RTMClient(
     context: Context,
-    private val appId: String,
+    private val appId: String?,
     clientIndex: Long,
     private val messenger: BinaryMessenger,
     private val eventHandler: Handler
@@ -21,7 +21,7 @@ class RTMClient(
 
     val client: RtmClient?
     val call: RTMCallManager
-    val channels: HashMap<String, RtmChannel> = HashMap()
+    val channels: HashMap<String?, RtmChannel> = HashMap()
 
     init {
         this.eventChannel = EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}")

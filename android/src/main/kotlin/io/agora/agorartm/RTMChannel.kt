@@ -9,8 +9,8 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
 class RTMChannel(
-    clientIndex: Long,
-    channelId: String,
+    clientIndex: Long?,
+    channelId: String?,
     private val messenger: BinaryMessenger,
     private val eventHandler: Handler
 ) : RtmChannelListener, EventChannel.StreamHandler {

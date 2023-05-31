@@ -3,12 +3,15 @@ package io.agora.agorartm
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import io.agora.rtm.ChannelAttributeOptions
+import io.agora.rtm.ErrorInfo
+import io.agora.rtm.LocalInvitation
 import io.agora.rtm.RtmAttribute
 import io.agora.rtm.RtmChannelAttribute
 import io.agora.rtm.RtmChannelMember
+import io.agora.rtm.RtmChannelMemberCount
 import io.agora.rtm.RtmClient
-import io.agora.rtm.SendMessageOptions
+import io.agora.rtm.RtmStatusCode.JoinChannelError.JOIN_CHANNEL_ERR_NOT_INITIALIZED
+import io.agora.rtm.RtmStatusCode.LoginError.LOGIN_ERR_NOT_INITIALIZED
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -54,10 +57,6 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         methodChannel.setMethodCallHandler(null)
     }
 
-    private fun runMainThread(f: () -> Unit) {
-        handler.post(f)
-    }
-
     override fun onMethodCall(methodCall: MethodCall, result: Result) {
         val methodName = methodCall.method
         val callArguments = methodCall.arguments as? Map<*, *>
@@ -89,106 +88,75 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
     private fun handleCallManagerMethod(methodName: String?, params: Map<*, *>?, result: Result) {
         val clientIndex = (params?.get("clientIndex") as? Int)?.toLong()
         val agoraClient = clients[clientIndex]
-        if (agoraClient == null) {
-            runMainThread {
-                result.success(hashMapOf("errorCode" to -1))
-            }
+        if (agoraClient?.client == null) {
+            object : Callback<Void>(result, handler) {}.onFailure(
+                ErrorInfo(
+                    LOGIN_ERR_NOT_INITIALIZED
+                )
+            )
             return
         }
 
         val args = params?.get("args") as? Map<*, *>
         when (methodName) {
-            "sendLocalInvitation" -> {
+            "createLocalInvitation" -> {
                 val calleeId = args?.get("calleeId") as? String
-                val content = args?.get("content") as? String
-                val channelId = args?.get("channelId") as? String
-
-                val localInvitation =
-                    agoraClient.call.manager.createLocalInvitation(calleeId).apply {
-                        this.content = content
-                        this.channelId = channelId
+                val localInvitation = agoraClient.call.manager.createLocalInvitation(calleeId)
+                object : Callback<LocalInvitation>(result, handler) {
+                    override fun toJson(responseInfo: LocalInvitation): Any {
+                        agoraClient.call.localInvitations[responseInfo.hashCode()] = responseInfo
+                        return responseInfo.toJson()
                     }
-
-                agoraClient.call.manager.sendLocalInvitation(localInvitation,
-                    object : Callback<Void>(result) {
-                        override fun toJson(responseInfo: Void): Any {
-                            agoraClient.call.localInvitations[localInvitation.calleeId] =
-                                localInvitation
-                            return Unit
-                        }
-                    })
+                }.onSuccess(localInvitation)
             }
 
-            "cancelLocalInvitation" -> {
-                val calleeId = args?.get("calleeId") as? String
-                val content = args?.get("content") as? String
-                val channelId = args?.get("channelId") as? String
-
-                val localInvitation = agoraClient.call.localInvitations[calleeId]?.apply {
-                    this.content = content
-                    this.channelId = channelId
-                }
-
-                if (localInvitation == null) {
-                    runMainThread {
-                        result.success(hashMapOf("errorCode" to -1))
-                    }
-                    return
-                }
-
-                agoraClient.call.manager.cancelLocalInvitation(localInvitation,
-                    object : Callback<Void>(result) {
-                        override fun toJson(responseInfo: Void): Any {
-                            agoraClient.call.localInvitations.remove(localInvitation.calleeId)
-                            return Unit
-                        }
-                    })
+            "sendLocalInvitation" -> {
+                val localInvitation =
+                    (args?.get("localInvitation") as? Map<*, *>)?.toLocalInvitation(agoraClient.call)
+                agoraClient.call.manager.sendLocalInvitation(
+                    localInvitation,
+                    object : Callback<Void>(result, handler) {},
+                )
             }
 
             "acceptRemoteInvitation" -> {
-                val response = args?.get("response") as? String
-                val callerId = args?.get("callerId") as? String
-                val remoteInvitation = agoraClient.call.remoteInvitations[callerId]?.apply {
-                    this.response = response
-                }
-
-                if (remoteInvitation == null) {
-                    runMainThread {
-                        result.success(hashMapOf("errorCode" to -1))
-                    }
-                    return
-                }
-
+                val remoteInvitation =
+                    (args?.get("remoteInvitation") as? Map<*, *>)?.toRemoteInvitation(agoraClient.call)
                 agoraClient.call.manager.acceptRemoteInvitation(remoteInvitation,
-                    object : Callback<Void>(result) {
-                        override fun toJson(responseInfo: Void): Any {
-                            agoraClient.call.remoteInvitations.remove(remoteInvitation.callerId)
-                            return Unit
+                    object : Callback<Void>(result, handler) {
+                        override fun toJson(responseInfo: Void): Any? {
+                            agoraClient.call.remoteInvitations.remove(remoteInvitation.hashCode())
+                            return null
                         }
                     })
             }
 
             "refuseRemoteInvitation" -> {
-                val response = args?.get("response") as? String
-                val callerId = args?.get("callerId") as? String
-                val remoteInvitation = agoraClient.call.remoteInvitations[callerId]?.apply {
-                    this.response = response
-                }
-
-                if (remoteInvitation == null) {
-                    runMainThread {
-                        result.success(hashMapOf("errorCode" to -1))
-                    }
-                    return
-                }
-
-                agoraClient.call.manager.refuseRemoteInvitation(remoteInvitation,
-                    object : Callback<Void>(result) {
-                        override fun toJson(responseInfo: Void): Any {
-                            agoraClient.call.remoteInvitations.remove(remoteInvitation.callerId)
-                            return Unit
+                val remoteInvitation =
+                    (args?.get("remoteInvitation") as? Map<*, *>)?.toRemoteInvitation(agoraClient.call)
+                agoraClient.call.manager.refuseRemoteInvitation(
+                    remoteInvitation,
+                    object : Callback<Void>(result, handler) {
+                        override fun toJson(responseInfo: Void): Any? {
+                            agoraClient.call.remoteInvitations.remove(remoteInvitation.hashCode())
+                            return null
                         }
-                    })
+                    },
+                )
+            }
+
+            "cancelLocalInvitation" -> {
+                val localInvitation =
+                    (args?.get("localInvitation") as? Map<*, *>)?.toLocalInvitation(agoraClient.call)
+                agoraClient.call.manager.cancelLocalInvitation(
+                    localInvitation,
+                    object : Callback<Void>(result, handler) {
+                        override fun toJson(responseInfo: Void): Any? {
+                            agoraClient.call.localInvitations.remove(localInvitation.hashCode())
+                            return null
+                        }
+                    },
+                )
             }
 
             else -> {
@@ -200,42 +168,23 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
     private fun handleStaticMethod(methodName: String?, params: Map<*, *>?, result: Result) {
         when (methodName) {
             "createInstance" -> {
-                val appId = params?.get("appId") as? String
-
-                if (appId == null) {
-                    runMainThread {
-                        result.success(hashMapOf("errorCode" to -1))
-                    }
-                    return
-                }
-
-                while (null != clients[nextClientIndex]) {
+                while (clients[nextClientIndex] != null) {
                     nextClientIndex++
                 }
-
                 val rtmClient = RTMClient(
                     applicationContext,
-                    appId,
+                    params?.get("appId") as? String,
                     nextClientIndex,
                     registrar?.messenger() ?: binding!!.binaryMessenger,
                     handler
                 )
-                result.success(
-                    hashMapOf(
-                        "errorCode" to 0,
-                        "result" to nextClientIndex,
-                    )
-                )
+                object : Callback<Long>(result, handler) {}.onSuccess(nextClientIndex)
                 clients[nextClientIndex] = rtmClient
                 nextClientIndex++
             }
 
             "getSdkVersion" -> {
-                result.success(
-                    hashMapOf(
-                        "errorCode" to 0, "result" to RtmClient.getSdkVersion()
-                    )
-                )
+                object : Callback<String>(result, handler) {}.onSuccess(RtmClient.getSdkVersion())
             }
 
             else -> {
@@ -247,201 +196,42 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
     private fun handleClientMethod(methodName: String?, params: Map<*, *>?, result: Result) {
         val clientIndex = (params?.get("clientIndex") as? Int)?.toLong()
         val agoraClient = clients[clientIndex]
-        if (agoraClient == null) {
-            runMainThread {
-                result.success(hashMapOf("errorCode" to -1))
-            }
+        if (agoraClient?.client == null) {
+            object : Callback<Void>(result, handler) {}.onFailure(
+                ErrorInfo(
+                    LOGIN_ERR_NOT_INITIALIZED
+                )
+            )
             return
         }
-
-        val client = agoraClient.client
         val args = params?.get("args") as? Map<*, *>
         when (methodName) {
             "release" -> {
-                agoraClient.channels.forEach {
-                    val pair = it.toPair()
-                    pair.second.release()
-                }
+                agoraClient.channels.values.forEach { it.release() }
                 agoraClient.channels.clear()
                 clients.remove(clientIndex)
-                runMainThread {
-                    result.success(hashMapOf("errorCode" to 0))
-                }
+                object : Callback<Void>(result, handler) {}.onSuccess(null)
             }
 
             "login" -> {
                 val token = args?.get("token") as? String
                 val userId = args?.get("userId") as? String
-                client?.login(token, userId, object : Callback<Void>(result) {})
+                agoraClient.client.login(token, userId, object : Callback<Void>(result, handler) {})
             }
 
             "logout" -> {
-                client?.logout(object : Callback<Void>(result) {})
-            }
-
-            "renewToken" -> {
-                val token = args?.get("token") as? String
-                client?.renewToken(token, object : Callback<Void>(result) {})
-            }
-
-            "queryPeersOnlineStatus" -> {
-                val peerIds = (args?.get("peerIds") as? ArrayList<*>)?.toSet()
-                client?.queryPeersOnlineStatus(peerIds,
-                    object : Callback<Map<String, Boolean>>(result) {
-                        override fun toJson(responseInfo: Map<String, Boolean>): Any {
-                            return responseInfo
-                        }
-                    })
+                agoraClient.client.logout(object : Callback<Void>(result, handler) {})
             }
 
             "sendMessageToPeer" -> {
                 val peerId = args?.get("peerId") as? String
-                val text = args?.get("message") as? String
-                val message = client?.createMessage(text)
-                val options = SendMessageOptions()
-                client?.sendMessageToPeer(peerId,
+                val message = (args?.get("message") as? Map<*, *>)?.toRtmMessage(agoraClient.client)
+                val options = (args?.get("options") as? Map<*, *>)?.toSendMessageOptions()
+                agoraClient.client.sendMessageToPeer(
+                    peerId,
                     message,
                     options,
-                    object : Callback<Void>(result) {})
-            }
-
-            "setLocalUserAttributes" -> {
-                val attributes = args?.get("attributes") as? List<*>
-                val localUserAttributes = ArrayList<RtmAttribute>()
-                attributes?.forEach {
-                    (it as? Map<*, *>)?.let {
-                        localUserAttributes.add(RtmAttribute().apply {
-                            key = it["key"] as String
-                            value = it["value"] as String
-                        })
-                    }
-                }
-                client?.setLocalUserAttributes(localUserAttributes,
-                    object : Callback<Void>(result) {})
-            }
-
-            "addOrUpdateLocalUserAttributes" -> {
-                val attributes = args?.get("attributes") as? List<*>
-                val localUserAttributes = ArrayList<RtmAttribute>()
-                attributes?.forEach {
-                    (it as? Map<*, *>)?.let {
-                        localUserAttributes.add(RtmAttribute().apply {
-                            key = it["key"] as String
-                            value = it["value"] as String
-                        })
-                    }
-                }
-                client?.addOrUpdateLocalUserAttributes(
-                    localUserAttributes,
-                    object : Callback<Void>(result) {})
-            }
-
-            "deleteLocalUserAttributesByKeys" -> {
-                val keys = args?.get("keys") as? List<*>
-                client?.deleteLocalUserAttributesByKeys(keys, object : Callback<Void>(result) {})
-            }
-
-            "clearLocalUserAttributes" -> {
-                client?.clearLocalUserAttributes(object : Callback<Void>(result) {})
-            }
-
-            "getUserAttributes" -> {
-                val userId = args?.get("userId") as? String
-                client?.getUserAttributes(userId, object : Callback<List<RtmAttribute>>(result) {
-                    override fun toJson(responseInfo: List<RtmAttribute>): Any {
-                        return responseInfo.toJson()
-                    }
-                })
-            }
-
-            "getUserAttributesByKeys" -> {
-                val userId = args?.get("userId") as? String
-                val keys = args?.get("keys") as? List<*>
-                client?.getUserAttributesByKeys(userId, keys,
-                    object : Callback<List<RtmAttribute>>(result) {
-                        override fun toJson(responseInfo: List<RtmAttribute>): Any {
-                            return responseInfo.toJson()
-                        }
-                    }
-                )
-            }
-
-            "setChannelAttributes" -> {
-                val channelId = args?.get("channelId") as? String
-                val enableNotificationToChannelMembers =
-                    args?.get("enableNotificationToChannelMembers") as? Boolean
-                val attributes = args?.get("attributes") as? List<*>
-                val channelAttributes = ArrayList<RtmChannelAttribute>()
-                attributes?.forEach {
-                    (it as? Map<*, *>)?.let {
-                        channelAttributes.add(RtmChannelAttribute().apply {
-                            key = it["key"] as String
-                            value = it["value"] as String
-                        })
-                    }
-                }
-                client?.setChannelAttributes(channelId, channelAttributes,
-                    ChannelAttributeOptions(enableNotificationToChannelMembers),
-                    object : Callback<Void>(result) {})
-            }
-
-            "addOrUpdateChannelAttributes" -> {
-                val channelId = args?.get("channelId") as? String
-                val enableNotificationToChannelMembers =
-                    args?.get("enableNotificationToChannelMembers") as? Boolean
-                val attributes = args?.get("attributes") as? List<*>
-                val channelAttributes = ArrayList<RtmChannelAttribute>()
-                attributes?.forEach {
-                    (it as? Map<*, *>)?.let {
-                        channelAttributes.add(RtmChannelAttribute().apply {
-                            key = it["key"] as String
-                            value = it["value"] as String
-                        })
-                    }
-                }
-                client?.addOrUpdateChannelAttributes(channelId, channelAttributes,
-                    ChannelAttributeOptions(enableNotificationToChannelMembers),
-                    object : Callback<Void>(result) {})
-            }
-
-            "deleteChannelAttributesByKeys" -> {
-                val channelId = args?.get("channelId") as? String
-                val enableNotificationToChannelMembers =
-                    args?.get("enableNotificationToChannelMembers") as? Boolean
-                val keys = args?.get("keys") as? List<*>
-                client?.deleteChannelAttributesByKeys(channelId, keys,
-                    ChannelAttributeOptions(enableNotificationToChannelMembers),
-                    object : Callback<Void>(result) {})
-            }
-
-            "clearChannelAttributes" -> {
-                val channelId = args?.get("channelId") as? String
-                val enableNotificationToChannelMembers =
-                    args?.get("enableNotificationToChannelMembers") as? Boolean
-                client?.clearChannelAttributes(channelId,
-                    ChannelAttributeOptions(enableNotificationToChannelMembers),
-                    object : Callback<Void>(result) {})
-            }
-
-            "getChannelAttributes" -> {
-                val channelId = args?.get("channelId") as? String
-                client?.getChannelAttributes(channelId,
-                    object : Callback<List<RtmChannelAttribute>>(result) {
-                        override fun toJson(responseInfo: List<RtmChannelAttribute>): Any {
-                            return responseInfo.toJson()
-                        }
-                    })
-            }
-
-            "getChannelAttributesByKeys" -> {
-                val channelId = args?.get("channelId") as? String
-                val keys = args?.get("keys") as? List<*>
-                client?.getChannelAttributesByKeys(channelId, keys,
-                    object : Callback<List<RtmChannelAttribute>>(result) {
-                        override fun toJson(responseInfo: List<RtmChannelAttribute>): Any {
-                            return responseInfo.toJson()
-                        }
-                    }
+                    object : Callback<Void>(result, handler) {},
                 )
             }
 
@@ -453,33 +243,220 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                     registrar?.messenger() ?: binding!!.binaryMessenger,
                     handler
                 )
-                val channel = client?.createChannel(channelId, agoraRtmChannel)
-                if (null == channel) {
-                    runMainThread {
-                        result.success(hashMapOf("errorCode" to -1))
-                    }
-                    return
-                }
-                agoraClient.channels[channelId] = channel
-                runMainThread {
-                    result.success(hashMapOf("errorCode" to 0))
+                agoraClient.client.createChannel(channelId, agoraRtmChannel)?.let {
+                    agoraClient.channels[channelId] = it
+                    object : Callback<Void>(result, handler) {}.onSuccess(null)
+                } ?: let {
+                    object : Callback<Void>(result, handler) {}.onFailure(
+                        ErrorInfo(
+                            JOIN_CHANNEL_ERR_NOT_INITIALIZED
+                        )
+                    )
                 }
             }
 
-            "releaseChannel" -> {
+            "queryPeersOnlineStatus" -> {
+                val peerIds = (args?.get("peerIds") as? ArrayList<*>)?.toStringSet()
+                agoraClient.client.queryPeersOnlineStatus(
+                    peerIds,
+                    object : Callback<Map<String, Boolean>>(result, handler) {
+                        override fun toJson(responseInfo: Map<String, Boolean>): Any {
+                            return responseInfo
+                        }
+                    },
+                )
+            }
+
+            "subscribePeersOnlineStatus" -> {
+                val peerIds = (args?.get("peerIds") as? ArrayList<*>)?.toStringSet()
+                agoraClient.client.subscribePeersOnlineStatus(
+                    peerIds,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "unsubscribePeersOnlineStatus" -> {
+                val peerIds = (args?.get("peerIds") as? ArrayList<*>)?.toStringSet()
+                agoraClient.client.unsubscribePeersOnlineStatus(
+                    peerIds,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "queryPeersBySubscriptionOption" -> {
+                val option = args?.get("option") as? Int
+                agoraClient.client.queryPeersBySubscriptionOption(
+                    option,
+                    object : Callback<Set<String>>(result, handler) {
+                        override fun toJson(responseInfo: Set<String>): Any {
+                            return responseInfo.toList()
+                        }
+                    },
+                )
+            }
+
+            "renewToken" -> {
+                val token = args?.get("token") as? String
+                agoraClient.client.renewToken(token, object : Callback<Void>(result, handler) {})
+            }
+
+            "setLocalUserAttributes" -> {
+                val attributes = (args?.get("attributes") as? List<*>)?.toRtmAttributeList()
+                agoraClient.client.setLocalUserAttributes(
+                    attributes,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "addOrUpdateLocalUserAttributes" -> {
+                val attributes = (args?.get("attributes") as? List<*>)?.toRtmAttributeList()
+                agoraClient.client.addOrUpdateLocalUserAttributes(
+                    attributes,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "deleteLocalUserAttributesByKeys" -> {
+                val attributeKeys = (args?.get("attributeKeys") as? List<*>)?.toStringList()
+                agoraClient.client.deleteLocalUserAttributesByKeys(
+                    attributeKeys,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "clearLocalUserAttributes" -> {
+                agoraClient.client.clearLocalUserAttributes(object :
+                    Callback<Void>(result, handler) {})
+            }
+
+            "getUserAttributes" -> {
+                val userId = args?.get("userId") as? String
+                agoraClient.client.getUserAttributes(
+                    userId,
+                    object : Callback<List<RtmAttribute>>(result, handler) {
+                        override fun toJson(responseInfo: List<RtmAttribute>): Any {
+                            return responseInfo.toJson()
+                        }
+                    },
+                )
+            }
+
+            "getUserAttributesByKeys" -> {
+                val userId = args?.get("userId") as? String
+                val attributeKeys = (args?.get("attributeKeys") as? List<*>)?.toStringList()
+                agoraClient.client.getUserAttributesByKeys(
+                    userId,
+                    attributeKeys,
+                    object : Callback<List<RtmAttribute>>(result, handler) {
+                        override fun toJson(responseInfo: List<RtmAttribute>): Any {
+                            return responseInfo.toJson()
+                        }
+                    },
+                )
+            }
+
+            "setChannelAttributes" -> {
                 val channelId = args?.get("channelId") as? String
-                val rtmChannel = agoraClient.channels[channelId]
-                if (null == rtmChannel) {
-                    runMainThread {
-                        result.success(hashMapOf("errorCode" to -1))
-                    }
-                    return
-                }
-                rtmChannel.release()
-                agoraClient.channels.remove(channelId)
-                runMainThread {
-                    result.success(hashMapOf("errorCode" to 0))
-                }
+                val attributes = (args?.get("attributes") as? List<*>)?.toRtmChannelAttributeList()
+                val option = (args?.get("option") as? Map<*, *>)?.toChannelAttributeOptions()
+                agoraClient.client.setChannelAttributes(
+                    channelId,
+                    attributes,
+                    option,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "addOrUpdateChannelAttributes" -> {
+                val channelId = args?.get("channelId") as? String
+                val attributes = (args?.get("attributes") as? List<*>)?.toRtmChannelAttributeList()
+                val option = (args?.get("option") as? Map<*, *>)?.toChannelAttributeOptions()
+                agoraClient.client.addOrUpdateChannelAttributes(
+                    channelId,
+                    attributes,
+                    option,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "deleteChannelAttributesByKeys" -> {
+                val channelId = args?.get("channelId") as? String
+                val attributeKeys = (args?.get("attributeKeys") as? List<*>)?.toStringList()
+                val option = (args?.get("option") as? Map<*, *>)?.toChannelAttributeOptions()
+                agoraClient.client.deleteChannelAttributesByKeys(
+                    channelId,
+                    attributeKeys,
+                    option,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "clearChannelAttributes" -> {
+                val channelId = args?.get("channelId") as? String
+                val option = (args?.get("option") as? Map<*, *>)?.toChannelAttributeOptions()
+                agoraClient.client.clearChannelAttributes(
+                    channelId,
+                    option,
+                    object : Callback<Void>(result, handler) {},
+                )
+            }
+
+            "getChannelAttributes" -> {
+                val channelId = args?.get("channelId") as? String
+                agoraClient.client.getChannelAttributes(
+                    channelId,
+                    object : Callback<List<RtmChannelAttribute>>(result, handler) {
+                        override fun toJson(responseInfo: List<RtmChannelAttribute>): Any {
+                            return responseInfo.toJson()
+                        }
+                    },
+                )
+            }
+
+            "getChannelAttributesByKeys" -> {
+                val channelId = args?.get("channelId") as? String
+                val attributeKeys = (args?.get("attributeKeys") as? List<*>)?.toStringList()
+                agoraClient.client.getChannelAttributesByKeys(
+                    channelId,
+                    attributeKeys,
+                    object : Callback<List<RtmChannelAttribute>>(result, handler) {
+                        override fun toJson(responseInfo: List<RtmChannelAttribute>): Any {
+                            return responseInfo.toJson()
+                        }
+                    },
+                )
+            }
+
+            "getChannelMemberCount" -> {
+                val channelIds = (args?.get("channelIds") as? List<*>)?.toStringList()
+                agoraClient.client.getChannelMemberCount(
+                    channelIds,
+                    object : Callback<List<RtmChannelMemberCount>>(result, handler) {
+                        override fun toJson(responseInfo: List<RtmChannelMemberCount>): Any {
+                            return responseInfo.toJson()
+                        }
+                    },
+                )
+            }
+
+            "setParameters" -> {
+                val parameters = args?.get("parameters") as? String
+                agoraClient.client.setParameters(parameters)
+            }
+
+            "setLogFile" -> {
+                val filePath = args?.get("filePath") as? String
+                agoraClient.client.setLogFile(filePath)
+            }
+
+            "setLogFilter" -> {
+                val filter = args?.get("filter") as? Int
+                agoraClient.client.setLogFilter(filter!!)
+            }
+
+            "setLogFileSize" -> {
+                val fileSizeInKBytes = args?.get("fileSizeInKBytes") as? Int
+                agoraClient.client.setLogFileSize(fileSizeInKBytes!!)
             }
 
             else -> {
@@ -488,59 +465,59 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun handleChannelMethod(
-        methodName: String?, params: Map<*, *>?, result: Result
-    ) {
+    private fun handleChannelMethod(methodName: String?, params: Map<*, *>?, result: Result) {
         val clientIndex = (params?.get("clientIndex") as? Int)?.toLong()
         val agoraClient = clients[clientIndex]
-        if (null == agoraClient) {
-            runMainThread {
-                result.success(hashMapOf("errorCode" to -1))
-            }
-            return
-        }
-
-        val client = agoraClient.client
-        if (null == client) {
-            runMainThread {
-                result.success(hashMapOf("errorCode" to -1))
-            }
+        if (agoraClient?.client == null) {
+            object : Callback<Void>(result, handler) {}.onFailure(
+                ErrorInfo(
+                    LOGIN_ERR_NOT_INITIALIZED
+                )
+            )
             return
         }
 
         val channelId = params?.get("channelId") as? String
         val rtmChannel = agoraClient.channels[channelId]
-        if (null == rtmChannel) {
-            runMainThread {
-                result.success(hashMapOf("errorCode" to -1))
-            }
+        if (rtmChannel == null) {
+            object : Callback<Void>(result, handler) {}.onFailure(
+                ErrorInfo(
+                    JOIN_CHANNEL_ERR_NOT_INITIALIZED
+                )
+            )
             return
         }
 
         val args = params?.get("args") as? Map<*, *>
         when (methodName) {
             "join" -> {
-                rtmChannel.join(object : Callback<Void>(result) {})
-            }
-
-            "sendMessage" -> {
-                val message = client.createMessage().apply {
-                    text = args?.get("message") as? String
-                }
-                val options = SendMessageOptions()
-                rtmChannel.sendMessage(message, options, object : Callback<Void>(result) {})
+                rtmChannel.join(object : Callback<Void>(result, handler) {})
             }
 
             "leave" -> {
-                rtmChannel.leave(object : Callback<Void>(result) {})
+                rtmChannel.leave(object : Callback<Void>(result, handler) {})
+            }
+
+            "sendMessage" -> {
+                val message = (args?.get("message") as? Map<*, *>)?.toRtmMessage(agoraClient.client)
+                val options = (args?.get("options") as? Map<*, *>)?.toSendMessageOptions()
+                rtmChannel.sendMessage(message,
+                    options,
+                    object : Callback<Void>(result, handler) {})
             }
 
             "getMembers" -> {
-                rtmChannel.getMembers(object : Callback<List<RtmChannelMember>>(result) {
+                rtmChannel.getMembers(object : Callback<List<RtmChannelMember>>(result, handler) {
                     override fun toJson(responseInfo: List<RtmChannelMember>): Any {
                         return responseInfo.toJson()
                     }
                 })
+            }
+
+            "release" -> {
+                rtmChannel.release()
+                agoraClient.channels.remove(channelId)
+                object : Callback<Void>(result, handler) {}.onSuccess(null)
             }
 
             else -> {

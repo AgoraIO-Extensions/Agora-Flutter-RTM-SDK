@@ -54,7 +54,7 @@ class AgoraRtmClient {
     _eventSubscription = EventChannel('io.agora.rtm.client$_clientIndex')
         .receiveBroadcastStream()
         .listen((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
+      final map = Map.from(event);
       switch (map['event']) {
         case 'onConnectionStateChanged':
           int state = map['state'];
@@ -62,7 +62,8 @@ class AgoraRtmClient {
           onConnectionStateChanged?.call(state, reason);
           break;
         case 'onMessageReceived':
-          RtmMessage message = RtmMessage.fromJson(map["message"]);
+          RtmMessage message =
+              RtmMessage.fromJson(Map<String, dynamic>.from(map["message"]));
           String peerId = map["peerId"];
           onMessageReceived?.call(message, peerId);
           break;
@@ -131,7 +132,7 @@ class AgoraRtmClient {
   }
 
   RtmMessage createRawMessage(Uint8List raw, String? description) {
-    return RtmMessage.fromRaw(raw, description);
+    return RtmMessage.fromRaw(raw, description ?? "");
   }
 
   /// Allows a user to send a peer-to-peer message to a specific peer user.
@@ -216,19 +217,18 @@ class AgoraRtmClient {
 
   /// Gets all attributes of a specified user.
   Future<List<RtmAttribute>> getUserAttributes2(String userId) async {
-    return List<Map<String, dynamic>>.from(
+    return List<Map>.from(
             await _callNative("getUserAttributes", {'userId': userId}))
-        .map((e) => RtmAttribute.fromJson(e))
+        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 
   /// Gets the attributes of a specified user using attribute keys.
   Future<List<RtmAttribute>> getUserAttributesByKeys2(
       String userId, List<String> attributeKeys) async {
-    return List<Map<String, dynamic>>.from(await _callNative(
-            "getUserAttributesByKeys",
+    return List<Map>.from(await _callNative("getUserAttributesByKeys",
             {'userId': userId, 'attributeKeys': attributeKeys}))
-        .map((e) => RtmAttribute.fromJson(e))
+        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 
@@ -277,27 +277,29 @@ class AgoraRtmClient {
   /// Gets all attributes of a specified channel.
   Future<List<RtmChannelAttribute>> getChannelAttributes(
       String channelId) async {
-    return List<Map<String, dynamic>>.from(
+    return List<Map>.from(
             await _callNative("getChannelAttributes", {'channelId': channelId}))
-        .map((attr) => RtmChannelAttribute.fromJson(attr))
+        .map((attr) =>
+            RtmChannelAttribute.fromJson(Map<String, dynamic>.from(attr)))
         .toList();
   }
 
   /// Gets the attributes of a specified channel using attribute keys.
   Future<List<RtmChannelAttribute>> getChannelAttributesByKeys(
       String channelId, List<String> attributeKeys) async {
-    return List<Map<String, dynamic>>.from(await _callNative(
-            "getChannelAttributesByKeys",
+    return List<Map>.from(await _callNative("getChannelAttributesByKeys",
             {'channelId': channelId, 'attributeKeys': attributeKeys}))
-        .map((attr) => RtmChannelAttribute.fromJson(attr))
+        .map((attr) =>
+            RtmChannelAttribute.fromJson(Map<String, dynamic>.from(attr)))
         .toList();
   }
 
   Future<List<RtmChannelMember>> getChannelMemberCount(
       List<String> channelIds) async {
-    return List<Map<String, dynamic>>.from(await _callNative(
+    return List<Map>.from(await _callNative(
             "getChannelMemberCount", {'channelIds': channelIds}))
-        .map((attr) => RtmChannelMember.fromJson(attr))
+        .map((attr) =>
+            RtmChannelMember.fromJson(Map<String, dynamic>.from(attr)))
         .toList();
   }
 
@@ -341,75 +343,107 @@ class AgoraRtmClient {
   /// [AgoraRtmCallManager.onLocalInvitationReceivedByPeer]
   @Deprecated(
       'Use AgoraRtmCallManager.onLocalInvitationReceivedByPeer instead of.')
-  void Function(LocalInvitation invite)? onLocalInvitationReceivedByPeer;
+  set onLocalInvitationReceivedByPeer(
+      Function(LocalInvitation invite)? onLocalInvitationReceivedByPeer) {
+    _callManager.onLocalInvitationReceivedByPeer =
+        onLocalInvitationReceivedByPeer;
+  }
 
   /// [AgoraRtmCallManager.onLocalInvitationAccepted]
   @Deprecated('Use AgoraRtmCallManager.onLocalInvitationAccepted instead of.')
-  void Function(LocalInvitation invite, String response)?
-      onLocalInvitationAccepted;
+  set onLocalInvitationAccepted(
+      Function(LocalInvitation invite, String response)?
+          onLocalInvitationAccepted) {
+    _callManager.onLocalInvitationAccepted = onLocalInvitationAccepted;
+  }
 
   /// [AgoraRtmCallManager.onLocalInvitationRefused]
   @Deprecated('Use AgoraRtmCallManager.onLocalInvitationRefused instead of.')
-  void Function(LocalInvitation invite, String response)?
-      onLocalInvitationRefused;
+  set onLocalInvitationRefused(
+      void Function(LocalInvitation invite, String response)?
+          onLocalInvitationRefused) {
+    _callManager.onLocalInvitationRefused = onLocalInvitationRefused;
+  }
 
   /// [AgoraRtmCallManager.onLocalInvitationCanceled]
   @Deprecated('Use AgoraRtmCallManager.onLocalInvitationCanceled instead of.')
-  void Function(LocalInvitation invite)? onLocalInvitationCanceled;
+  set onLocalInvitationCanceled(
+      void Function(LocalInvitation invite)? onLocalInvitationCanceled) {
+    _callManager.onLocalInvitationCanceled = onLocalInvitationCanceled;
+  }
 
   /// [AgoraRtmCallManager.onLocalInvitationFailure]
   @Deprecated('Use AgoraRtmCallManager.onLocalInvitationFailure instead of.')
-  void Function(LocalInvitation invite, int errorCode)?
-      onLocalInvitationFailure;
+  set onLocalInvitationFailure(
+      void Function(LocalInvitation invite, int errorCode)?
+          onLocalInvitationFailure) {
+    _callManager.onLocalInvitationFailure = onLocalInvitationFailure;
+  }
 
   /// [AgoraRtmCallManager.onRemoteInvitationReceived]
   @Deprecated(
       'Use AgoraRtmCallManager.onRemoteInvitationReceivedByPeer instead of.')
-  void Function(RemoteInvitation invite)? onRemoteInvitationReceivedByPeer;
+  set onRemoteInvitationReceivedByPeer(
+      void Function(RemoteInvitation invite)?
+          onRemoteInvitationReceivedByPeer) {
+    _callManager.onRemoteInvitationReceived = onRemoteInvitationReceivedByPeer;
+  }
 
   /// [AgoraRtmCallManager.onRemoteInvitationAccepted]
   @Deprecated('Use AgoraRtmCallManager.onRemoteInvitationAccepted instead of.')
-  void Function(RemoteInvitation invite)? onRemoteInvitationAccepted;
+  set onRemoteInvitationAccepted(
+      void Function(RemoteInvitation invite)? onRemoteInvitationAccepted) {
+    _callManager.onRemoteInvitationAccepted = onRemoteInvitationAccepted;
+  }
 
   /// [AgoraRtmCallManager.onRemoteInvitationRefused]
   @Deprecated('Use AgoraRtmCallManager.onRemoteInvitationRefused instead of.')
-  void Function(RemoteInvitation invite)? onRemoteInvitationRefused;
+  set onRemoteInvitationRefused(
+      void Function(RemoteInvitation invite)? onRemoteInvitationRefused) {
+    _callManager.onRemoteInvitationRefused = onRemoteInvitationRefused;
+  }
 
   /// [AgoraRtmCallManager.onRemoteInvitationCanceled]
   @Deprecated('Use AgoraRtmCallManager.onRemoteInvitationCanceled instead of.')
-  void Function(RemoteInvitation invite)? onRemoteInvitationCanceled;
+  set onRemoteInvitationCanceled(
+      void Function(RemoteInvitation invite)? onRemoteInvitationCanceled) {
+    _callManager.onRemoteInvitationCanceled = onRemoteInvitationCanceled;
+  }
 
   /// [AgoraRtmCallManager.onRemoteInvitationFailure]
   @Deprecated('Use AgoraRtmCallManager.onRemoteInvitationFailure instead of.')
-  void Function(RemoteInvitation invite, int errorCode)?
-      onRemoteInvitationFailure;
+  set onRemoteInvitationFailure(
+      void Function(RemoteInvitation invite, int errorCode)?
+          onRemoteInvitationFailure) {
+    _callManager.onRemoteInvitationFailure = onRemoteInvitationFailure;
+  }
 
   /// [AgoraRtmCallManager.sendLocalInvitation]
   @Deprecated('Use AgoraRtmCallManager.sendLocalInvitation instead of.')
   Future<void> sendLocalInvitation(Map<String, dynamic> arguments) {
-    return _callManager
-        .sendLocalInvitation(LocalInvitation.fromJson(arguments));
+    return _callManager.sendLocalInvitation(
+        LocalInvitation.fromJson(Map<String, dynamic>.from(arguments)));
   }
 
   /// [AgoraRtmCallManager.acceptRemoteInvitation]
   @Deprecated('Use AgoraRtmCallManager.acceptRemoteInvitation instead of.')
   Future<void> acceptRemoteInvitation(Map<String, dynamic> arguments) {
-    return _callManager
-        .acceptRemoteInvitation(RemoteInvitation.fromJson(arguments));
+    return _callManager.acceptRemoteInvitation(
+        RemoteInvitation.fromJson(Map<String, dynamic>.from(arguments)));
   }
 
   /// [AgoraRtmCallManager.refuseRemoteInvitation]
   @Deprecated('Use AgoraRtmCallManager.refuseRemoteInvitation instead of.')
   Future<void> refuseRemoteInvitation(Map<String, dynamic> arguments) {
-    return _callManager
-        .refuseRemoteInvitation(RemoteInvitation.fromJson(arguments));
+    return _callManager.refuseRemoteInvitation(
+        RemoteInvitation.fromJson(Map<String, dynamic>.from(arguments)));
   }
 
   /// [AgoraRtmCallManager.cancelLocalInvitation]
   @Deprecated('Use AgoraRtmCallManager.cancelLocalInvitation instead of.')
   Future<void> cancelLocalInvitation(Map<String, dynamic> arguments) {
-    return _callManager
-        .cancelLocalInvitation(LocalInvitation.fromJson(arguments));
+    return _callManager.cancelLocalInvitation(
+        LocalInvitation.fromJson(Map<String, dynamic>.from(arguments)));
   }
 
   /// [sendMessageToPeer2]
@@ -427,16 +461,18 @@ class AgoraRtmClient {
   /// [setLocalUserAttributes2]
   @Deprecated('Use setLocalUserAttributes2 instead of.')
   Future<void> setLocalUserAttributes(List<Map<String, String>> attributes) {
-    return setLocalUserAttributes2(
-        attributes.map((e) => RtmAttribute.fromJson(e)).toList());
+    return setLocalUserAttributes2(attributes
+        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
+        .toList());
   }
 
   /// [addOrUpdateLocalUserAttributes2]
   @Deprecated('Use addOrUpdateLocalUserAttributes2 instead of.')
   Future<void> addOrUpdateLocalUserAttributes(
       List<Map<String, String>> attributes) {
-    return addOrUpdateLocalUserAttributes2(
-        attributes.map((e) => RtmAttribute.fromJson(e)).toList());
+    return addOrUpdateLocalUserAttributes2(attributes
+        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
+        .toList());
   }
 
   /// [getUserAttributes2]

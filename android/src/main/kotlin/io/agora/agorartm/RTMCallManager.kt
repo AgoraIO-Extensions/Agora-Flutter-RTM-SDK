@@ -19,8 +19,8 @@ class RTMCallManager(
     private var eventSink: EventChannel.EventSink?
 
     val manager: RtmCallManager
-    val remoteInvitations: MutableMap<String, RemoteInvitation> = HashMap()
-    val localInvitations: MutableMap<String, LocalInvitation> = HashMap()
+    val remoteInvitations: MutableMap<Int?, RemoteInvitation> = HashMap()
+    val localInvitations: MutableMap<Int?, LocalInvitation> = HashMap()
 
     init {
         this.eventChannel =
@@ -54,7 +54,7 @@ class RTMCallManager(
 
     override
     fun onLocalInvitationReceivedByPeer(localInvitation: LocalInvitation) {
-        localInvitations[localInvitation.calleeId] = localInvitation
+        localInvitations[localInvitation.hashCode()] = localInvitation
         sendEvent(
             "onLocalInvitationReceivedByPeer", hashMapOf(
                 "localInvitation" to localInvitation.toJson()
@@ -103,7 +103,7 @@ class RTMCallManager(
 
     override
     fun onRemoteInvitationReceived(remoteInvitation: RemoteInvitation) {
-        remoteInvitations[remoteInvitation.callerId] = remoteInvitation
+        remoteInvitations[remoteInvitation.hashCode()] = remoteInvitation
         sendEvent(
             "onRemoteInvitationReceived", hashMapOf(
                 "remoteInvitation" to remoteInvitation.toJson()
@@ -113,7 +113,7 @@ class RTMCallManager(
 
     override
     fun onRemoteInvitationAccepted(remoteInvitation: RemoteInvitation) {
-        remoteInvitations.remove(remoteInvitation.callerId)
+        remoteInvitations.remove(remoteInvitation.hashCode())
         sendEvent(
             "onRemoteInvitationAccepted", hashMapOf(
                 "remoteInvitation" to remoteInvitation.toJson()
@@ -123,7 +123,7 @@ class RTMCallManager(
 
     override
     fun onRemoteInvitationRefused(remoteInvitation: RemoteInvitation) {
-        remoteInvitations.remove(remoteInvitation.callerId)
+        remoteInvitations.remove(remoteInvitation.hashCode())
         sendEvent(
             "onRemoteInvitationRefused", hashMapOf(
                 "remoteInvitation" to remoteInvitation.toJson()
@@ -133,7 +133,7 @@ class RTMCallManager(
 
     override
     fun onRemoteInvitationCanceled(remoteInvitation: RemoteInvitation) {
-        remoteInvitations.remove(remoteInvitation.callerId)
+        remoteInvitations.remove(remoteInvitation.hashCode())
         sendEvent(
             "onRemoteInvitationCanceled", hashMapOf(
                 "remoteInvitation" to remoteInvitation.toJson()
@@ -143,7 +143,7 @@ class RTMCallManager(
 
     override
     fun onRemoteInvitationFailure(remoteInvitation: RemoteInvitation, errorCode: Int) {
-        remoteInvitations.remove(remoteInvitation.callerId)
+        remoteInvitations.remove(remoteInvitation.hashCode())
         sendEvent(
             "onRemoteInvitationFailure", hashMapOf(
                 "remoteInvitation" to remoteInvitation.toJson(),

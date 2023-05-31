@@ -45,31 +45,35 @@ class AgoraRtmChannel {
   AgoraRtmChannel(this._clientIndex, this._channelId) {
     _eventSubscription =
         _addEventChannel().receiveBroadcastStream().listen((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
+      final map = Map.from(event);
       switch (map['event']) {
         case 'onMemberCountUpdated':
           int memberCount = map['memberCount'];
           onMemberCountUpdated?.call(memberCount);
           break;
         case 'onAttributesUpdated':
-          List<RtmChannelAttribute> attributeList =
-              List<Map<String, dynamic>>.from(map['attributeList'])
-                  .map((e) => RtmChannelAttribute.fromJson(e))
-                  .toList();
+          List<RtmChannelAttribute> attributeList = List<Map>.from(
+                  map['attributeList'])
+              .map((e) =>
+                  RtmChannelAttribute.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
           onAttributesUpdated?.call(attributeList);
           break;
         case 'onMessageReceived':
-          RtmMessage message = RtmMessage.fromJson(map['message']);
-          RtmChannelMember fromMember =
-              RtmChannelMember.fromJson(map['fromMember']);
+          RtmMessage message =
+              RtmMessage.fromJson(Map<String, dynamic>.from(map['message']));
+          RtmChannelMember fromMember = RtmChannelMember.fromJson(
+              Map<String, dynamic>.from(map['fromMember']));
           onMessageReceived?.call(message, fromMember);
           break;
         case 'onMemberJoined':
-          RtmChannelMember member = RtmChannelMember.fromJson(map['member']);
+          RtmChannelMember member = RtmChannelMember.fromJson(
+              Map<String, dynamic>.from(map['member']));
           onMemberJoined?.call(member);
           break;
         case 'onMemberLeft':
-          RtmChannelMember member = RtmChannelMember.fromJson(map['member']);
+          RtmChannelMember member = RtmChannelMember.fromJson(
+              Map<String, dynamic>.from(map['member']));
           onMemberLeft?.call(member);
           break;
       }
@@ -94,15 +98,14 @@ class AgoraRtmChannel {
 
   Future<void> sendMessage2(RtmMessage message, [SendMessageOptions? options]) {
     return _callNative("sendMessage", {
-      'message': message.text,
+      'message': message.toJson(),
       "options": options?.toJson(),
     });
   }
 
   Future<List<RtmChannelMember>> getMembers() async {
-    return List<Map<String, dynamic>>.from(
-            await _callNative("getMembers", null))
-        .map((e) => RtmChannelMember.fromJson(e))
+    return List<Map>.from(await _callNative("getMembers", null))
+        .map((e) => RtmChannelMember.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 
@@ -126,9 +129,11 @@ class AgoraRtmChannel {
   Future<void> sendMessage(RtmMessage message,
       [bool? offline, bool? historical]) {
     return sendMessage2(
-        message,
-        SendMessageOptions(
-            enableHistoricalMessaging: historical,
-            enableOfflineMessaging: offline));
+      message,
+      SendMessageOptions(
+        enableHistoricalMessaging: historical,
+        enableOfflineMessaging: offline,
+      ),
+    );
   }
 }

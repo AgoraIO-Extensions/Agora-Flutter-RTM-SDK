@@ -49,7 +49,7 @@ mixin AgoraRtmPlugin {
     return _sendMethodMessage("AgoraRtmCallManager", method, arguments)
         .then((res) {
       if (res["errorCode"] != 0) {
-        throw AgoraRtmChannelException(
+        throw AgoraRtmCallManagerException(
             "AgoraRtmCallManager $method failed errorCode: ${res['errorCode']}",
             res["errorCode"]);
       }

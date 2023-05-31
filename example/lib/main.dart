@@ -61,7 +61,7 @@ class MyAppState extends State<MyApp> {
 
   void _createClient() async {
     _client =
-        await AgoraRtmClient.createInstance('aab8b8f5a8cd4469a63042fcfafe7063');
+        await AgoraRtmClient.createInstance(YOUR_APP_ID);
     _client?.onMessageReceived = (AgoraRtmMessage message, String peerId) {
       _log("Peer msg: $peerId, msg: ${message.text}");
     };
@@ -325,11 +325,14 @@ class MyAppState extends State<MyApp> {
     }
 
     try {
-      AgoraRtmLocalInvitation invitation =
-          AgoraRtmLocalInvitation(peerUid, content: text);
-      _log(invitation.content ?? '');
-      await _client?.sendLocalInvitation(invitation.toJson());
-      _log('Send local invitation success.');
+      AgoraRtmLocalInvitation? invitation =
+          await _client?.getRtmCallManager().createLocalInvitation(peerUid);
+      if (invitation != null) {
+        invitation.content = text;
+        _log(invitation.content ?? '');
+        await _client?.sendLocalInvitation(invitation.toJson());
+        _log('Send local invitation success.');
+      }
     } catch (errorCode) {
       _log('Send local invitation error: $errorCode');
     }

@@ -17,7 +17,7 @@ enum RtmMessageType {
 
 @JsonSerializable()
 class RtmMessage {
-  String? text;
+  String text;
   @JsonKey(fromJson: _rawMessage, toJson: _rawMessage)
   Uint8List? rawMessage;
   RtmMessageType? messageType;
@@ -25,7 +25,7 @@ class RtmMessage {
   bool? isOfflineMessage;
 
   RtmMessage({
-    this.text,
+    this.text = "",
     this.rawMessage,
     this.messageType,
     this.serverReceivedTs,
@@ -97,20 +97,23 @@ class RtmChannelAttribute {
   Map<String, dynamic> toJson() => _$RtmChannelAttributeToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(constructor: '_')
 class LocalInvitation {
   String calleeId;
   String? content;
   String? response;
   String? channelId;
   int state;
+  @JsonKey(name: 'hashCode')
+  int handle;
 
-  LocalInvitation(
+  LocalInvitation._(
     this.calleeId, {
     this.content,
     this.response,
     this.channelId,
     this.state = 0,
+    this.handle = 0,
   });
 
   factory LocalInvitation.fromJson(Map<String, dynamic> json) =>
@@ -119,20 +122,23 @@ class LocalInvitation {
   Map<String, dynamic> toJson() => _$LocalInvitationToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(constructor: '_')
 class RemoteInvitation {
   String callerId;
   String? content;
   String? response;
   String? channelId;
   int state;
+  @JsonKey(name: 'hashCode')
+  int handle;
 
-  RemoteInvitation(
+  RemoteInvitation._(
     this.callerId, {
     this.content,
     this.response,
     this.channelId,
     this.state = 0,
+    this.handle = 0,
   });
 
   factory RemoteInvitation.fromJson(Map<String, dynamic> json) =>

@@ -7,7 +7,7 @@ part of 'utils.dart';
 // **************************************************************************
 
 RtmMessage _$RtmMessageFromJson(Map<String, dynamic> json) => RtmMessage(
-      text: json['text'] as String?,
+      text: json['text'] as String? ?? "",
       rawMessage: RtmMessage._rawMessage(json['rawMessage'] as Uint8List?),
       messageType:
           $enumDecodeNullable(_$RtmMessageTypeEnumMap, json['messageType']),
@@ -71,12 +71,13 @@ Map<String, dynamic> _$RtmChannelAttributeToJson(
     };
 
 LocalInvitation _$LocalInvitationFromJson(Map<String, dynamic> json) =>
-    LocalInvitation(
+    LocalInvitation._(
       json['calleeId'] as String,
       content: json['content'] as String?,
       response: json['response'] as String?,
       channelId: json['channelId'] as String?,
       state: json['state'] as int? ?? 0,
+      handle: json['hashCode'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$LocalInvitationToJson(LocalInvitation instance) =>
@@ -86,15 +87,17 @@ Map<String, dynamic> _$LocalInvitationToJson(LocalInvitation instance) =>
       'response': instance.response,
       'channelId': instance.channelId,
       'state': instance.state,
+      'hashCode': instance.handle,
     };
 
 RemoteInvitation _$RemoteInvitationFromJson(Map<String, dynamic> json) =>
-    RemoteInvitation(
+    RemoteInvitation._(
       json['callerId'] as String,
       content: json['content'] as String?,
       response: json['response'] as String?,
       channelId: json['channelId'] as String?,
       state: json['state'] as int? ?? 0,
+      handle: json['hashCode'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$RemoteInvitationToJson(RemoteInvitation instance) =>
@@ -104,6 +107,7 @@ Map<String, dynamic> _$RemoteInvitationToJson(RemoteInvitation instance) =>
       'response': instance.response,
       'channelId': instance.channelId,
       'state': instance.state,
+      'hashCode': instance.handle,
     };
 
 ChannelAttributeOptions _$ChannelAttributeOptionsFromJson(

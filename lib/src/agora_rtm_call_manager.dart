@@ -63,50 +63,54 @@ class AgoraRtmCallManager {
   AgoraRtmCallManager(this._clientIndex) {
     _eventSubscription =
         _addEventChannel().receiveBroadcastStream().listen((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
+      final map = Map.from(event);
       switch (map['event']) {
         case 'onLocalInvitationReceivedByPeer':
-          onLocalInvitationReceivedByPeer
-              ?.call(LocalInvitation.fromJson(map['localInvitation']));
+          onLocalInvitationReceivedByPeer?.call(LocalInvitation.fromJson(
+              Map<String, dynamic>.from(map['localInvitation'])));
           break;
         case 'onLocalInvitationAccepted':
           onLocalInvitationAccepted?.call(
-              LocalInvitation.fromJson(map['localInvitation']),
+              LocalInvitation.fromJson(
+                  Map<String, dynamic>.from(map['localInvitation'])),
               map['response']);
           break;
         case 'onLocalInvitationRefused':
           onLocalInvitationRefused?.call(
-              LocalInvitation.fromJson(map['localInvitation']),
+              LocalInvitation.fromJson(
+                  Map<String, dynamic>.from(map['localInvitation'])),
               map['response']);
           break;
         case 'onLocalInvitationCanceled':
-          onLocalInvitationCanceled
-              ?.call(LocalInvitation.fromJson(map['localInvitation']));
+          onLocalInvitationCanceled?.call(LocalInvitation.fromJson(
+              Map<String, dynamic>.from(map['localInvitation'])));
           break;
         case 'onLocalInvitationFailure':
           onLocalInvitationFailure?.call(
-              LocalInvitation.fromJson(map['localInvitation']),
+              LocalInvitation.fromJson(
+                  Map<String, dynamic>.from(map['localInvitation'])),
               map['errorCode']);
           break;
         case 'onRemoteInvitationReceived':
-          onRemoteInvitationReceived
-              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
+          onRemoteInvitationReceived?.call(RemoteInvitation.fromJson(
+              Map<String, dynamic>.from(map['remoteInvitation'])));
           break;
         case 'onRemoteInvitationAccepted':
-          onRemoteInvitationAccepted
-              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
+          onRemoteInvitationAccepted?.call(RemoteInvitation.fromJson(
+              Map<String, dynamic>.from(map['remoteInvitation'])));
           break;
         case 'onRemoteInvitationRefused':
-          onRemoteInvitationRefused
-              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
+          onRemoteInvitationRefused?.call(RemoteInvitation.fromJson(
+              Map<String, dynamic>.from(map['remoteInvitation'])));
           break;
         case 'onRemoteInvitationCanceled':
-          onRemoteInvitationCanceled
-              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
+          onRemoteInvitationCanceled?.call(RemoteInvitation.fromJson(
+              Map<String, dynamic>.from(map['remoteInvitation'])));
           break;
         case 'onRemoteInvitationFailure':
           onRemoteInvitationFailure?.call(
-              RemoteInvitation.fromJson(map['remoteInvitation']),
+              RemoteInvitation.fromJson(
+                  Map<String, dynamic>.from(map['remoteInvitation'])),
               map['errorCode']);
           break;
       }
@@ -119,28 +123,32 @@ class AgoraRtmCallManager {
   }
 
   Future<LocalInvitation> createLocalInvitation(String calleeId) async {
-    return LocalInvitation.fromJson(
-        await _callNative("createLocalInvitation", {'calleeId', calleeId}));
+    return LocalInvitation.fromJson(Map<String, dynamic>.from(
+        await _callNative("createLocalInvitation", {'calleeId': calleeId})));
   }
 
   /// Allows the caller to send a call invitation to the callee.
   Future<void> sendLocalInvitation(LocalInvitation localInvitation) {
-    return _callNative("sendLocalInvitation", localInvitation.toJson());
+    return _callNative(
+        "sendLocalInvitation", {'localInvitation': localInvitation.toJson()});
   }
 
   /// Allows the callee to accept a call invitation.
   Future<void> acceptRemoteInvitation(RemoteInvitation remoteInvitation) {
-    return _callNative("acceptRemoteInvitation", remoteInvitation.toJson());
+    return _callNative("acceptRemoteInvitation",
+        {'remoteInvitation': remoteInvitation.toJson()});
   }
 
   /// Allows the callee to decline a call invitation.
   Future<void> refuseRemoteInvitation(RemoteInvitation remoteInvitation) {
-    return _callNative("refuseRemoteInvitation", remoteInvitation.toJson());
+    return _callNative("refuseRemoteInvitation",
+        {'remoteInvitation': remoteInvitation.toJson()});
   }
 
   /// Allows the caller to cancel a call invitation.
   Future<void> cancelLocalInvitation(LocalInvitation localInvitation) {
-    return _callNative("cancelLocalInvitation", localInvitation.toJson());
+    return _callNative(
+        "cancelLocalInvitation", {'localInvitation': localInvitation.toJson()});
   }
 
   Future<void> release() async {
