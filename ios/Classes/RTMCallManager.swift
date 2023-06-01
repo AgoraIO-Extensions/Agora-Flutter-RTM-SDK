@@ -47,69 +47,75 @@ class RTMCallManager: NSObject, AgoraRtmCallDelegate, FlutterStreamHandler {
         return nil
     }
     
-    func onLocalInvitationReceived(byPeer localInvitation: AgoraRtmLocalInvitation) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, localInvitationReceivedByPeer localInvitation: AgoraRtmLocalInvitation) {
         localInvitations[localInvitation.hash] = localInvitation
         sendEvent(eventName: "onLocalInvitationReceivedByPeer", params: [
             "localInvitation": localInvitation.toJson(),
         ])
     }
     
-    func onLocalInvitationAccepted(_ localInvitation: AgoraRtmLocalInvitation, withResponse response: String) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, localInvitationAccepted localInvitation: AgoraRtmLocalInvitation, withResponse response: String?) {
+        localInvitations.removeValue(forKey: localInvitation.hash)
         sendEvent(eventName: "onLocalInvitationAccepted", params: [
             "localInvitation": localInvitation.toJson(),
             "response": response,
         ])
     }
     
-    func onLocalInvitationRefused(_ localInvitation: AgoraRtmLocalInvitation, withResponse response: String) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, localInvitationRefused localInvitation: AgoraRtmLocalInvitation, withResponse response: String?) {
+        localInvitations.removeValue(forKey: localInvitation.hash)
         sendEvent(eventName: "onLocalInvitationRefused", params: [
             "localInvitation": localInvitation.toJson(),
             "response": response,
         ])
     }
     
-    func onLocalInvitationCanceled(_ localInvitation: AgoraRtmLocalInvitation) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, localInvitationCanceled localInvitation: AgoraRtmLocalInvitation) {
+        localInvitations.removeValue(forKey: localInvitation.hash)
         sendEvent(eventName: "onLocalInvitationCanceled", params: [
             "localInvitation": localInvitation.toJson(),
         ])
     }
     
-    func onLocalInvitationFailure(_ localInvitation: AgoraRtmLocalInvitation, errorCode: AgoraRtmLocalInvitationErrorCode) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, localInvitationFailure localInvitation: AgoraRtmLocalInvitation, errorCode: AgoraRtmLocalInvitationErrorCode) {
         sendEvent(eventName: "onLocalInvitationFailure", params: [
             "localInvitation": localInvitation.toJson(),
             "errorCode": errorCode.rawValue,
         ])
     }
     
-    func onRemoteInvitationFailure(_ remoteInvitation: AgoraRtmRemoteInvitation, errorCode: AgoraRtmRemoteInvitationErrorCode) {
-        sendEvent(eventName: "onRemoteInvitationFailure", params: [
-            "remoteInvitation": remoteInvitation.toJson(),
-            "errorCode": errorCode.rawValue,
-        ])
-    }
-    
-    func onRemoteInvitationReceived(_ remoteInvitation: AgoraRtmRemoteInvitation) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, remoteInvitationReceived remoteInvitation: AgoraRtmRemoteInvitation) {
         remoteInvitations[remoteInvitation.hash] = remoteInvitation
         sendEvent(eventName: "onRemoteInvitationReceived", params: [
             "remoteInvitation": remoteInvitation.toJson(),
         ])
     }
     
-    func onRemoteInvitationAccepted(_ remoteInvitation: AgoraRtmRemoteInvitation) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, remoteInvitationAccepted remoteInvitation: AgoraRtmRemoteInvitation) {
+        remoteInvitations.removeValue(forKey: remoteInvitation.hash)
         sendEvent(eventName: "onRemoteInvitationAccepted", params: [
             "remoteInvitation": remoteInvitation.toJson(),
         ])
     }
     
-    func onRemoteInvitationRefused(_ remoteInvitation: AgoraRtmRemoteInvitation) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, remoteInvitationRefused remoteInvitation: AgoraRtmRemoteInvitation) {
+        remoteInvitations.removeValue(forKey: remoteInvitation.hash)
         sendEvent(eventName: "onRemoteInvitationRefused", params: [
             "remoteInvitation": remoteInvitation.toJson(),
         ])
     }
     
-    func onRemoteInvitationCanceled(_ remoteInvitation: AgoraRtmRemoteInvitation) {
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, remoteInvitationCanceled remoteInvitation: AgoraRtmRemoteInvitation) {
+        remoteInvitations.removeValue(forKey: remoteInvitation.hash)
         sendEvent(eventName: "onRemoteInvitationCanceled", params: [
             "remoteInvitation": remoteInvitation.toJson(),
+        ])
+    }
+    
+    func rtmCallKit(_ callKit: AgoraRtmCallKit, remoteInvitationFailure remoteInvitation: AgoraRtmRemoteInvitation, errorCode: AgoraRtmRemoteInvitationErrorCode) {
+        sendEvent(eventName: "onRemoteInvitationFailure", params: [
+            "remoteInvitation": remoteInvitation.toJson(),
+            "errorCode": errorCode.rawValue,
         ])
     }
 }

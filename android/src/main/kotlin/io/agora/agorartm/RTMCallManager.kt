@@ -61,6 +61,7 @@ class RTMCallManager(
 
     override
     fun onLocalInvitationAccepted(localInvitation: LocalInvitation, response: String) {
+        localInvitation.remove(localInvitation.hashCode())
         sendEvent(
             "onLocalInvitationAccepted", hashMapOf(
                 "localInvitation" to localInvitation.toJson(),
@@ -71,6 +72,7 @@ class RTMCallManager(
 
     override
     fun onLocalInvitationRefused(localInvitation: LocalInvitation, response: String) {
+        localInvitation.remove(localInvitation.hashCode())
         sendEvent(
             "onLocalInvitationRefused", hashMapOf(
                 "localInvitation" to localInvitation.toJson(),
@@ -81,6 +83,7 @@ class RTMCallManager(
 
     override
     fun onLocalInvitationCanceled(localInvitation: LocalInvitation) {
+        localInvitation.remove(localInvitation.hashCode())
         sendEvent(
             "onLocalInvitationCanceled", hashMapOf(
                 "localInvitation" to localInvitation.toJson()
@@ -140,7 +143,6 @@ class RTMCallManager(
 
     override
     fun onRemoteInvitationFailure(remoteInvitation: RemoteInvitation, errorCode: Int) {
-        remoteInvitations.remove(remoteInvitation.hashCode())
         sendEvent(
             "onRemoteInvitationFailure", hashMapOf(
                 "remoteInvitation" to remoteInvitation.toJson(),

@@ -66,16 +66,19 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
             case "acceptRemoteInvitation":
                 let remoteInvitation = (args?["remoteInvitation"] as? [String: Any?])?.toRemoteInvitation(agoraClient.call!)
                 callManager.accept(remoteInvitation!) {
+                    agoraClient.call!.remoteInvitations.removeValue(forKey: remoteInvitation!.hash)
                     result(["errorCode": $0.rawValue])
                 }
             case "refuseRemoteInvitation":
                 let remoteInvitation = (args?["remoteInvitation"] as? [String: Any?])?.toRemoteInvitation(agoraClient.call!)
                 callManager.refuse(remoteInvitation!) {
+                    agoraClient.call!.remoteInvitations.removeValue(forKey: remoteInvitation!.hash)
                     result(["errorCode": $0.rawValue])
                 }
             case "cancelLocalInvitation":
                 let localInvitation = (args?["localInvitation"] as? [String: Any?])?.toLocalInvitation(agoraClient.call!)
                 callManager.cancel(localInvitation!) {
+                    agoraClient.call!.localInvitations.removeValue(forKey: localInvitation!.hash)
                     result(["errorCode": $0.rawValue])
                 }
             default:
