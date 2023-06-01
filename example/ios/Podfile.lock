@@ -1,5 +1,5 @@
 PODS:
-  - agora_rtm (1.1.1):
+  - agora_rtm (1.5.0):
     - AgoraRtm_iOS (= 1.5.1)
     - Flutter
   - AgoraRtm_iOS (1.5.1)
@@ -20,10 +20,10 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  agora_rtm: 02df4188716774b441578e5d60a6a772ce4fc651
+  agora_rtm: fe254f84e056f8dbcf878a2a20b9f46aa9e7d0dd
   AgoraRtm_iOS: 595a9fa33a409831e6183396ea8f8bc563918403
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

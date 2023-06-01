@@ -63,8 +63,8 @@ class AgoraRtmCallManager {
   AgoraRtmCallManager(this._clientIndex) {
     _eventSubscription =
         _addEventChannel().receiveBroadcastStream().listen((dynamic event) {
-      final map = Map.from(event);
-      switch (map['event']) {
+      final map = Map.from(event['data']);
+      switch (event['event']) {
         case 'onLocalInvitationReceivedByPeer':
           onLocalInvitationReceivedByPeer?.call(LocalInvitation.fromJson(
               Map<String, dynamic>.from(map['localInvitation'])));

@@ -15,19 +15,19 @@ enum RtmMessageType {
   raw
 }
 
-@JsonSerializable()
+@JsonSerializable(constructor: '_')
 class RtmMessage {
   String text;
   @JsonKey(fromJson: _rawMessage, toJson: _rawMessage)
   Uint8List? rawMessage;
-  RtmMessageType? messageType;
+  RtmMessageType messageType;
   int? serverReceivedTs;
   bool? isOfflineMessage;
 
-  RtmMessage({
-    this.text = "",
+  RtmMessage._(
+    this.text,
+    this.messageType, {
     this.rawMessage,
-    this.messageType,
     this.serverReceivedTs,
     this.isOfflineMessage,
   });
@@ -81,14 +81,14 @@ class RtmAttribute {
 class RtmChannelAttribute {
   String key;
   String value;
-  String lastUpdateUserId;
-  int lastUpdateTs;
+  String? lastUpdateUserId;
+  int? lastUpdateTs;
 
   RtmChannelAttribute(
     this.key,
     this.value, {
-    this.lastUpdateUserId = "",
-    this.lastUpdateTs = 0,
+    this.lastUpdateUserId,
+    this.lastUpdateTs,
   });
 
   factory RtmChannelAttribute.fromJson(Map<String, dynamic> json) =>
@@ -163,7 +163,9 @@ class ChannelAttributeOptions {
 
 @JsonSerializable()
 class SendMessageOptions {
+  @Deprecated('Removed in v1.5.0')
   bool? enableOfflineMessaging;
+  @Deprecated('Removed in v1.5.0')
   bool? enableHistoricalMessaging;
 
   SendMessageOptions({
@@ -179,11 +181,11 @@ class SendMessageOptions {
 
 @JsonSerializable()
 class RtmChannelMemberCount {
-  String channelID;
+  String channelId;
   int memberCount;
 
   RtmChannelMemberCount(
-    this.channelID,
+    this.channelId,
     this.memberCount,
   );
 

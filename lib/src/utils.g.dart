@@ -6,11 +6,10 @@ part of 'utils.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RtmMessage _$RtmMessageFromJson(Map<String, dynamic> json) => RtmMessage(
-      text: json['text'] as String? ?? "",
+RtmMessage _$RtmMessageFromJson(Map<String, dynamic> json) => RtmMessage._(
+      json['text'] as String,
+      $enumDecode(_$RtmMessageTypeEnumMap, json['messageType']),
       rawMessage: RtmMessage._rawMessage(json['rawMessage'] as Uint8List?),
-      messageType:
-          $enumDecodeNullable(_$RtmMessageTypeEnumMap, json['messageType']),
       serverReceivedTs: json['serverReceivedTs'] as int?,
       isOfflineMessage: json['isOfflineMessage'] as bool?,
     );
@@ -19,7 +18,7 @@ Map<String, dynamic> _$RtmMessageToJson(RtmMessage instance) =>
     <String, dynamic>{
       'text': instance.text,
       'rawMessage': RtmMessage._rawMessage(instance.rawMessage),
-      'messageType': _$RtmMessageTypeEnumMap[instance.messageType],
+      'messageType': _$RtmMessageTypeEnumMap[instance.messageType]!,
       'serverReceivedTs': instance.serverReceivedTs,
       'isOfflineMessage': instance.isOfflineMessage,
     };
@@ -57,8 +56,8 @@ RtmChannelAttribute _$RtmChannelAttributeFromJson(Map<String, dynamic> json) =>
     RtmChannelAttribute(
       json['key'] as String,
       json['value'] as String,
-      lastUpdateUserId: json['lastUpdateUserId'] as String? ?? "",
-      lastUpdateTs: json['lastUpdateTs'] as int? ?? 0,
+      lastUpdateUserId: json['lastUpdateUserId'] as String?,
+      lastUpdateTs: json['lastUpdateTs'] as int?,
     );
 
 Map<String, dynamic> _$RtmChannelAttributeToJson(
@@ -138,13 +137,13 @@ Map<String, dynamic> _$SendMessageOptionsToJson(SendMessageOptions instance) =>
 RtmChannelMemberCount _$RtmChannelMemberCountFromJson(
         Map<String, dynamic> json) =>
     RtmChannelMemberCount(
-      json['channelID'] as String,
+      json['channelId'] as String,
       json['memberCount'] as int,
     );
 
 Map<String, dynamic> _$RtmChannelMemberCountToJson(
         RtmChannelMemberCount instance) =>
     <String, dynamic>{
-      'channelID': instance.channelID,
+      'channelId': instance.channelId,
       'memberCount': instance.memberCount,
     };

@@ -45,8 +45,8 @@ class AgoraRtmChannel {
   AgoraRtmChannel(this._clientIndex, this._channelId) {
     _eventSubscription =
         _addEventChannel().receiveBroadcastStream().listen((dynamic event) {
-      final map = Map.from(event);
-      switch (map['event']) {
+      final map = Map.from(event['data']);
+      switch (event['event']) {
         case 'onMemberCountUpdated':
           int memberCount = map['memberCount'];
           onMemberCountUpdated?.call(memberCount);

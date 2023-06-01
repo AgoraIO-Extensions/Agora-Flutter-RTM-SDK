@@ -11,28 +11,25 @@ import io.flutter.plugin.common.EventChannel
 class RTMChannel(
     clientIndex: Long?,
     channelId: String?,
-    private val messenger: BinaryMessenger,
-    private val eventHandler: Handler
+    messenger: BinaryMessenger,
+    private val handler: Handler
 ) : RtmChannelListener, EventChannel.StreamHandler {
-    private val eventChannel: EventChannel
-    private var eventSink: EventChannel.EventSink?
+    private val eventChannel: EventChannel =
+        EventChannel(messenger, "io.agora.rtm.client${clientIndex}.channel${channelId}")
+    private var eventSink: EventChannel.EventSink? = null
 
     init {
-        this.eventChannel =
-            EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}.channel${channelId}")
         this.eventChannel.setStreamHandler(this)
-        this.eventSink = null
-    }
-
-    private fun runMainThread(f: () -> Unit) {
-        eventHandler.post(f)
     }
 
     private fun sendEvent(eventName: String, params: HashMap<String, Any?>) {
-        val map = params.toMutableMap()
-        map["event"] = eventName
-        runMainThread {
-            this.eventSink?.success(map)
+        handler.post {
+            this.eventSink?.success(
+                hashMapOf(
+                    "event" to eventName,
+                    "data" to params,
+                )
+            )
         }
     }
 

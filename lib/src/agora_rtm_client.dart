@@ -54,8 +54,8 @@ class AgoraRtmClient {
     _eventSubscription = EventChannel('io.agora.rtm.client$_clientIndex')
         .receiveBroadcastStream()
         .listen((dynamic event) {
-      final map = Map.from(event);
-      switch (map['event']) {
+      final map = Map.from(event['data']);
+      switch (event['event']) {
         case 'onConnectionStateChanged':
           int state = map['state'];
           int reason = map['reason'];

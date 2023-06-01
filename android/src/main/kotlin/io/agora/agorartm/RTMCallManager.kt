@@ -10,37 +10,34 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
 class RTMCallManager(
-    clientIndex: Long,
     client: RtmClient,
-    private val messenger: BinaryMessenger,
-    private val eventHandler: Handler
+    clientIndex: Long,
+    messenger: BinaryMessenger,
+    private val handler: Handler
 ) : RtmCallEventListener, EventChannel.StreamHandler {
-    private val eventChannel: EventChannel
-    private var eventSink: EventChannel.EventSink?
+    private val eventChannel: EventChannel =
+        EventChannel(messenger, "io.agora.rtm.client${clientIndex}.call_manager")
+    private var eventSink: EventChannel.EventSink? = null
 
     val manager: RtmCallManager
     val remoteInvitations: MutableMap<Int?, RemoteInvitation> = HashMap()
     val localInvitations: MutableMap<Int?, LocalInvitation> = HashMap()
 
     init {
-        this.eventChannel =
-            EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}.call_manager")
         this.eventChannel.setStreamHandler(this)
-        this.eventSink = null
 
         manager = client.rtmCallManager
         manager.setEventListener(this)
     }
 
-    private fun runMainThread(f: () -> Unit) {
-        eventHandler.post(f)
-    }
-
     private fun sendEvent(eventName: String, params: HashMap<String, Any?>) {
-        val map = params.toMutableMap()
-        map["event"] = eventName
-        runMainThread {
-            this.eventSink?.success(map)
+        handler.post {
+            this.eventSink?.success(
+                hashMapOf(
+                    "event" to eventName,
+                    "data" to params,
+                )
+            )
         }
     }
 

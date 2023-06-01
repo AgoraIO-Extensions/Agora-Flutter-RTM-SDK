@@ -11,51 +11,46 @@ import io.flutter.plugin.common.EventChannel
 
 class RTMClient(
     context: Context,
-    private val appId: String?,
+    appId: String?,
     clientIndex: Long,
-    private val messenger: BinaryMessenger,
-    private val eventHandler: Handler
+    messenger: BinaryMessenger,
+    private val handler: Handler
 ) : RtmClientListener, EventChannel.StreamHandler {
-    private val eventChannel: EventChannel
-    private var eventSink: EventChannel.EventSink?
+    private val eventChannel: EventChannel =
+        EventChannel(messenger, "io.agora.rtm.client${clientIndex}")
+    private var eventSink: EventChannel.EventSink? = null
 
     val client: RtmClient?
     val call: RTMCallManager
     val channels: HashMap<String?, RtmChannel> = HashMap()
 
     init {
-        this.eventChannel = EventChannel(this.messenger, "io.agora.rtm.client${clientIndex}")
         this.eventChannel.setStreamHandler(this)
-        this.eventSink = null
 
-        this.client = RtmClient.createInstance(context, this.appId, this)
-        this.call = RTMCallManager(clientIndex, client, messenger, eventHandler)
-    }
-
-    private fun runMainThread(f: () -> Unit) {
-        eventHandler.post(f)
+        this.client = RtmClient.createInstance(context, appId, this)
+        this.call = RTMCallManager(client, clientIndex, messenger, handler)
     }
 
     private fun sendEvent(eventName: String, params: HashMap<Any, Any>) {
-        val map = params.toMutableMap()
-        map["event"] = eventName
-        runMainThread {
-            this.eventSink?.success(map)
+        handler.post {
+            this.eventSink?.success(
+                hashMapOf(
+                    "event" to eventName,
+                    "data" to params,
+                )
+            )
         }
     }
 
-    override
-    fun onListen(params: Any?, eventSink: EventChannel.EventSink) {
+    override fun onListen(params: Any?, eventSink: EventChannel.EventSink) {
         this.eventSink = eventSink
     }
 
-    override
-    fun onCancel(params: Any?) {
+    override fun onCancel(params: Any?) {
         this.eventSink = null
     }
 
-    override
-    fun onConnectionStateChanged(state: Int, reason: Int) {
+    override fun onConnectionStateChanged(state: Int, reason: Int) {
         sendEvent(
             "onConnectionStateChanged", hashMapOf(
                 "state" to state,
@@ -64,8 +59,7 @@ class RTMClient(
         )
     }
 
-    override
-    fun onMessageReceived(message: RtmMessage, peerId: String) {
+    override fun onMessageReceived(message: RtmMessage, peerId: String) {
         sendEvent(
             "onMessageReceived", hashMapOf(
                 "message" to message.toJson(),
@@ -74,8 +68,7 @@ class RTMClient(
         )
     }
 
-    override
-    fun onTokenExpired() {
+    override fun onTokenExpired() {
         sendEvent("onTokenExpired", hashMapOf())
     }
 
@@ -83,8 +76,7 @@ class RTMClient(
         sendEvent("onTokenPrivilegeWillExpire", hashMapOf())
     }
 
-    override
-    fun onPeersOnlineStatusChanged(peersStatus: Map<String, Int>) {
+    override fun onPeersOnlineStatusChanged(peersStatus: Map<String, Int>) {
         sendEvent(
             "onPeersOnlineStatusChanged", hashMapOf(
                 "peersStatus" to peersStatus

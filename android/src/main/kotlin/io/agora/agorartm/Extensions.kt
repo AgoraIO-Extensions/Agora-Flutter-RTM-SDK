@@ -22,11 +22,11 @@ fun RtmMessage.toJson(): Map<String, Any?> {
     )
 }
 
-fun Map<*, *>.toRtmMessage(client: RtmClient): RtmMessage {
+fun Map<*, *>.toRtmMessage(client: RtmClient?): RtmMessage? {
     val text = this["text"] as? String
     return (this["rawMessage"] as? ByteArray)?.let {
-        client.createMessage(it, text)
-    } ?: let { client.createMessage(text) }
+        client?.createMessage(it, text)
+    } ?: let { client?.createMessage(text) }
 }
 
 fun RtmChannelMember.toJson(): Map<String, Any?> {
@@ -141,7 +141,7 @@ fun Map<*, *>.toSendMessageOptions(): SendMessageOptions {
 
 fun RtmChannelMemberCount.toJson(): Map<String, Any?> {
     return hashMapOf(
-        "channelID" to channelID,
+        "channelId" to channelID,
         "memberCount" to memberCount,
     )
 }
