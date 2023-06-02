@@ -1,11 +1,12 @@
 import AgoraRtmKit
+import Flutter
 
 extension AgoraRtmMessage {
     func toJson() -> [String: Any?] {
         switch(self){
         case let self as AgoraRtmRawMessage: return [
             "text": text,
-            "rawMessage": self.rawData,
+            "rawMessage": FlutterStandardTypedData(bytes: self.rawData),
             "messageType": type.rawValue,
             "serverReceivedTs": serverReceivedTs,
             "isOfflineMessage": isOfflineMessage,
@@ -101,8 +102,8 @@ extension AgoraRtmChannelMemberCount {
 extension Dictionary where Key == String {
     func toRtmMessage() -> AgoraRtmMessage {
         let text = self["text"] as? String
-        if let rawMessage = self["rawMessage"] as? Data {
-            return AgoraRtmRawMessage(rawData: rawMessage, description: text!)
+        if let rawMessage = self["rawMessage"] as? FlutterStandardTypedData {
+            return AgoraRtmRawMessage(rawData: rawMessage.data, description: text!)
         } else {
             return AgoraRtmMessage(text: text!)
         }

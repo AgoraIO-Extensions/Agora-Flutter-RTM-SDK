@@ -17,13 +17,15 @@ class RTMClient: NSObject, FlutterStreamHandler, AgoraRtmDelegate {
     var call: RTMCallManager?
     var channels: [String: AgoraRtmChannel] = [:]
     
-    init(_ appId: String?, _ clientIndex: Int, _ messenger: FlutterBinaryMessenger) {
+    init(_ appId: String?, _ clientIndex: Int, _ messenger: FlutterBinaryMessenger) throws {
         super.init()
         self.eventChannel = FlutterEventChannel(name: "io.agora.rtm.client\(clientIndex)", binaryMessenger: messenger)
         self.eventChannel?.setStreamHandler(self)
         
-        self.client = AgoraRtmKit(appId: appId ?? "", delegate: self)
-        self.call = RTMCallManager(client!, clientIndex, messenger)
+        guard let client = AgoraRtmKit(appId: appId ?? "", delegate: self) else {
+            throw NSError(domain: "", code: AgoraRtmLoginErrorCode.invalidAppId.rawValue)
+        }
+        self.call = RTMCallManager(client, clientIndex, messenger)
     }
     
     deinit {

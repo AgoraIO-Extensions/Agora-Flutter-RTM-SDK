@@ -94,10 +94,14 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 nextClientIndex += 1
             }
             let appId = params?["appId"] as? String
-            let agoraClient = RTMClient(appId, nextClientIndex, registrar.messenger())
-            result(["errorCode": 0, "result": nextClientIndex])
-            clients[nextClientIndex] = agoraClient
-            nextClientIndex += 1
+            do {
+                let agoraClient = try RTMClient(appId, nextClientIndex, registrar.messenger())
+                result(["errorCode": 0, "result": nextClientIndex])
+                clients[nextClientIndex] = agoraClient
+                nextClientIndex += 1
+            } catch let error as NSError {
+                result(["errorCode": error.code])
+            }
         case "getSdkVersion":
             result(["errorCode": 0, "result": AgoraRtmKit.getSDKVersion()])
         default:
