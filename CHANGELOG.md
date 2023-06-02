@@ -1,3 +1,12 @@
+
+
+## [1.5.1](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.0...v1.5.1) (2023-06-02)
+
+
+### Bug Fixes
+
+* some issues [close [#142](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/142) [#141](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/141)] ([#144](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/144)) ([79af48b](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/79af48b1054ee4da37277a8e94e6953a7793c598))
+
 # [1.5.0](https://github.com/AgoraIO/Flutter-RTM/compare/v1.1.1...v1.5.0) (2022-11-30)
 
 
