@@ -38,7 +38,6 @@ jobs:
         if: ${{ inputs.dry-run }}
         run: |
           release-it ${{ inputs.increment }} -d --ci
-          dart pub publish --dry-run
 
       - name: Release
         if: ${{ !inputs.dry-run }}
@@ -47,10 +46,10 @@ jobs:
           git config --global user.name "${{ secrets.GIT_USERNAME }}"
           release-it ${{ inputs.increment }} --ci --no.npm
       
-      - name: Publish Dart Package
+      - name: Publish
         if: ${{ !inputs.dry-run }}
         uses: k-paxian/dart-package-publisher@1.5
         with:
           accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.OAUTH_REFRESH_TOKEN }}
-          skipTests: true
+          dryRunOnly: ${{ inputs.dry-run }}
