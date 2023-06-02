@@ -22,7 +22,7 @@ jobs:
       - uses: axel-op/dart-package-analyzer@v3
         id: analysis
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          githubToken: ${{ secrets.GH_TOKEN }}
       - name: Check scores
         env:
           TOTAL: ${{ steps.analysis.outputs.total }}
