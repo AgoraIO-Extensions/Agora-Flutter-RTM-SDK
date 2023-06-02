@@ -47,7 +47,6 @@ jobs:
           release-it ${{ inputs.increment }} --ci --no.npm
       
       - name: Publish
-        if: ${{ !inputs.dry-run }}
         uses: k-paxian/dart-package-publisher@1.5
         with:
           accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
