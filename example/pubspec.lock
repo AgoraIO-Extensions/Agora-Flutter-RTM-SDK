@@ -94,10 +94,10 @@ packages:
     dependency: transitive
     description:
       name: json_annotation
-      sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
+      sha256: cb314f00b2488de7bc575207e54402cd2f92363f333a7933fd1b0631af226baa
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.8.1"
+    version: "4.6.0"
   lints:
     dependency: transitive
     description:
