@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:agora_rtm/src/agora_rtm_client.dart';
 import 'package:flutter/services.dart';
 
 import 'agora_rtm_plugin.dart';
@@ -10,139 +11,129 @@ class AgoraRtmChannelException implements Exception {
   final int code;
 
   AgoraRtmChannelException(this.reason, this.code) : super();
-
-  Map<String, dynamic> toJson() => {"reason": reason, "code": code};
-
-  @override
-  String toString() {
-    return reason;
-  }
 }
 
 class AgoraRtmChannel {
   /// Occurs when you receive error events.
   void Function(dynamic error)? onError;
 
+  /// Occurs when channel member count updated.
+  void Function(int memberCount)? onMemberCountUpdated;
+
+  /// Occurs when channel attribute updated.
+  void Function(List<RtmChannelAttribute> attributeList)? onAttributesUpdated;
+
   /// Occurs when receiving a channel message.
-  void Function(AgoraRtmMessage message, AgoraRtmMember fromMember)?
+  void Function(RtmMessage message, RtmChannelMember fromMember)?
       onMessageReceived;
 
   /// Occurs when a user joins the channel.
-  void Function(AgoraRtmMember member)? onMemberJoined;
+  void Function(RtmChannelMember member)? onMemberJoined;
 
   /// Occurs when a channel member leaves the channel.
-  void Function(AgoraRtmMember member)? onMemberLeft;
+  void Function(RtmChannelMember member)? onMemberLeft;
 
-  /// Occurs when channel attribute updated.
-  void Function(List<AgoraRtmChannelAttribute> attributes)? onAttributesUpdated;
-
-  /// Occurs when channel member count updated.
-  void Function(int count)? onMemberCountUpdated;
-
-  final String? channelId;
-  final int? _clientIndex;
-
-  bool? _closed;
+  final int _clientIndex;
+  final String _channelId;
 
   StreamSubscription<dynamic>? _eventSubscription;
 
   EventChannel _addEventChannel() {
-    return EventChannel('io.agora.rtm.client$_clientIndex.channel$channelId');
+    return EventChannel('io.agora.rtm.client$_clientIndex.channel$_channelId');
   }
 
-  _eventListener(dynamic event) {
-    final Map<dynamic, dynamic> map = event;
-    switch (map['event']) {
-      case 'onMessageReceived':
-        AgoraRtmMessage message = AgoraRtmMessage.fromJson(map['message']);
-        AgoraRtmMember member = AgoraRtmMember.fromJson(map);
-        onMessageReceived?.call(message, member);
-        break;
-      case 'onMemberJoined':
-        AgoraRtmMember member = AgoraRtmMember.fromJson(map);
-        onMemberJoined?.call(member);
-        break;
-      case 'onMemberLeft':
-        AgoraRtmMember member = AgoraRtmMember.fromJson(map);
-        onMemberLeft?.call(member);
-        break;
-      case 'onAttributesUpdated':
-        List<Map<dynamic, dynamic>> attributes =
-            List<Map<dynamic, dynamic>>.from(map['attributes']);
-        onAttributesUpdated?.call(attributes
-            .map((attr) => AgoraRtmChannelAttribute.fromJson(attr))
-            .toList());
-        break;
-      case 'onMemberCountUpdated':
-        int count = map['count'];
-        onMemberCountUpdated?.call(count);
-        break;
-    }
-  }
-
-  AgoraRtmChannel(this._clientIndex, this.channelId) {
-    _closed = false;
-    _eventSubscription = _addEventChannel()
-        .receiveBroadcastStream()
-        .listen(_eventListener, onError: onError);
+  AgoraRtmChannel(this._clientIndex, this._channelId) {
+    _eventSubscription =
+        _addEventChannel().receiveBroadcastStream().listen((dynamic event) {
+      final map = Map.from(event['data']);
+      switch (event['event']) {
+        case 'onMemberCountUpdated':
+          int memberCount = map['memberCount'];
+          onMemberCountUpdated?.call(memberCount);
+          break;
+        case 'onAttributesUpdated':
+          List<RtmChannelAttribute> attributeList = List<Map>.from(
+                  map['attributeList'])
+              .map((e) =>
+                  RtmChannelAttribute.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+          onAttributesUpdated?.call(attributeList);
+          break;
+        case 'onMessageReceived':
+          RtmMessage message =
+              RtmMessage.fromJson(Map<String, dynamic>.from(map['message']));
+          RtmChannelMember fromMember = RtmChannelMember.fromJson(
+              Map<String, dynamic>.from(map['fromMember']));
+          onMessageReceived?.call(message, fromMember);
+          break;
+        case 'onMemberJoined':
+          RtmChannelMember member = RtmChannelMember.fromJson(
+              Map<String, dynamic>.from(map['member']));
+          onMemberJoined?.call(member);
+          break;
+        case 'onMemberLeft':
+          RtmChannelMember member = RtmChannelMember.fromJson(
+              Map<String, dynamic>.from(map['member']));
+          onMemberLeft?.call(member);
+          break;
+      }
+    }, onError: onError);
   }
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {
     return AgoraRtmPlugin.callMethodForChannel(methodName, {
       'clientIndex': _clientIndex,
-      'channelId': channelId,
+      'channelId': _channelId,
       'args': arguments
     });
   }
 
-  Future<void> join() async {
-    final res = await _callNative("join", null);
-    if (res["errorCode"] != 0) {
-      throw AgoraRtmChannelException(
-          "join failed errorCode:${res['errorCode']}", res['errorCode']);
-    }
+  Future<void> join() {
+    return _callNative("join", null);
   }
 
-  Future<void> sendMessage(AgoraRtmMessage message,
-      [bool? offline, bool? historical]) async {
-    final res = await _callNative("sendMessage", {
-      'message': message.text,
-      "offline": offline,
-      "historical": historical
+  Future<void> leave() {
+    return _callNative("leave", null);
+  }
+
+  Future<void> sendMessage2(RtmMessage message, [SendMessageOptions? options]) {
+    return _callNative("sendMessage", {
+      'message': message.toJson(),
+      "options": options?.toJson(),
     });
-    if (res["errorCode"] != 0) {
-      throw AgoraRtmChannelException(
-          "sendMessage failed errorCode:${res['errorCode']}", res['errorCode']);
-    }
   }
 
-  Future<void> leave() async {
-    final res = await _callNative("leave", null);
-    if (res["errorCode"] != 0) {
-      throw AgoraRtmChannelException(
-          "leave failed errorCode:${res['errorCode']}", res['errorCode']);
-    }
+  Future<List<RtmChannelMember>> getMembers() async {
+    return List<Map>.from(await _callNative("getMembers", null))
+        .map((e) => RtmChannelMember.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
   }
 
-  Future<List<AgoraRtmMember>> getMembers() async {
-    final res = await _callNative("getMembers", null);
-    if (res["errorCode"] != 0) {
-      throw AgoraRtmChannelException(
-          "getMembers failed errorCode: ${res['errorCode']}", res['errorCode']);
-    }
-    List<AgoraRtmMember> list = [];
-    for (final member in res['members']) {
-      list.add(AgoraRtmMember.fromJson(Map<String, dynamic>.from(member)));
-    }
-    return list;
+  String getId() {
+    return _channelId;
   }
 
-  Future<void> close() async {
-    if (_closed ?? true) return;
-    await _eventSubscription?.cancel();
-    _closed = true;
+  Future<void> release() async {
+    await _eventSubscription
+        ?.cancel()
+        .then((value) => _eventSubscription = null);
+    await _callNative("release", {'channelId': _channelId});
+    AgoraRtmClient.getChannels(_clientIndex)
+        ?.removeWhere((String key, _) => key == _channelId);
   }
 
-  @Deprecated('Use `AgoraRtmClient.releaseChannel` instead.')
-  void release() {}
+  String get channelId => _channelId;
+
+  /// [sendMessage2]
+  @Deprecated('Use sendMessage2 instead of.')
+  Future<void> sendMessage(RtmMessage message,
+      [bool? offline, bool? historical]) {
+    return sendMessage2(
+      message,
+      SendMessageOptions(
+        enableHistoricalMessaging: historical,
+        enableOfflineMessaging: offline,
+      ),
+    );
+  }
 }

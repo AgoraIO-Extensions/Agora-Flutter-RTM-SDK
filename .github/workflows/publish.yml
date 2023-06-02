@@ -1,0 +1,56 @@
+name: Publish to pub.dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      increment:
+        description: 'Increment "major", "minor", "patch", or "pre*" version; or specify version [default: "patch"]'
+        required: true
+        default: 'patch'
+        type: string
+      dry-run:
+        description: 'Do not touch or write anything, but show the commands'
+        default: true
+        type: boolean
+
+jobs:
+  release-it:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - run: |
+          npm install -g release-it
+          npm install -g release-it/bumper
+          npm install -g release-it/conventional-changelog
+
+      - name: Dry Run Release
+        if: ${{ inputs.dry-run }}
+        run: |
+          release-it ${{ inputs.increment }} -d --ci
+          dart pub publish --dry-run
+
+      - name: Release
+        if: ${{ !inputs.dry-run }}
+        run: |
+          git config --global user.email "${{ secrets.GIT_EMAIL }}"
+          git config --global user.name "${{ secrets.GIT_USERNAME }}"
+          release-it ${{ inputs.increment }} --ci --no.npm
+      
+      - name: Publish Dart Package
+        if: ${{ !inputs.dry-run }}
+        uses: k-paxian/dart-package-publisher@1.5
+        with:
+          accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.OAUTH_REFRESH_TOKEN }}
+          skipTests: true
