@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:agora_rtm/src/agora_rtm_call_manager.dart';
 import 'package:flutter/services.dart';
