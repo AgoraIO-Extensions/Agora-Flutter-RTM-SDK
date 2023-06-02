@@ -6,12 +6,12 @@ version: 1.5.0
 homepage: "https://www.agora.io"
 repository: "https://github.com/AgoraIO/Flutter-RTM"
 environment:
-      sdk: ">=2.14.0 <3.0.0"
+      sdk: ">=2.14.0 <4.0.0"
       flutter: ">=1.12.13+hotfix.6"
 dependencies:
       flutter:
             sdk: flutter
-      json_annotation: 4.6.0
+      json_annotation: ^4.6.0
 dev_dependencies:
       flutter_test:
             sdk: flutter
