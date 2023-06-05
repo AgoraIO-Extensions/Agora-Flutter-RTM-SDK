@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import io.agora.rtm.ErrorInfo
 import io.agora.rtm.LocalInvitation
+import io.agora.rtm.PeerOnlineState
 import io.agora.rtm.RtmAttribute
 import io.agora.rtm.RtmChannelAttribute
 import io.agora.rtm.RtmChannelMember
@@ -276,7 +277,9 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                         peerIds,
                         object : Callback<Map<String, Boolean>>(result, handler) {
                             override fun toJson(responseInfo: Map<String, Boolean>): Any {
-                                return responseInfo
+                                return responseInfo.entries.associate {
+                                    it.key to if (it.value) PeerOnlineState.ONLINE else PeerOnlineState.OFFLINE
+                                }
                             }
                         },
                     )
