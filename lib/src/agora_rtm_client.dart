@@ -27,7 +27,8 @@ class AgoraRtmClient {
   void Function(dynamic error)? onError;
 
   /// Occurs when the connection state between the SDK and the Agora RTM system changes.
-  void Function(int state, int reason)? onConnectionStateChanged;
+  void Function(RtmConnectionState state, RtmConnectionChangeReason reason)?
+      onConnectionStateChanged2;
 
   /// Occurs when the local user receives a peer-to-peer message.
   void Function(RtmMessage message, String peerId)? onMessageReceived;
@@ -37,7 +38,8 @@ class AgoraRtmClient {
 
   void Function()? onTokenPrivilegeWillExpire;
 
-  void Function(Map<String, bool> peersStatus)? onPeersOnlineStatusChanged;
+  void Function(Map<String, RtmPeerOnlineState> peersStatus)?
+      onPeersOnlineStatusChanged;
 
   final int _clientIndex;
   final _channels = <String, AgoraRtmChannel>{};
@@ -58,12 +60,13 @@ class AgoraRtmClient {
       final map = Map.from(event['data']);
       switch (event['event']) {
         case 'onConnectionStateChanged':
-          int state = map['state'];
-          int reason = map['reason'];
-          onConnectionStateChanged?.call(state, reason);
+          var state = RtmConnectionStateExtension.fromJson(map['state']);
+          var reason =
+              RtmConnectionChangeReasonExtension.fromJson(map['reason']);
+          onConnectionStateChanged2?.call(state, reason);
           break;
         case 'onMessageReceived':
-          RtmMessage message =
+          var message =
               RtmMessage.fromJson(Map<String, dynamic>.from(map["message"]));
           String peerId = map["peerId"];
           onMessageReceived?.call(message, peerId);
@@ -75,7 +78,9 @@ class AgoraRtmClient {
           onTokenPrivilegeWillExpire?.call();
           break;
         case 'onPeersOnlineStatusChanged':
-          Map<String, bool> peersStatus = map["peersStatus"];
+          var peersStatus = Map<String, int>.from(map["peersStatus"]).map(
+              (key, value) =>
+                  MapEntry(key, RtmPeerOnlineStateExtension.fromJson(value)));
           onPeersOnlineStatusChanged?.call(peersStatus);
           break;
       }
@@ -167,9 +172,12 @@ class AgoraRtmClient {
   }
 
   /// Queries the online status of the specified user(s).
-  Future<Map<String, bool>> queryPeersOnlineStatus(List<String> peerIds) async {
-    return Map<String, bool>.from(
-        await _callNative("queryPeersOnlineStatus", {'peerIds': peerIds}));
+  Future<Map<String, RtmPeerOnlineState>> queryPeersOnlineStatus(
+      List<String> peerIds) async {
+    return Map<String, int>.from(
+            await _callNative("queryPeersOnlineStatus", {'peerIds': peerIds}))
+        .map((key, value) =>
+            MapEntry(key, RtmPeerOnlineStateExtension.fromJson(value)));
   }
 
   Future<void> subscribePeersOnlineStatus(List<String> peerIds) {
@@ -180,9 +188,10 @@ class AgoraRtmClient {
     return _callNative("unsubscribePeersOnlineStatus", {'peerIds': peerIds});
   }
 
-  Future<List<String>> queryPeersBySubscriptionOption(int option) async {
+  Future<List<String>> queryPeersBySubscriptionOption(
+      RtmPeerSubscriptionOption option) async {
     return List<String>.from(await _callNative(
-        "queryPeersBySubscriptionOption", {'option': option}));
+        "queryPeersBySubscriptionOption", {'option': option.toJson()}));
   }
 
   /// Renews the token.
@@ -312,8 +321,8 @@ class AgoraRtmClient {
     return _callNative("setLogFile", {'filePath': filePath});
   }
 
-  Future<void> setLogFilter(int filter) {
-    return _callNative("setLogFilter", {'filter': filter});
+  Future<void> setLogFilter(RtmLogFilter filter) {
+    return _callNative("setLogFilter", {'filter': filter.toJson()});
   }
 
   Future<void> setLogFileSize(int fileSizeInKBytes) {
@@ -325,13 +334,18 @@ class AgoraRtmClient {
     return await AgoraRtmPlugin.callMethodForStatic("getSdkVersion", null);
   }
 
+  static Future<void> setRtmServiceContext(RtmServiceContext context) async {
+    return await AgoraRtmPlugin.callMethodForStatic(
+        "setRtmServiceContext", {'context': context.toJson()});
+  }
+
   /// [setLogFile]
   /// [setLogFilter]
   /// [setLogFileSize]
   @Deprecated('Use `setLogFile` `setLogFilter` `setLogFileSize` instead of.')
   Future<void> setLog(int level, int size, String path) async {
     await setLogFile(path);
-    await setLogFilter(level);
+    await setLogFilter(RtmLogFilterExtension.fromJson(level));
     await setLogFileSize(size);
   }
 
@@ -339,6 +353,17 @@ class AgoraRtmClient {
   @Deprecated('Use AgoraRtmChannel.release instead of.')
   Future<void> releaseChannel(String channelId) async {
     await _channels[channelId]?.release();
+  }
+
+  /// [onConnectionStateChanged2]
+  @Deprecated('Use onConnectionStateChanged2 instead of.')
+  set onConnectionStateChanged(
+      Function(int state, int reason)? onConnectionStateChanged) {
+    onConnectionStateChanged2 = onConnectionStateChanged == null
+        ? null
+        : (RtmConnectionState state, RtmConnectionChangeReason reason) {
+            onConnectionStateChanged(state.toJson(), reason.toJson());
+          };
   }
 
   /// [AgoraRtmCallManager.onLocalInvitationReceivedByPeer]

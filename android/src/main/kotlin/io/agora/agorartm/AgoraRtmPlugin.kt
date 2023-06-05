@@ -117,13 +117,15 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                         (args?.get("remoteInvitation") as? Map<*, *>)?.toRemoteInvitation(
                             agoraClient.call
                         )
-                    callManager.acceptRemoteInvitation(remoteInvitation,
+                    callManager.acceptRemoteInvitation(
+                        remoteInvitation,
                         object : Callback<Void>(result, handler) {
                             override fun toJson(responseInfo: Void): Any? {
                                 agoraClient.call.remoteInvitations.remove(remoteInvitation.hashCode())
                                 return null
                             }
-                        })
+                        },
+                    )
                 }
 
                 "refuseRemoteInvitation" -> {
@@ -190,6 +192,21 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
 
             "getSdkVersion" -> {
                 object : Callback<String>(result, handler) {}.onSuccess(RtmClient.getSdkVersion())
+            }
+
+            "setRtmServiceContext" -> {
+                val context = (params?.get("context") as? Map<*, *>)?.toRtmServiceContext()
+                val ret = RtmClient.setRtmServiceContext(context)
+                if (ret.swigValue() == 0) {
+                    object : Callback<Void>(result, handler) {}.onSuccess(null)
+                } else {
+                    object : Callback<Void>(result, handler) {}.onFailure(
+                        ErrorInfo(
+                            ret.swigValue(),
+                            ret.toString(),
+                        )
+                    )
+                }
             }
 
             else -> {
@@ -490,9 +507,11 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                     val message =
                         (args?.get("message") as? Map<*, *>)?.toRtmMessage(agoraClient.client)
                     val options = (args?.get("options") as? Map<*, *>)?.toSendMessageOptions()
-                    channel.sendMessage(message,
+                    channel.sendMessage(
+                        message,
                         options,
-                        object : Callback<Void>(result, handler) {})
+                        object : Callback<Void>(result, handler) {},
+                    )
                 }
 
                 "getMembers" -> {

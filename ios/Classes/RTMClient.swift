@@ -64,8 +64,8 @@ class RTMClient: NSObject, FlutterStreamHandler, AgoraRtmDelegate {
     }
     
     func rtmKit(_ kit: AgoraRtmKit, peersOnlineStatusChanged onlineStatus: [AgoraRtmPeerOnlineStatus]) {
-        sendEvent(eventName: "onPeersOnlineStatusChanged", params: ["peersStatus": onlineStatus.reduce(into: [String: Bool]()) {
-            $0[$1.peerId] = $1.isOnline
+        sendEvent(eventName: "onPeersOnlineStatusChanged", params: ["peersStatus": onlineStatus.reduce(into: [String: Int]()) {
+            $0[$1.peerId] = $1.state.rawValue
         }])
     }
     

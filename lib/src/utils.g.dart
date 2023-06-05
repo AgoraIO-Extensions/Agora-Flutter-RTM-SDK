@@ -75,7 +75,9 @@ LocalInvitation _$LocalInvitationFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String?,
       response: json['response'] as String?,
       channelId: json['channelId'] as String?,
-      state: json['state'] as int? ?? 0,
+      state: $enumDecodeNullable(
+              _$RtmLocalInvitationStateEnumMap, json['state']) ??
+          RtmLocalInvitationState.idle,
       handle: json['hashCode'] as int? ?? 0,
     );
 
@@ -85,9 +87,19 @@ Map<String, dynamic> _$LocalInvitationToJson(LocalInvitation instance) =>
       'content': instance.content,
       'response': instance.response,
       'channelId': instance.channelId,
-      'state': instance.state,
+      'state': _$RtmLocalInvitationStateEnumMap[instance.state]!,
       'hashCode': instance.handle,
     };
+
+const _$RtmLocalInvitationStateEnumMap = {
+  RtmLocalInvitationState.idle: 0,
+  RtmLocalInvitationState.sentToRemote: 1,
+  RtmLocalInvitationState.receivedByRemote: 2,
+  RtmLocalInvitationState.acceptedByRemote: 3,
+  RtmLocalInvitationState.refusedByLocal: 4,
+  RtmLocalInvitationState.canceled: 5,
+  RtmLocalInvitationState.failure: 6,
+};
 
 RemoteInvitation _$RemoteInvitationFromJson(Map<String, dynamic> json) =>
     RemoteInvitation._(
@@ -95,7 +107,9 @@ RemoteInvitation _$RemoteInvitationFromJson(Map<String, dynamic> json) =>
       content: json['content'] as String?,
       response: json['response'] as String?,
       channelId: json['channelId'] as String?,
-      state: json['state'] as int? ?? 0,
+      state: $enumDecodeNullable(
+              _$RtmRemoteInvitationStateEnumMap, json['state']) ??
+          RtmRemoteInvitationState.idle,
       handle: json['hashCode'] as int? ?? 0,
     );
 
@@ -105,9 +119,19 @@ Map<String, dynamic> _$RemoteInvitationToJson(RemoteInvitation instance) =>
       'content': instance.content,
       'response': instance.response,
       'channelId': instance.channelId,
-      'state': instance.state,
+      'state': _$RtmRemoteInvitationStateEnumMap[instance.state]!,
       'hashCode': instance.handle,
     };
+
+const _$RtmRemoteInvitationStateEnumMap = {
+  RtmRemoteInvitationState.idle: 0,
+  RtmRemoteInvitationState.invitationReceived: 1,
+  RtmRemoteInvitationState.acceptSentToLocal: 2,
+  RtmRemoteInvitationState.refused: 3,
+  RtmRemoteInvitationState.accepted: 4,
+  RtmRemoteInvitationState.canceled: 5,
+  RtmRemoteInvitationState.failure: 6,
+};
 
 ChannelAttributeOptions _$ChannelAttributeOptionsFromJson(
         Map<String, dynamic> json) =>
@@ -147,3 +171,75 @@ Map<String, dynamic> _$RtmChannelMemberCountToJson(
       'channelId': instance.channelId,
       'memberCount': instance.memberCount,
     };
+
+RtmServiceContext _$RtmServiceContextFromJson(Map<String, dynamic> json) =>
+    RtmServiceContext(
+      areaCode: (json['areaCode'] as List<dynamic>?)
+              ?.map((e) => $enumDecode(_$RtmAreaCodeEnumMap, e))
+              .toList() ??
+          const [RtmAreaCode.GLOB],
+      proxyType:
+          $enumDecodeNullable(_$RtmCloudProxyTypeEnumMap, json['proxyType']) ??
+              RtmCloudProxyType.noneProxy,
+    );
+
+Map<String, dynamic> _$RtmServiceContextToJson(RtmServiceContext instance) =>
+    <String, dynamic>{
+      'areaCode':
+          instance.areaCode.map((e) => _$RtmAreaCodeEnumMap[e]!).toList(),
+      'proxyType': _$RtmCloudProxyTypeEnumMap[instance.proxyType]!,
+    };
+
+const _$RtmAreaCodeEnumMap = {
+  RtmAreaCode.CN: 0,
+  RtmAreaCode.NA: 2,
+  RtmAreaCode.EU: 4,
+  RtmAreaCode.AS: 8,
+  RtmAreaCode.JP: 16,
+  RtmAreaCode.IN: 32,
+  RtmAreaCode.GLOB: -1,
+};
+
+const _$RtmCloudProxyTypeEnumMap = {
+  RtmCloudProxyType.noneProxy: 0,
+  RtmCloudProxyType.tcpProxy: 1,
+};
+
+const _$RtmConnectionStateEnumMap = {
+  RtmConnectionState.disconnected: 1,
+  RtmConnectionState.connecting: 2,
+  RtmConnectionState.connected: 3,
+  RtmConnectionState.reconnecting: 4,
+  RtmConnectionState.aborted: 5,
+};
+
+const _$RtmConnectionChangeReasonEnumMap = {
+  RtmConnectionChangeReason.login: 1,
+  RtmConnectionChangeReason.loginSuccess: 2,
+  RtmConnectionChangeReason.loginFailure: 3,
+  RtmConnectionChangeReason.loginTimeout: 4,
+  RtmConnectionChangeReason.interrupt: 5,
+  RtmConnectionChangeReason.logout: 6,
+  RtmConnectionChangeReason.bannedByServer: 7,
+  RtmConnectionChangeReason.remoteLogin: 8,
+  RtmConnectionChangeReason.tokenExpired: 9,
+};
+
+const _$RtmPeerOnlineStateEnumMap = {
+  RtmPeerOnlineState.online: 0,
+  RtmPeerOnlineState.unreachable: 1,
+  RtmPeerOnlineState.offline: 2,
+};
+
+const _$RtmPeerSubscriptionOptionEnumMap = {
+  RtmPeerSubscriptionOption.onlineStatus: 0,
+};
+
+const _$RtmLogFilterEnumMap = {
+  RtmLogFilter.off: 0,
+  RtmLogFilter.info: 15,
+  RtmLogFilter.warn: 14,
+  RtmLogFilter.error: 12,
+  RtmLogFilter.critical: 8,
+  RtmLogFilter.mask: 2063,
+};

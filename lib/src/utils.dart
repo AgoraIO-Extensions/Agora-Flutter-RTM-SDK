@@ -5,14 +5,214 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'utils.g.dart';
 
-@JsonEnum()
+@JsonEnum(alwaysCreate: true)
 enum RtmMessageType {
   @JsonValue(0)
   undefined,
   @JsonValue(1)
   text,
   @JsonValue(2)
-  raw
+  raw,
+}
+
+extension RtmMessageTypeExtension on RtmMessageType {
+  static RtmMessageType fromJson(int json) =>
+      $enumDecode(_$RtmMessageTypeEnumMap, json);
+
+  int toJson() => _$RtmMessageTypeEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmConnectionState {
+  @JsonValue(1)
+  disconnected,
+  @JsonValue(2)
+  connecting,
+  @JsonValue(3)
+  connected,
+  @JsonValue(4)
+  reconnecting,
+  @JsonValue(5)
+  aborted,
+}
+
+extension RtmConnectionStateExtension on RtmConnectionState {
+  static RtmConnectionState fromJson(int json) =>
+      $enumDecode(_$RtmConnectionStateEnumMap, json);
+
+  int toJson() => _$RtmConnectionStateEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmConnectionChangeReason {
+  @JsonValue(1)
+  login,
+  @JsonValue(2)
+  loginSuccess,
+  @JsonValue(3)
+  loginFailure,
+  @JsonValue(4)
+  loginTimeout,
+  @JsonValue(5)
+  interrupt,
+  @JsonValue(6)
+  logout,
+  @JsonValue(7)
+  bannedByServer,
+  @JsonValue(8)
+  remoteLogin,
+  @JsonValue(9)
+  tokenExpired,
+}
+
+extension RtmConnectionChangeReasonExtension on RtmConnectionChangeReason {
+  static RtmConnectionChangeReason fromJson(int json) =>
+      $enumDecode(_$RtmConnectionChangeReasonEnumMap, json);
+
+  int toJson() => _$RtmConnectionChangeReasonEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmPeerOnlineState {
+  @JsonValue(0)
+  online,
+  @JsonValue(1)
+  unreachable,
+  @JsonValue(2)
+  offline,
+}
+
+extension RtmPeerOnlineStateExtension on RtmPeerOnlineState {
+  static RtmPeerOnlineState fromJson(int json) =>
+      $enumDecode(_$RtmPeerOnlineStateEnumMap, json);
+
+  int toJson() => _$RtmPeerOnlineStateEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmPeerSubscriptionOption {
+  @JsonValue(0)
+  onlineStatus,
+}
+
+extension RtmPeerSubscriptionOptionExtension on RtmPeerSubscriptionOption {
+  static RtmPeerSubscriptionOption fromJson(int json) =>
+      $enumDecode(_$RtmPeerSubscriptionOptionEnumMap, json);
+
+  int toJson() => _$RtmPeerSubscriptionOptionEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmLogFilter {
+  @JsonValue(0)
+  off,
+  @JsonValue(15)
+  info,
+  @JsonValue(14)
+  warn,
+  @JsonValue(12)
+  error,
+  @JsonValue(8)
+  critical,
+  @JsonValue(2063)
+  mask,
+}
+
+extension RtmLogFilterExtension on RtmLogFilter {
+  static RtmLogFilter fromJson(int json) =>
+      $enumDecode(_$RtmLogFilterEnumMap, json);
+
+  int toJson() => _$RtmLogFilterEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmLocalInvitationState {
+  @JsonValue(0)
+  idle,
+  @JsonValue(1)
+  sentToRemote,
+  @JsonValue(2)
+  receivedByRemote,
+  @JsonValue(3)
+  acceptedByRemote,
+  @JsonValue(4)
+  refusedByLocal,
+  @JsonValue(5)
+  canceled,
+  @JsonValue(6)
+  failure,
+}
+
+extension RtmLocalInvitationStateExtension on RtmLocalInvitationState {
+  static RtmLocalInvitationState fromJson(int json) =>
+      $enumDecode(_$RtmLocalInvitationStateEnumMap, json);
+
+  int toJson() => _$RtmLocalInvitationStateEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmRemoteInvitationState {
+  @JsonValue(0)
+  idle,
+  @JsonValue(1)
+  invitationReceived,
+  @JsonValue(2)
+  acceptSentToLocal,
+  @JsonValue(3)
+  refused,
+  @JsonValue(4)
+  accepted,
+  @JsonValue(5)
+  canceled,
+  @JsonValue(6)
+  failure,
+}
+
+extension RtmRemoteInvitationStateExtension on RtmRemoteInvitationState {
+  static RtmRemoteInvitationState fromJson(int json) =>
+      $enumDecode(_$RtmRemoteInvitationStateEnumMap, json);
+
+  int toJson() => _$RtmRemoteInvitationStateEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmAreaCode {
+  @JsonValue(0)
+  CN,
+  @JsonValue(2)
+  NA,
+  @JsonValue(4)
+  EU,
+  @JsonValue(8)
+  AS,
+  @JsonValue(16)
+  JP,
+  @JsonValue(32)
+  IN,
+  @JsonValue(-1)
+  GLOB,
+}
+
+extension RtmAreaCodeExtension on RtmAreaCode {
+  static RtmAreaCode fromJson(int json) =>
+      $enumDecode(_$RtmAreaCodeEnumMap, json);
+
+  int toJson() => _$RtmAreaCodeEnumMap[this]!;
+}
+
+@JsonEnum(alwaysCreate: true)
+enum RtmCloudProxyType {
+  @JsonValue(0)
+  noneProxy,
+  @JsonValue(1)
+  tcpProxy,
+}
+
+extension RtmCloudProxyTypeExtension on RtmCloudProxyType {
+  static RtmCloudProxyType fromJson(int json) =>
+      $enumDecode(_$RtmCloudProxyTypeEnumMap, json);
+
+  int toJson() => _$RtmCloudProxyTypeEnumMap[this]!;
 }
 
 @JsonSerializable(constructor: '_')
@@ -103,7 +303,7 @@ class LocalInvitation {
   String? content;
   String? response;
   String? channelId;
-  int state;
+  RtmLocalInvitationState state;
   @JsonKey(name: 'hashCode')
   int handle;
 
@@ -112,7 +312,7 @@ class LocalInvitation {
     this.content,
     this.response,
     this.channelId,
-    this.state = 0,
+    this.state = RtmLocalInvitationState.idle,
     this.handle = 0,
   });
 
@@ -128,7 +328,7 @@ class RemoteInvitation {
   String? content;
   String? response;
   String? channelId;
-  int state;
+  RtmRemoteInvitationState state;
   @JsonKey(name: 'hashCode')
   int handle;
 
@@ -137,7 +337,7 @@ class RemoteInvitation {
     this.content,
     this.response,
     this.channelId,
-    this.state = 0,
+    this.state = RtmRemoteInvitationState.idle,
     this.handle = 0,
   });
 
@@ -193,6 +393,22 @@ class RtmChannelMemberCount {
       _$RtmChannelMemberCountFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmChannelMemberCountToJson(this);
+}
+
+@JsonSerializable()
+class RtmServiceContext {
+  List<RtmAreaCode> areaCode;
+  RtmCloudProxyType proxyType;
+
+  RtmServiceContext({
+    this.areaCode = const [RtmAreaCode.GLOB],
+    this.proxyType = RtmCloudProxyType.noneProxy,
+  });
+
+  factory RtmServiceContext.fromJson(Map<String, dynamic> json) =>
+      _$RtmServiceContextFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmServiceContextToJson(this);
 }
 
 /// [RtmMessage]
