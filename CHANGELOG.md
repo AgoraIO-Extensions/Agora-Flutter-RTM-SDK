@@ -1,5 +1,12 @@
 
 
+## [1.5.2](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.1...v1.5.2) (2023-06-05)
+
+
+### Bug Fixes
+
+* 1.5.1 crash [#145](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/145) Unhandled Exception when calling onPeersOnlineStatusChanged  [#146](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/146) ([df4bcec](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/df4bcec5e65e8ae434781c52d093a4499b6c5321))
+
 ## [1.5.1](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.0...v1.5.1) (2023-06-02)
 
 
