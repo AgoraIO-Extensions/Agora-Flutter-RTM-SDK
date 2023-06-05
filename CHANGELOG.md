@@ -1,5 +1,12 @@
 
 
+## [1.5.4](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.3...v1.5.4) (2023-06-05)
+
+
+### Bug Fixes
+
+* login not working on iOS & close [#148](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/148) ([#149](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/149)) ([6dbc424](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/6dbc4240c2e280abe3b124797edefda001b73e47))
+
 ## [1.5.3](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.2...v1.5.3) (2023-06-05)
 
 
