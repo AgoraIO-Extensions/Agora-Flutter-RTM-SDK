@@ -37,7 +37,7 @@ class AgoraRtmClient {
 
   void Function()? onTokenPrivilegeWillExpire;
 
-  void Function(Map<String, int> peersStatus)? onPeersOnlineStatusChanged;
+  void Function(Map<String, bool> peersStatus)? onPeersOnlineStatusChanged;
 
   final int _clientIndex;
   final _channels = <String, AgoraRtmChannel>{};
@@ -75,7 +75,7 @@ class AgoraRtmClient {
           onTokenPrivilegeWillExpire?.call();
           break;
         case 'onPeersOnlineStatusChanged':
-          Map<String, int> peersStatus = map["peersStatus"];
+          Map<String, bool> peersStatus = map["peersStatus"];
           onPeersOnlineStatusChanged?.call(peersStatus);
           break;
       }

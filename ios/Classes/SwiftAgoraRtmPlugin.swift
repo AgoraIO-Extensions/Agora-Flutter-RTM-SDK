@@ -124,9 +124,9 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 }
             case "sendMessageToPeer":
                 let peerId = args?["peerId"] as? String
-                let message = args?["message"] as? [String: Any?]
-                let options = args?["options"] as? [String: Any?]
-                client.send(message!.toRtmMessage(), toPeer: peerId!, sendMessageOptions: options!.toSendMessageOptions()) {
+                let message = args?["message"] as? [String: Any?] ?? [:]
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.send(message.toRtmMessage(), toPeer: peerId!, sendMessageOptions: options.toSendMessageOptions()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "createChannel":
@@ -163,13 +163,13 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                     result(["errorCode": $1.rawValue, "result": $0])
                 }
             case "setLocalUserAttributes":
-                let attributes = args?["attributes"] as? [[String: Any?]]
-                client.setLocalUserAttributes(attributes!.toRtmAttributeList()) {
+                let attributes = args?["attributes"] as? [[String: Any?]] ?? []
+                client.setLocalUserAttributes(attributes.toRtmAttributeList()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "addOrUpdateLocalUserAttributes":
-                let attributes = args?["attributes"] as? [[String: Any?]]
-                client.addOrUpdateLocalUserAttributes(attributes!.toRtmAttributeList()) {
+                let attributes = args?["attributes"] as? [[String: Any?]] ?? []
+                client.addOrUpdateLocalUserAttributes(attributes.toRtmAttributeList()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "deleteLocalUserAttributesByKeys":
@@ -194,29 +194,29 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 }
             case "setChannelAttributes":
                 let channelId = args?["channelId"] as? String
-                let attributes = args?["attributes"] as? [[String: Any?]]
-                let options = args?["options"] as? [String: Any?]
-                client.setChannel(channelId!, attributes: attributes!.toRtmChannelAttributeList(), options: options!.toChannelAttributeOptions()) {
+                let attributes = args?["attributes"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.setChannel(channelId!, attributes: attributes.toRtmChannelAttributeList(), options: options.toChannelAttributeOptions()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "addOrUpdateChannelAttributes":
                 let channelId = args?["channelId"] as? String
-                let attributes = args?["attributes"] as? [[String: Any?]]
-                let options = args?["options"] as? [String: Any?]
-                client.addOrUpdateChannel(channelId!, attributes: attributes!.toRtmChannelAttributeList(), options: options!.toChannelAttributeOptions()) {
+                let attributes = args?["attributes"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.addOrUpdateChannel(channelId!, attributes: attributes.toRtmChannelAttributeList(), options: options.toChannelAttributeOptions()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "deleteChannelAttributesByKeys":
                 let channelId = args?["channelId"] as? String
                 let keys = args?["keys"] as? [String]
-                let options = args?["options"] as? [String: Any?]
-                client.deleteChannel(channelId!, attributesByKeys: keys!, options: options!.toChannelAttributeOptions()) {
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.deleteChannel(channelId!, attributesByKeys: keys!, options: options.toChannelAttributeOptions()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "clearChannelAttributes":
                 let channelId = args?["channelId"] as? String
-                let options = args?["options"] as? [String: Any?]
-                client.clearChannel(channelId!, options: options!.toChannelAttributeOptions()) {
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.clearChannel(channelId!, options: options.toChannelAttributeOptions()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "getChannelAttributes":
@@ -270,9 +270,9 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                     result(["errorCode": $0.rawValue])
                 }
             case "sendMessage":
-                let message = args?["message"] as? [String: Any?]
-                let options = args?["options"] as? [String: Any?]
-                channel.send(message!.toRtmMessage(), sendMessageOptions: options!.toSendMessageOptions()) {
+                let message = args?["message"] as? [String: Any?] ?? [:]
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                channel.send(message.toRtmMessage(), sendMessageOptions: options.toSendMessageOptions()) {
                     result(["errorCode": $0.rawValue])
                 }
             case "getMembers":

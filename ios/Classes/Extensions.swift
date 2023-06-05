@@ -158,11 +158,11 @@ extension Dictionary where Key == String {
 
 extension Array {
     func toRtmAttributeList() -> [AgoraRtmAttribute] {
-        return self.map { ($0 as? [String: Any?])!.toRtmAttribute() }
+        return self.map { ($0 as? [String: Any?] ?? [:]).toRtmAttribute() }
     }
     
     func toRtmChannelAttributeList() -> [AgoraRtmChannelAttribute] {
-        return self.map { ($0 as? [String: Any?])!.toRtmChannelAttribute() }
+        return self.map { ($0 as? [String: Any?] ?? [:]).toRtmChannelAttribute() }
     }
     
     func toStringList() -> [String] {
