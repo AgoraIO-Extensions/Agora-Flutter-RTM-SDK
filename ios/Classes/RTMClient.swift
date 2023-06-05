@@ -25,6 +25,7 @@ class RTMClient: NSObject, FlutterStreamHandler, AgoraRtmDelegate {
         guard let client = AgoraRtmKit(appId: appId ?? "", delegate: self) else {
             throw NSError(domain: "", code: AgoraRtmLoginErrorCode.invalidAppId.rawValue)
         }
+        self.client = client
         self.call = RTMCallManager(client, clientIndex, messenger)
     }
     
