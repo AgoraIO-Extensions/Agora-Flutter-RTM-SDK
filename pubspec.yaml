@@ -2,7 +2,7 @@ name: agora_rtm
 description: >-
       Flutter wrapper around the Agora Real Time Message SDKs for Android and
       iOS.
-version: 1.5.2
+version: 1.5.3
 homepage: https://www.agora.io
 repository: https://github.com/AgoraIO/Flutter-RTM
 environment:

@@ -1,5 +1,17 @@
 
 
+## [1.5.3](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.2...v1.5.3) (2023-06-05)
+
+
+### Bug Fixes
+
+* FlutterStandardTypedData & init with wrong appId ([3bba6a9](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/3bba6a9806b0a505da6a329dc77f8342dc066d44))
+
+
+### Features
+
+* Flutter - Specify AreaCode in RTM [#87](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/87) close [#146](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/146) ([#147](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/147)) ([c86657d](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/c86657d46d756ef413d6deb3bbedad5cd0fe445b))
+
 ## [1.5.2](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.1...v1.5.2) (2023-06-05)
 
 
