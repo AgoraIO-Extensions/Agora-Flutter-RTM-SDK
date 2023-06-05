@@ -154,6 +154,13 @@ extension Dictionary where Key == String {
     func toSendMessageOptions() -> AgoraRtmSendMessageOptions {
         return AgoraRtmSendMessageOptions()
     }
+
+    func toRtmServiceContext() -> AgoraRtmServiceContext {
+        let context = AgoraRtmServiceContext()
+        context.areaCode = AgoraRtmAreaCode(rawValue: self["areaCode"] as! UInt)
+        context.proxyType = AgoraRtmCloudProxyType(rawValue: self["proxyType"] as! UInt)
+        return context
+    }
 }
 
 extension Array {

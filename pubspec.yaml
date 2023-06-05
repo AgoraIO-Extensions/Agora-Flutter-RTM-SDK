@@ -7,7 +7,6 @@ homepage: https://www.agora.io
 repository: https://github.com/AgoraIO/Flutter-RTM
 environment:
       sdk: '>=2.14.0 <4.0.0'
-      flutter: '>=1.12.13+hotfix.6'
 dependencies:
       flutter:
             sdk: flutter
@@ -16,7 +15,8 @@ dev_dependencies:
       flutter_test:
             sdk: flutter
       flutter_lints: ^1.0.0
-      build_runner: 2.2.0
+      analyzer: ^4.0.0
+      build_runner: 2.3.3
       json_serializable: 6.3.1
 flutter:
       plugin:

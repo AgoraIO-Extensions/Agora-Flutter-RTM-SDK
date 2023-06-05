@@ -100,6 +100,9 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
             nextClientIndex += 1
         case "getSdkVersion":
             result(["errorCode": 0, "result": AgoraRtmKit.getSDKVersion()])
+        case "setRtmServiceContext":
+            let context = params?["context"] as? [String: Any?] ?? [:]
+            result(["errorCode": AgoraRtmKit.setRtmServiceContext(context.toRtmServiceContext())])
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -138,8 +141,8 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
             case "queryPeersOnlineStatus":
                 let peerIds = args?["peerIds"] as? [String]
                 client.queryPeersOnlineStatus(peerIds!) {
-                    result(["errorCode": $1.rawValue, "result": $0?.reduce(into: [String: Bool]()) {
-                        $0[$1.peerId] = $1.isOnline
+                    result(["errorCode": $1.rawValue, "result": $0?.reduce(into: [String: Int]()) {
+                        $0[$1.peerId] = $1.state.rawValue
                     }])
                 }
             case "subscribePeersOnlineStatus":

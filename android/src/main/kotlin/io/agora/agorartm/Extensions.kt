@@ -10,6 +10,7 @@ import io.agora.rtm.RtmChannelMember
 import io.agora.rtm.RtmChannelMemberCount
 import io.agora.rtm.RtmClient
 import io.agora.rtm.RtmMessage
+import io.agora.rtm.RtmServiceContext
 import io.agora.rtm.SendMessageOptions
 
 fun RtmMessage.toJson(): Map<String, Any?> {
@@ -151,6 +152,13 @@ fun ErrorInfo.toJson(): Map<String, Any?> {
         "errorCode" to errorCode,
         "errorDescription" to errorDescription,
     )
+}
+
+fun Map<*, *>.toRtmServiceContext(): RtmServiceContext {
+    return RtmServiceContext().apply {
+        areaCode = this@toRtmServiceContext["areaCode"] as Int
+        proxyType = this@toRtmServiceContext["proxyType"] as Int
+    }
 }
 
 fun List<*>.toStringSet(): Set<String> {
