@@ -58,7 +58,7 @@ jobs:
     name: Build iOS
     strategy:
       matrix:
-        version: ['2.10.5', '3.0.0']
+        version: ['2.5.0', '3.0.0']
     runs-on: macos-12
     timeout-minutes: 120
     steps:
