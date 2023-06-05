@@ -38,9 +38,9 @@ class RTMChannel: NSObject, FlutterStreamHandler, AgoraRtmChannelDelegate {
         return nil
     }
     
-    func channel(_ channel: AgoraRtmChannel, memberCountUpdated memberCount: Int32) {
+    func channel(_ channel: AgoraRtmChannel, memberCount count: Int32) {
         sendEvent(eventName: "onMemberCountUpdated", params: [
-            "memberCount": memberCount,
+            "memberCount": count,
         ])
     }
     
