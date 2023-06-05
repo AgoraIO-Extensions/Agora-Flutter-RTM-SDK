@@ -6,6 +6,7 @@ import io.agora.rtm.RtmChannel
 import io.agora.rtm.RtmClient
 import io.agora.rtm.RtmClientListener
 import io.agora.rtm.RtmMessage
+import io.agora.rtm.RtmMetadata
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
@@ -80,6 +81,15 @@ class RTMClient(
         sendEvent(
             "onPeersOnlineStatusChanged", hashMapOf(
                 "peersStatus" to peersStatus
+            )
+        )
+    }
+
+    override fun onUserMetadataUpdated(userId: String, metadata: RtmMetadata) {
+        sendEvent(
+            "onUserMetadataUpdated", hashMapOf(
+                "userId" to userId,
+                "metadata" to metadata.toJson(),
             )
         )
     }

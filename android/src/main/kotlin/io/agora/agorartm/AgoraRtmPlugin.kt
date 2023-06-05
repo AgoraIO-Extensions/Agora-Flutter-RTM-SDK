@@ -11,6 +11,7 @@ import io.agora.rtm.RtmChannelAttribute
 import io.agora.rtm.RtmChannelMember
 import io.agora.rtm.RtmChannelMemberCount
 import io.agora.rtm.RtmClient
+import io.agora.rtm.RtmMetadata
 import io.agora.rtm.RtmStatusCode.JoinChannelError.JOIN_CHANNEL_ERR_NOT_INITIALIZED
 import io.agora.rtm.RtmStatusCode.LoginError.LOGIN_ERR_NOT_INITIALIZED
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -478,6 +479,82 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                     client.setLogFileSize(fileSizeInKBytes!!)
                 }
 
+                "addLocalUserMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    client.addLocalUserMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "updateLocalUserMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    client.updateLocalUserMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "deleteLocalUserMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    client.deleteLocalUserMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "setLocalUserMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    client.setLocalUserMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "clearLocalUserMetadata" -> {
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    client.clearLocalUserMetadata(
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "getUserMetadata" -> {
+                    val userId = args?.get("userId") as? String
+                    client.getUserMetadata(
+                        userId,
+                        object : Callback<RtmMetadata>(result, handler) {
+                            override fun toJson(responseInfo: RtmMetadata): Any {
+                                return responseInfo.toJson()
+                            }
+                        },
+                    )
+                }
+
+                "subscribeUserMetadata" -> {
+                    val userId = args?.get("userId") as? String
+                    client.subscribeUserMetadata(
+                        userId,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "unsubscribeUserMetadata" -> {
+                    val userId = args?.get("userId") as? String
+                    client.unsubscribeUserMetadata(
+                        userId,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
                 else -> {
                     result.notImplemented()
                 }
@@ -529,6 +606,64 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                     channel.release()
                     agoraClient.channels.remove(channelId)
                     object : Callback<Void>(result, handler) {}.onSuccess(null)
+                }
+
+                "addChannelMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    channel.addChannelMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "updateChannelMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    channel.updateChannelMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "deleteChannelMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    channel.deleteChannelMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "setChannelMetadata" -> {
+                    val items = (args?.get("items") as? List<*>)?.toRtmMetadataItemList()
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    channel.setChannelMetadata(
+                        items,
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "clearChannelMetadata" -> {
+                    val options = (args?.get("options") as? Map<*, *>)?.toRtmMetadataOptions()
+                    channel.clearChannelMetadata(
+                        options,
+                        object : Callback<Void>(result, handler) {},
+                    )
+                }
+
+                "getChannelMetadata" -> {
+                    channel.getChannelMetadata(
+                        object : Callback<RtmMetadata>(result, handler) {
+                            override fun toJson(responseInfo: RtmMetadata): Any {
+                                return responseInfo.toJson()
+                            }
+                        },
+                    )
                 }
 
                 else -> {

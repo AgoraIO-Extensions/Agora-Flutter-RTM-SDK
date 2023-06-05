@@ -198,6 +198,51 @@ const _$RtmCloudProxyTypeEnumMap = {
   RtmCloudProxyType.tcpProxy: 1,
 };
 
+RtmMetadataItem _$RtmMetadataItemFromJson(Map<String, dynamic> json) =>
+    RtmMetadataItem(
+      json['key'] as String,
+      json['value'] as String,
+      authorUserId: json['authorUserId'] as String?,
+      revision: json['revision'] as int?,
+      updateTs: json['updateTs'] as int?,
+    );
+
+Map<String, dynamic> _$RtmMetadataItemToJson(RtmMetadataItem instance) =>
+    <String, dynamic>{
+      'key': instance.key,
+      'value': instance.value,
+      'authorUserId': instance.authorUserId,
+      'revision': instance.revision,
+      'updateTs': instance.updateTs,
+    };
+
+RtmMetadata _$RtmMetadataFromJson(Map<String, dynamic> json) => RtmMetadata(
+      (json['items'] as List<dynamic>)
+          .map((e) => RtmMetadataItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      json['majorRevision'] as int,
+    );
+
+Map<String, dynamic> _$RtmMetadataToJson(RtmMetadata instance) =>
+    <String, dynamic>{
+      'items': instance.items,
+      'majorRevision': instance.majorRevision,
+    };
+
+RtmMetadataOptions _$RtmMetadataOptionsFromJson(Map<String, dynamic> json) =>
+    RtmMetadataOptions(
+      json['majorRevision'] as int,
+      json['enableRecordTs'] as bool,
+      json['enableRecordUserId'] as bool,
+    );
+
+Map<String, dynamic> _$RtmMetadataOptionsToJson(RtmMetadataOptions instance) =>
+    <String, dynamic>{
+      'majorRevision': instance.majorRevision,
+      'enableRecordTs': instance.enableRecordTs,
+      'enableRecordUserId': instance.enableRecordUserId,
+    };
+
 const _$RtmConnectionStateEnumMap = {
   RtmConnectionState.disconnected: 1,
   RtmConnectionState.connecting: 2,

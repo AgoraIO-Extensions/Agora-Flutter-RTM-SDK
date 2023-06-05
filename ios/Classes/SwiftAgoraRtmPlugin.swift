@@ -259,6 +259,50 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 let fileSizeInKBytes = args?["fileSizeInKBytes"] as? Int32
                 let errorCode = client.setLogFileSize(fileSizeInKBytes!)
                 result(["errorCode": errorCode])
+            case "addLocalUserMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.addLocalUserMetadata(withCompletion: items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "updateLocalUserMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.updateLocalUserMetadata(withCompletion: items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "deleteLocalUserMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.deleteLocalUserMetadata(withCompletion: items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "setLocalUserMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.setLocalUserMetadataWithCompletion(items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "clearLocalUserMetadata":
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                client.clearLocalUserMetadata(withCompletion: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "getUserMetadata":
+                let userId = args?["userId"] as? String
+                client.getUserMetadata(withCompletion: userId!) {
+                    result(["errorCode": $2.rawValue, "result": $1?.toJson(), "userId": $0])
+                }
+            case "subscribeUserMetadata":
+                let userId = args?["userId"] as? String
+                client.subscribeUserMetadata(withCompletion: userId!) {
+                    result(["errorCode": $1.rawValue, "userId": $0])
+                }
+            case "unsubscribeUserMetadata":
+                let userId = args?["userId"] as? String
+                client.unsubscribeUserMetadata(withCompletion: userId!) {
+                    result(["errorCode": $1.rawValue, "userId": $0])
+                }
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -293,6 +337,39 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                     if errorCode {
                         result(["errorCode": 0])
                     }
+                }
+            case "addChannelMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                channel.addMetadata(withCompletion: items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "updateChannelMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                channel.updateMetadata(withCompletion: items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "deleteChannelMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                channel.deleteMetadata(withCompletion: items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "setChannelMetadata":
+                let items = args?["items"] as? [[String: Any?]] ?? []
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                channel.setChannelMetadataWithCompletion(items.toMetadataItemList(), metadataOptions: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "clearChannelMetadata":
+                let options = args?["options"] as? [String: Any?] ?? [:]
+                channel.clearMetadata(withCompletion: options.toMetadataOptions()) {
+                    result(["errorCode": $0.rawValue])
+                }
+            case "getChannelMetadata":
+                channel.getMetadataWithCompletion() {
+                    result(["errorCode": $1.rawValue, "result": $0?.toJson()])
                 }
             default:
                 result(FlutterMethodNotImplemented)

@@ -408,6 +408,51 @@ class RtmServiceContext {
   Map<String, dynamic> toJson() => _$RtmServiceContextToJson(this);
 }
 
+@JsonSerializable()
+class RtmMetadataItem {
+  String key;
+  String value;
+  String? authorUserId;
+  int? revision;
+  int? updateTs;
+
+  RtmMetadataItem(this.key, this.value,
+      {this.authorUserId, this.revision, this.updateTs});
+
+  factory RtmMetadataItem.fromJson(Map<String, dynamic> json) =>
+      _$RtmMetadataItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmMetadataItemToJson(this);
+}
+
+@JsonSerializable()
+class RtmMetadata {
+  List<RtmMetadataItem> items;
+  int majorRevision;
+
+  RtmMetadata(this.items, this.majorRevision);
+
+  factory RtmMetadata.fromJson(Map<String, dynamic> json) =>
+      _$RtmMetadataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmMetadataToJson(this);
+}
+
+@JsonSerializable()
+class RtmMetadataOptions {
+  int majorRevision;
+  bool enableRecordTs;
+  bool enableRecordUserId;
+
+  RtmMetadataOptions(
+      this.majorRevision, this.enableRecordTs, this.enableRecordUserId);
+
+  factory RtmMetadataOptions.fromJson(Map<String, dynamic> json) =>
+      _$RtmMetadataOptionsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmMetadataOptionsToJson(this);
+}
+
 /// [RtmMessage]
 @Deprecated('Use RtmMessage instead of.')
 typedef AgoraRtmMessage = RtmMessage;

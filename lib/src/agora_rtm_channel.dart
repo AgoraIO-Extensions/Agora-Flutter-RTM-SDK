@@ -33,6 +33,8 @@ class AgoraRtmChannel {
   /// Occurs when a channel member leaves the channel.
   void Function(RtmChannelMember member)? onMemberLeft;
 
+  void Function(RtmMetadata metadata)? onMetadataUpdated;
+
   final int _clientIndex;
   final String _channelId;
 
@@ -71,6 +73,11 @@ class AgoraRtmChannel {
         case 'onMemberLeft':
           RtmChannelMember member = RtmChannelMember.fromJson(map['member']);
           onMemberLeft?.call(member);
+          break;
+        case 'onMetadataUpdated':
+          RtmMetadata metadata =
+              RtmMetadata.fromJson(Map<String, dynamic>.from(map['metadata']));
+          onMetadataUpdated?.call(metadata);
           break;
       }
     }, onError: onError);
@@ -119,6 +126,39 @@ class AgoraRtmChannel {
   }
 
   String get channelId => _channelId;
+
+  Future<void> addChannelMetadata(
+      List<RtmMetadataItem> items, RtmMetadataOptions options) {
+    return _callNative("addChannelMetadata",
+        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+  }
+
+  Future<void> updateChannelMetadata(
+      List<RtmMetadataItem> items, RtmMetadataOptions options) {
+    return _callNative("updateChannelMetadata",
+        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+  }
+
+  Future<void> deleteChannelMetadata(
+      List<RtmMetadataItem> items, RtmMetadataOptions options) {
+    return _callNative("deleteChannelMetadataByKeys",
+        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+  }
+
+  Future<void> setChannelMetadata(
+      List<RtmMetadataItem> items, RtmMetadataOptions options) {
+    return _callNative("setChannelMetadata",
+        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+  }
+
+  Future<void> clearChannelMetadata(RtmMetadataOptions options) {
+    return _callNative("clearChannelMetadata", {'options': options.toJson()});
+  }
+
+  Future<RtmMetadata> getChannelMetadata(s) async {
+    return RtmMetadata.fromJson(Map<String, dynamic>.from(
+        await _callNative("getChannelMetadata", null)));
+  }
 
   /// [sendMessage2]
   @Deprecated('Use sendMessage2 instead of.')

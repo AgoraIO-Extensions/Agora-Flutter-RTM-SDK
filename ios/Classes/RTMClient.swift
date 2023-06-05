@@ -77,4 +77,8 @@ class RTMClient: NSObject, FlutterStreamHandler, AgoraRtmDelegate {
     func rtmKitTokenPrivilegeWillExpire(_ kit: AgoraRtmKit) {
         sendEvent(eventName: "onTokenPrivilegeWillExpire", params: [:])
     }
+    
+    func rtmKit(_ kit: AgoraRtmKit, userMetadataUpdated userId: String, metadata data: AgoraRtmMetadata) {
+        sendEvent(eventName: "onUserMetadataUpdated", params: ["userId": userId, "metadata": data.toJson()])
+    }
 }

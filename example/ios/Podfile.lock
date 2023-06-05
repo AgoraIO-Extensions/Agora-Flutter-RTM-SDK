@@ -1,8 +1,8 @@
 PODS:
-  - agora_rtm (1.5.7):
-    - AgoraRtm_iOS (= 1.5.1)
+  - agora_rtm (1.5.4):
+    - AgoraRtm_Special_iOS (= 1.6.0.202)
     - Flutter
-  - AgoraRtm_iOS (1.5.1)
+  - AgoraRtm_Special_iOS (1.6.0.202)
   - Flutter (1.0.0)
 
 DEPENDENCIES:
@@ -11,7 +11,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - AgoraRtm_iOS
+    - AgoraRtm_Special_iOS
 
 EXTERNAL SOURCES:
   agora_rtm:
@@ -20,8 +20,8 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  agora_rtm: d00cc64910bee2c7f8354c436ff591cc344f4d47
-  AgoraRtm_iOS: 595a9fa33a409831e6183396ea8f8bc563918403
+  agora_rtm: f5b0272cd13244373d80a9e22e34ca873d741001
+  AgoraRtm_Special_iOS: 9a46c3d580f436c5d8cb74b6f4b67bb2d6014456
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3

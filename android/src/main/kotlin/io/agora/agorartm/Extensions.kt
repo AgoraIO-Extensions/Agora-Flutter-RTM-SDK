@@ -10,6 +10,9 @@ import io.agora.rtm.RtmChannelMember
 import io.agora.rtm.RtmChannelMemberCount
 import io.agora.rtm.RtmClient
 import io.agora.rtm.RtmMessage
+import io.agora.rtm.RtmMetadata
+import io.agora.rtm.RtmMetadataItem
+import io.agora.rtm.RtmMetadataOptions
 import io.agora.rtm.RtmServiceContext
 import io.agora.rtm.SendMessageOptions
 
@@ -163,6 +166,59 @@ fun Map<*, *>.toRtmServiceContext(): RtmServiceContext {
     }
 }
 
+fun RtmMetadataItem.toJson(): Map<String, Any?> {
+    return hashMapOf(
+        "key" to key,
+        "value" to value,
+        "revision" to revision,
+        "updateTs" to lastUpdateTs,
+        "authorUserId" to authorUserId,
+    )
+}
+
+fun Map<*, *>.toRtmMetadataItem(): RtmMetadataItem {
+    return RtmMetadataItem().apply {
+        key = this@toRtmMetadataItem["key"] as? String
+        value = this@toRtmMetadataItem["value"] as? String
+        (this@toRtmMetadataItem["revision"] as? Int)?.let {
+            revision = it.toLong()
+        }
+    }
+}
+
+fun List<*>.toRtmMetadataItemList(): List<RtmMetadataItem?> {
+    return this.map { (it as? Map<*, *>)?.toRtmMetadataItem() }
+}
+
+fun RtmMetadata.toJson(): Map<String, Any?> {
+    return hashMapOf(
+        "items" to items.toJson(),
+        "majorRevision" to majorRevision,
+    )
+}
+
+fun RtmMetadataOptions.toJson(): Map<String, Any?> {
+    return hashMapOf(
+        "majorRevision" to majorRevision,
+        "enableRecordTs" to enableRecordTs,
+        "enableRecordUserId" to enableRecordUserId,
+    )
+}
+
+fun Map<*, *>.toRtmMetadataOptions(): RtmMetadataOptions {
+    return RtmMetadataOptions().apply {
+        (this@toRtmMetadataOptions["majorRevision"] as? Int)?.let {
+            majorRevision = it.toLong()
+        }
+        (this@toRtmMetadataOptions["enableRecordTs"] as? Boolean)?.let {
+            enableRecordTs = it
+        }
+        (this@toRtmMetadataOptions["enableRecordUserId"] as? Boolean)?.let {
+            enableRecordUserId = it
+        }
+    }
+}
+
 fun List<*>.toStringSet(): Set<String> {
     return toStringList().toSet()
 }
@@ -178,6 +234,7 @@ fun List<*>.toJson(): List<Map<String, Any?>> {
             is RtmChannelAttribute -> it.toJson()
             is RtmChannelMember -> it.toJson()
             is RtmChannelMemberCount -> it.toJson()
+            is RtmMetadataItem -> it.toJson()
             else -> emptyMap()
         }
     }

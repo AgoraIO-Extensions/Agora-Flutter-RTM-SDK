@@ -68,4 +68,10 @@ class RTMChannel: NSObject, FlutterStreamHandler, AgoraRtmChannelDelegate {
             "member": member.toJson(),
         ])
     }
+    
+    func channel(_ channel: AgoraRtmChannel, metadataUpdate data: AgoraRtmMetadata) {
+        sendEvent(eventName: "onMetadataUpdate", params: [
+            "metadata": data.toJson(),
+        ])
+    }
 }

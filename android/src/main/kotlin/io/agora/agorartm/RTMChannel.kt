@@ -5,6 +5,7 @@ import io.agora.rtm.RtmChannelAttribute
 import io.agora.rtm.RtmChannelListener
 import io.agora.rtm.RtmChannelMember
 import io.agora.rtm.RtmMessage
+import io.agora.rtm.RtmMetadata
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
@@ -74,6 +75,14 @@ class RTMChannel(
         sendEvent(
             "onMemberLeft", hashMapOf(
                 "member" to member.toJson()
+            )
+        )
+    }
+
+    override fun onMetadataUpdated(metadata: RtmMetadata?) {
+        sendEvent(
+            "onMetadataUpdated", hashMapOf(
+                "metadata" to metadata?.toJson()
             )
         )
     }

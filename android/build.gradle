@@ -46,7 +46,7 @@ android {
 }
 
 dependencies {
-    api 'io.agora.rtm:rtm-sdk:1.5.3'
+    api 'io.agora.rtm:rtm-special-sdk:1.6.0.203'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
