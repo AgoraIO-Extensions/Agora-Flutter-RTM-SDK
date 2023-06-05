@@ -75,8 +75,12 @@ class AgoraRtmClient {
           onTokenPrivilegeWillExpire?.call();
           break;
         case 'onPeersOnlineStatusChanged':
-          Map<String, bool> peersStatus = map["peersStatus"];
-          onPeersOnlineStatusChanged?.call(peersStatus);
+          final peers = (map["peersStatus"] as Map<Object?, Object?>);
+          Map<String, bool> mp = {};
+          peers.forEach(( key, value) {
+            mp['$key'] = value as bool;
+          });
+          onPeersOnlineStatusChanged?.call(mp);
           break;
       }
     }, onError: onError);
