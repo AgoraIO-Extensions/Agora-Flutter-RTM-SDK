@@ -86,8 +86,7 @@ class AgoraRtmClient {
           break;
         case 'onUserMetadataUpdated':
           var userId = map["userId"];
-          var metadata =
-              RtmMetadata.fromJson(Map<String, dynamic>.from(map["metadata"]));
+          var metadata = RtmMetadata.fromJson(map["metadata"]);
           onUserMetadataUpdated?.call(userId, metadata);
           break;
       }
@@ -336,26 +335,34 @@ class AgoraRtmClient {
 
   Future<void> addLocalUserMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("addLocalUserMetadata",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("addLocalUserMetadata", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> updateLocalUserMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("updateLocalUserMetadata",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("updateLocalUserMetadata", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> deleteLocalUserMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("deleteLocalUserMetadataByKeys",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("deleteLocalUserMetadataByKeys", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> setLocalUserMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("setLocalUserMetadata",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("setLocalUserMetadata", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> clearLocalUserMetadata(RtmMetadataOptions options) {
@@ -363,8 +370,8 @@ class AgoraRtmClient {
   }
 
   Future<RtmMetadata> getUserMetadata(String userId) async {
-    return RtmMetadata.fromJson(Map<String, dynamic>.from(
-        await _callNative("getUserMetadata", {'userId': userId})));
+    return RtmMetadata.fromJson(
+        await _callNative("getUserMetadata", {'userId': userId}));
   }
 
   Future<void> subscribeUserMetadata(String userId) {

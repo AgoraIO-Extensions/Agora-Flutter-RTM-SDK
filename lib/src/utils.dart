@@ -408,7 +408,7 @@ class RtmServiceContext {
   Map<String, dynamic> toJson() => _$RtmServiceContextToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmMetadataItem {
   String key;
   String value;
@@ -419,26 +419,24 @@ class RtmMetadataItem {
   RtmMetadataItem(this.key, this.value,
       {this.authorUserId, this.revision, this.updateTs});
 
-  factory RtmMetadataItem.fromJson(Map<String, dynamic> json) =>
-      _$RtmMetadataItemFromJson(json);
+  factory RtmMetadataItem.fromJson(Map json) => _$RtmMetadataItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmMetadataItemToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmMetadata {
   List<RtmMetadataItem> items;
   int majorRevision;
 
   RtmMetadata(this.items, this.majorRevision);
 
-  factory RtmMetadata.fromJson(Map<String, dynamic> json) =>
-      _$RtmMetadataFromJson(json);
+  factory RtmMetadata.fromJson(Map json) => _$RtmMetadataFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmMetadataToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmMetadataOptions {
   int majorRevision;
   bool enableRecordTs;
@@ -447,7 +445,7 @@ class RtmMetadataOptions {
   RtmMetadataOptions(
       this.majorRevision, this.enableRecordTs, this.enableRecordUserId);
 
-  factory RtmMetadataOptions.fromJson(Map<String, dynamic> json) =>
+  factory RtmMetadataOptions.fromJson(Map json) =>
       _$RtmMetadataOptionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmMetadataOptionsToJson(this);

@@ -210,18 +210,28 @@ extension Dictionary where Key == String {
 
     func toMetadataItem() -> AgoraRtmMetadataItem {
         let metadataItem = AgoraRtmMetadataItem()
-        metadataItem.key = self["key"] as! String
+        if let key = self["key"] as? String {
+            metadataItem.key = key
+        }
         metadataItem.value = self["value"] as? String
-        metadataItem.revision = self["revision"] as! Int64
+        if let revision = self["revision"] as? Int64 {
+            metadataItem.revision = revision
+        }
         metadataItem.authorUserId = self["authorUserId"] as? String
         return metadataItem
     }
 
     func toMetadataOptions() -> AgoraRtmMetadataOptions {
         let metadataOptions = AgoraRtmMetadataOptions()
-        metadataOptions.majorRevision = self["majorRevision"] as! Int64
-        metadataOptions.enableRecordTs = self["enableRecordTs"] as! Bool
-        metadataOptions.enableRecordUserId = self["enableRecordUserId"] as! Bool
+        if let majorRevision = self["majorRevision"] as? Int64 {
+            metadataOptions.majorRevision = majorRevision
+        }
+        if let enableRecordTs = self["enableRecordTs"] as? Bool {
+            metadataOptions.enableRecordTs = enableRecordTs
+        }
+        if let enableRecordUserId = self["enableRecordUserId"] as? Bool {
+            metadataOptions.enableRecordUserId = enableRecordUserId
+        }
         return metadataOptions
     }
 }

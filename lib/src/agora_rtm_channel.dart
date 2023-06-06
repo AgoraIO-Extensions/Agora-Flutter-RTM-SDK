@@ -75,8 +75,7 @@ class AgoraRtmChannel {
           onMemberLeft?.call(member);
           break;
         case 'onMetadataUpdated':
-          RtmMetadata metadata =
-              RtmMetadata.fromJson(Map<String, dynamic>.from(map['metadata']));
+          RtmMetadata metadata = RtmMetadata.fromJson(map['metadata']);
           onMetadataUpdated?.call(metadata);
           break;
       }
@@ -129,26 +128,34 @@ class AgoraRtmChannel {
 
   Future<void> addChannelMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("addChannelMetadata",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("addChannelMetadata", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> updateChannelMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("updateChannelMetadata",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("updateChannelMetadata", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> deleteChannelMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("deleteChannelMetadataByKeys",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("deleteChannelMetadataByKeys", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> setChannelMetadata(
       List<RtmMetadataItem> items, RtmMetadataOptions options) {
-    return _callNative("setChannelMetadata",
-        {'items': items.map((e) => e.toJson()), 'options': options.toJson()});
+    return _callNative("setChannelMetadata", {
+      'items': items.map((e) => e.toJson()).toList(),
+      'options': options.toJson()
+    });
   }
 
   Future<void> clearChannelMetadata(RtmMetadataOptions options) {
@@ -156,8 +163,7 @@ class AgoraRtmChannel {
   }
 
   Future<RtmMetadata> getChannelMetadata(s) async {
-    return RtmMetadata.fromJson(Map<String, dynamic>.from(
-        await _callNative("getChannelMetadata", null)));
+    return RtmMetadata.fromJson(await _callNative("getChannelMetadata", null));
   }
 
   /// [sendMessage2]
