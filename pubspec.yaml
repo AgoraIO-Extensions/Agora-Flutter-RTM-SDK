@@ -7,6 +7,7 @@ homepage: https://www.agora.io
 repository: https://github.com/AgoraIO/Flutter-RTM
 environment:
       sdk: '>=2.14.0 <4.0.0'
+      flutter: '>=2.5.0'
 dependencies:
       flutter:
             sdk: flutter
