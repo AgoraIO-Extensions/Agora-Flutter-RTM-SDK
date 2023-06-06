@@ -215,7 +215,7 @@ extension RtmCloudProxyTypeExtension on RtmCloudProxyType {
   int toJson() => _$RtmCloudProxyTypeEnumMap[this]!;
 }
 
-@JsonSerializable(constructor: '_')
+@JsonSerializable(anyMap: true, constructor: '_')
 class RtmMessage {
   String text;
   @JsonKey(fromJson: _rawMessage, toJson: _rawMessage)
@@ -237,15 +237,14 @@ class RtmMessage {
   RtmMessage.fromRaw(this.rawMessage, this.text)
       : messageType = RtmMessageType.raw;
 
-  factory RtmMessage.fromJson(Map<String, dynamic> json) =>
-      _$RtmMessageFromJson(json);
+  factory RtmMessage.fromJson(Map json) => _$RtmMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmMessageToJson(this);
 
   static Uint8List? _rawMessage(Uint8List? rawMessage) => rawMessage;
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmChannelMember {
   String userId;
   String channelId;
@@ -255,13 +254,13 @@ class RtmChannelMember {
     this.channelId,
   );
 
-  factory RtmChannelMember.fromJson(Map<String, dynamic> json) =>
+  factory RtmChannelMember.fromJson(Map json) =>
       _$RtmChannelMemberFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmChannelMemberToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmAttribute {
   String key;
   String value;
@@ -271,13 +270,12 @@ class RtmAttribute {
     this.value,
   );
 
-  factory RtmAttribute.fromJson(Map<String, dynamic> json) =>
-      _$RtmAttributeFromJson(json);
+  factory RtmAttribute.fromJson(Map json) => _$RtmAttributeFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmAttributeToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmChannelAttribute {
   String key;
   String value;
@@ -291,13 +289,13 @@ class RtmChannelAttribute {
     this.lastUpdateTs,
   });
 
-  factory RtmChannelAttribute.fromJson(Map<String, dynamic> json) =>
+  factory RtmChannelAttribute.fromJson(Map json) =>
       _$RtmChannelAttributeFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmChannelAttributeToJson(this);
 }
 
-@JsonSerializable(constructor: '_')
+@JsonSerializable(anyMap: true, constructor: '_')
 class LocalInvitation {
   String calleeId;
   String? content;
@@ -316,13 +314,12 @@ class LocalInvitation {
     this.handle = 0,
   });
 
-  factory LocalInvitation.fromJson(Map<String, dynamic> json) =>
-      _$LocalInvitationFromJson(json);
+  factory LocalInvitation.fromJson(Map json) => _$LocalInvitationFromJson(json);
 
   Map<String, dynamic> toJson() => _$LocalInvitationToJson(this);
 }
 
-@JsonSerializable(constructor: '_')
+@JsonSerializable(anyMap: true, constructor: '_')
 class RemoteInvitation {
   String callerId;
   String? content;
@@ -341,13 +338,13 @@ class RemoteInvitation {
     this.handle = 0,
   });
 
-  factory RemoteInvitation.fromJson(Map<String, dynamic> json) =>
+  factory RemoteInvitation.fromJson(Map json) =>
       _$RemoteInvitationFromJson(json);
 
   Map<String, dynamic> toJson() => _$RemoteInvitationToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class ChannelAttributeOptions {
   bool enableNotificationToChannelMembers;
 
@@ -355,13 +352,13 @@ class ChannelAttributeOptions {
     this.enableNotificationToChannelMembers,
   );
 
-  factory ChannelAttributeOptions.fromJson(Map<String, dynamic> json) =>
+  factory ChannelAttributeOptions.fromJson(Map json) =>
       _$ChannelAttributeOptionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChannelAttributeOptionsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class SendMessageOptions {
   @Deprecated('Removed in v1.5.0')
   bool? enableOfflineMessaging;
@@ -373,13 +370,13 @@ class SendMessageOptions {
     this.enableHistoricalMessaging,
   });
 
-  factory SendMessageOptions.fromJson(Map<String, dynamic> json) =>
+  factory SendMessageOptions.fromJson(Map json) =>
       _$SendMessageOptionsFromJson(json);
 
   Map<String, dynamic> toJson() => _$SendMessageOptionsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmChannelMemberCount {
   String channelId;
   int memberCount;
@@ -389,13 +386,13 @@ class RtmChannelMemberCount {
     this.memberCount,
   );
 
-  factory RtmChannelMemberCount.fromJson(Map<String, dynamic> json) =>
+  factory RtmChannelMemberCount.fromJson(Map json) =>
       _$RtmChannelMemberCountFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmChannelMemberCountToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(anyMap: true)
 class RtmServiceContext {
   List<RtmAreaCode> areaCode;
   RtmCloudProxyType proxyType;
@@ -405,7 +402,7 @@ class RtmServiceContext {
     this.proxyType = RtmCloudProxyType.noneProxy,
   });
 
-  factory RtmServiceContext.fromJson(Map<String, dynamic> json) =>
+  factory RtmServiceContext.fromJson(Map json) =>
       _$RtmServiceContextFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmServiceContextToJson(this);

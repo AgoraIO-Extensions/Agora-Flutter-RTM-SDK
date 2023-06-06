@@ -52,28 +52,24 @@ class AgoraRtmChannel {
           onMemberCountUpdated?.call(memberCount);
           break;
         case 'onAttributesUpdated':
-          List<RtmChannelAttribute> attributeList = List<Map>.from(
-                  map['attributeList'])
-              .map((e) =>
-                  RtmChannelAttribute.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
+          List<RtmChannelAttribute> attributeList =
+              List<Map>.from(map['attributeList'])
+                  .map((e) => RtmChannelAttribute.fromJson(e))
+                  .toList();
           onAttributesUpdated?.call(attributeList);
           break;
         case 'onMessageReceived':
-          RtmMessage message =
-              RtmMessage.fromJson(Map<String, dynamic>.from(map['message']));
-          RtmChannelMember fromMember = RtmChannelMember.fromJson(
-              Map<String, dynamic>.from(map['fromMember']));
+          RtmMessage message = RtmMessage.fromJson(map['message']);
+          RtmChannelMember fromMember =
+              RtmChannelMember.fromJson(map['fromMember']);
           onMessageReceived?.call(message, fromMember);
           break;
         case 'onMemberJoined':
-          RtmChannelMember member = RtmChannelMember.fromJson(
-              Map<String, dynamic>.from(map['member']));
+          RtmChannelMember member = RtmChannelMember.fromJson(map['member']);
           onMemberJoined?.call(member);
           break;
         case 'onMemberLeft':
-          RtmChannelMember member = RtmChannelMember.fromJson(
-              Map<String, dynamic>.from(map['member']));
+          RtmChannelMember member = RtmChannelMember.fromJson(map['member']);
           onMemberLeft?.call(member);
           break;
       }
@@ -105,7 +101,7 @@ class AgoraRtmChannel {
 
   Future<List<RtmChannelMember>> getMembers() async {
     return List<Map>.from(await _callNative("getMembers", null))
-        .map((e) => RtmChannelMember.fromJson(Map<String, dynamic>.from(e)))
+        .map((e) => RtmChannelMember.fromJson(e))
         .toList();
   }
 

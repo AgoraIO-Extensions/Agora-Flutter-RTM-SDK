@@ -65,51 +65,47 @@ class AgoraRtmCallManager {
       final map = Map.from(event['data']);
       switch (event['event']) {
         case 'onLocalInvitationReceivedByPeer':
-          onLocalInvitationReceivedByPeer?.call(LocalInvitation.fromJson(
-              Map<String, dynamic>.from(map['localInvitation'])));
+          onLocalInvitationReceivedByPeer
+              ?.call(LocalInvitation.fromJson(map['localInvitation']));
           break;
         case 'onLocalInvitationAccepted':
           onLocalInvitationAccepted?.call(
-              LocalInvitation.fromJson(
-                  Map<String, dynamic>.from(map['localInvitation'])),
+              LocalInvitation.fromJson(map['localInvitation']),
               map['response']);
           break;
         case 'onLocalInvitationRefused':
           onLocalInvitationRefused?.call(
-              LocalInvitation.fromJson(
-                  Map<String, dynamic>.from(map['localInvitation'])),
+              LocalInvitation.fromJson(map['localInvitation']),
               map['response']);
           break;
         case 'onLocalInvitationCanceled':
-          onLocalInvitationCanceled?.call(LocalInvitation.fromJson(
-              Map<String, dynamic>.from(map['localInvitation'])));
+          onLocalInvitationCanceled
+              ?.call(LocalInvitation.fromJson(map['localInvitation']));
           break;
         case 'onLocalInvitationFailure':
           onLocalInvitationFailure?.call(
-              LocalInvitation.fromJson(
-                  Map<String, dynamic>.from(map['localInvitation'])),
+              LocalInvitation.fromJson(map['localInvitation']),
               map['errorCode']);
           break;
         case 'onRemoteInvitationReceived':
-          onRemoteInvitationReceived?.call(RemoteInvitation.fromJson(
-              Map<String, dynamic>.from(map['remoteInvitation'])));
+          onRemoteInvitationReceived
+              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
           break;
         case 'onRemoteInvitationAccepted':
-          onRemoteInvitationAccepted?.call(RemoteInvitation.fromJson(
-              Map<String, dynamic>.from(map['remoteInvitation'])));
+          onRemoteInvitationAccepted
+              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
           break;
         case 'onRemoteInvitationRefused':
-          onRemoteInvitationRefused?.call(RemoteInvitation.fromJson(
-              Map<String, dynamic>.from(map['remoteInvitation'])));
+          onRemoteInvitationRefused
+              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
           break;
         case 'onRemoteInvitationCanceled':
-          onRemoteInvitationCanceled?.call(RemoteInvitation.fromJson(
-              Map<String, dynamic>.from(map['remoteInvitation'])));
+          onRemoteInvitationCanceled
+              ?.call(RemoteInvitation.fromJson(map['remoteInvitation']));
           break;
         case 'onRemoteInvitationFailure':
           onRemoteInvitationFailure?.call(
-              RemoteInvitation.fromJson(
-                  Map<String, dynamic>.from(map['remoteInvitation'])),
+              RemoteInvitation.fromJson(map['remoteInvitation']),
               map['errorCode']);
           break;
       }
@@ -122,8 +118,8 @@ class AgoraRtmCallManager {
   }
 
   Future<LocalInvitation> createLocalInvitation(String calleeId) async {
-    return LocalInvitation.fromJson(Map<String, dynamic>.from(
-        await _callNative("createLocalInvitation", {'calleeId': calleeId})));
+    return LocalInvitation.fromJson(
+        await _callNative("createLocalInvitation", {'calleeId': calleeId}));
   }
 
   /// Allows the caller to send a call invitation to the callee.

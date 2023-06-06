@@ -66,8 +66,7 @@ class AgoraRtmClient {
           onConnectionStateChanged2?.call(state, reason);
           break;
         case 'onMessageReceived':
-          var message =
-              RtmMessage.fromJson(Map<String, dynamic>.from(map["message"]));
+          var message = RtmMessage.fromJson(map["message"]);
           String peerId = map["peerId"];
           onMessageReceived?.call(message, peerId);
           break;
@@ -229,7 +228,7 @@ class AgoraRtmClient {
   Future<List<RtmAttribute>> getUserAttributes2(String userId) async {
     return List<Map>.from(
             await _callNative("getUserAttributes", {'userId': userId}))
-        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
+        .map((e) => RtmAttribute.fromJson(e))
         .toList();
   }
 
@@ -238,7 +237,7 @@ class AgoraRtmClient {
       String userId, List<String> attributeKeys) async {
     return List<Map>.from(await _callNative("getUserAttributesByKeys",
             {'userId': userId, 'attributeKeys': attributeKeys}))
-        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
+        .map((e) => RtmAttribute.fromJson(e))
         .toList();
   }
 
@@ -289,8 +288,7 @@ class AgoraRtmClient {
       String channelId) async {
     return List<Map>.from(
             await _callNative("getChannelAttributes", {'channelId': channelId}))
-        .map((attr) =>
-            RtmChannelAttribute.fromJson(Map<String, dynamic>.from(attr)))
+        .map((attr) => RtmChannelAttribute.fromJson(attr))
         .toList();
   }
 
@@ -299,8 +297,7 @@ class AgoraRtmClient {
       String channelId, List<String> attributeKeys) async {
     return List<Map>.from(await _callNative("getChannelAttributesByKeys",
             {'channelId': channelId, 'attributeKeys': attributeKeys}))
-        .map((attr) =>
-            RtmChannelAttribute.fromJson(Map<String, dynamic>.from(attr)))
+        .map((attr) => RtmChannelAttribute.fromJson(attr))
         .toList();
   }
 
@@ -308,8 +305,7 @@ class AgoraRtmClient {
       List<String> channelIds) async {
     return List<Map>.from(await _callNative(
             "getChannelMemberCount", {'channelIds': channelIds}))
-        .map((attr) =>
-            RtmChannelMember.fromJson(Map<String, dynamic>.from(attr)))
+        .map((attr) => RtmChannelMember.fromJson(attr))
         .toList();
   }
 
@@ -447,29 +443,29 @@ class AgoraRtmClient {
   /// [AgoraRtmCallManager.sendLocalInvitation]
   @Deprecated('Use AgoraRtmCallManager.sendLocalInvitation instead of.')
   Future<void> sendLocalInvitation(Map<String, dynamic> arguments) {
-    return _callManager.sendLocalInvitation(
-        LocalInvitation.fromJson(Map<String, dynamic>.from(arguments)));
+    return _callManager
+        .sendLocalInvitation(LocalInvitation.fromJson(arguments));
   }
 
   /// [AgoraRtmCallManager.acceptRemoteInvitation]
   @Deprecated('Use AgoraRtmCallManager.acceptRemoteInvitation instead of.')
   Future<void> acceptRemoteInvitation(Map<String, dynamic> arguments) {
-    return _callManager.acceptRemoteInvitation(
-        RemoteInvitation.fromJson(Map<String, dynamic>.from(arguments)));
+    return _callManager
+        .acceptRemoteInvitation(RemoteInvitation.fromJson(arguments));
   }
 
   /// [AgoraRtmCallManager.refuseRemoteInvitation]
   @Deprecated('Use AgoraRtmCallManager.refuseRemoteInvitation instead of.')
   Future<void> refuseRemoteInvitation(Map<String, dynamic> arguments) {
-    return _callManager.refuseRemoteInvitation(
-        RemoteInvitation.fromJson(Map<String, dynamic>.from(arguments)));
+    return _callManager
+        .refuseRemoteInvitation(RemoteInvitation.fromJson(arguments));
   }
 
   /// [AgoraRtmCallManager.cancelLocalInvitation]
   @Deprecated('Use AgoraRtmCallManager.cancelLocalInvitation instead of.')
   Future<void> cancelLocalInvitation(Map<String, dynamic> arguments) {
-    return _callManager.cancelLocalInvitation(
-        LocalInvitation.fromJson(Map<String, dynamic>.from(arguments)));
+    return _callManager
+        .cancelLocalInvitation(LocalInvitation.fromJson(arguments));
   }
 
   /// [sendMessageToPeer2]
@@ -487,18 +483,16 @@ class AgoraRtmClient {
   /// [setLocalUserAttributes2]
   @Deprecated('Use setLocalUserAttributes2 instead of.')
   Future<void> setLocalUserAttributes(List<Map<String, String>> attributes) {
-    return setLocalUserAttributes2(attributes
-        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
-        .toList());
+    return setLocalUserAttributes2(
+        attributes.map((e) => RtmAttribute.fromJson(e)).toList());
   }
 
   /// [addOrUpdateLocalUserAttributes2]
   @Deprecated('Use addOrUpdateLocalUserAttributes2 instead of.')
   Future<void> addOrUpdateLocalUserAttributes(
       List<Map<String, String>> attributes) {
-    return addOrUpdateLocalUserAttributes2(attributes
-        .map((e) => RtmAttribute.fromJson(Map<String, dynamic>.from(e)))
-        .toList());
+    return addOrUpdateLocalUserAttributes2(
+        attributes.map((e) => RtmAttribute.fromJson(e)).toList());
   }
 
   /// [getUserAttributes2]

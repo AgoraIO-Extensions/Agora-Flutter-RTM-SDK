@@ -6,7 +6,7 @@ part of 'utils.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RtmMessage _$RtmMessageFromJson(Map<String, dynamic> json) => RtmMessage._(
+RtmMessage _$RtmMessageFromJson(Map json) => RtmMessage._(
       json['text'] as String,
       $enumDecode(_$RtmMessageTypeEnumMap, json['messageType']),
       rawMessage: RtmMessage._rawMessage(json['rawMessage'] as Uint8List?),
@@ -29,8 +29,7 @@ const _$RtmMessageTypeEnumMap = {
   RtmMessageType.raw: 2,
 };
 
-RtmChannelMember _$RtmChannelMemberFromJson(Map<String, dynamic> json) =>
-    RtmChannelMember(
+RtmChannelMember _$RtmChannelMemberFromJson(Map json) => RtmChannelMember(
       json['userId'] as String,
       json['channelId'] as String,
     );
@@ -41,7 +40,7 @@ Map<String, dynamic> _$RtmChannelMemberToJson(RtmChannelMember instance) =>
       'channelId': instance.channelId,
     };
 
-RtmAttribute _$RtmAttributeFromJson(Map<String, dynamic> json) => RtmAttribute(
+RtmAttribute _$RtmAttributeFromJson(Map json) => RtmAttribute(
       json['key'] as String,
       json['value'] as String,
     );
@@ -52,7 +51,7 @@ Map<String, dynamic> _$RtmAttributeToJson(RtmAttribute instance) =>
       'value': instance.value,
     };
 
-RtmChannelAttribute _$RtmChannelAttributeFromJson(Map<String, dynamic> json) =>
+RtmChannelAttribute _$RtmChannelAttributeFromJson(Map json) =>
     RtmChannelAttribute(
       json['key'] as String,
       json['value'] as String,
@@ -69,8 +68,7 @@ Map<String, dynamic> _$RtmChannelAttributeToJson(
       'lastUpdateTs': instance.lastUpdateTs,
     };
 
-LocalInvitation _$LocalInvitationFromJson(Map<String, dynamic> json) =>
-    LocalInvitation._(
+LocalInvitation _$LocalInvitationFromJson(Map json) => LocalInvitation._(
       json['calleeId'] as String,
       content: json['content'] as String?,
       response: json['response'] as String?,
@@ -101,8 +99,7 @@ const _$RtmLocalInvitationStateEnumMap = {
   RtmLocalInvitationState.failure: 6,
 };
 
-RemoteInvitation _$RemoteInvitationFromJson(Map<String, dynamic> json) =>
-    RemoteInvitation._(
+RemoteInvitation _$RemoteInvitationFromJson(Map json) => RemoteInvitation._(
       json['callerId'] as String,
       content: json['content'] as String?,
       response: json['response'] as String?,
@@ -133,8 +130,7 @@ const _$RtmRemoteInvitationStateEnumMap = {
   RtmRemoteInvitationState.failure: 6,
 };
 
-ChannelAttributeOptions _$ChannelAttributeOptionsFromJson(
-        Map<String, dynamic> json) =>
+ChannelAttributeOptions _$ChannelAttributeOptionsFromJson(Map json) =>
     ChannelAttributeOptions(
       json['enableNotificationToChannelMembers'] as bool,
     );
@@ -146,8 +142,7 @@ Map<String, dynamic> _$ChannelAttributeOptionsToJson(
           instance.enableNotificationToChannelMembers,
     };
 
-SendMessageOptions _$SendMessageOptionsFromJson(Map<String, dynamic> json) =>
-    SendMessageOptions(
+SendMessageOptions _$SendMessageOptionsFromJson(Map json) => SendMessageOptions(
       enableOfflineMessaging: json['enableOfflineMessaging'] as bool?,
       enableHistoricalMessaging: json['enableHistoricalMessaging'] as bool?,
     );
@@ -158,8 +153,7 @@ Map<String, dynamic> _$SendMessageOptionsToJson(SendMessageOptions instance) =>
       'enableHistoricalMessaging': instance.enableHistoricalMessaging,
     };
 
-RtmChannelMemberCount _$RtmChannelMemberCountFromJson(
-        Map<String, dynamic> json) =>
+RtmChannelMemberCount _$RtmChannelMemberCountFromJson(Map json) =>
     RtmChannelMemberCount(
       json['channelId'] as String,
       json['memberCount'] as int,
@@ -172,8 +166,7 @@ Map<String, dynamic> _$RtmChannelMemberCountToJson(
       'memberCount': instance.memberCount,
     };
 
-RtmServiceContext _$RtmServiceContextFromJson(Map<String, dynamic> json) =>
-    RtmServiceContext(
+RtmServiceContext _$RtmServiceContextFromJson(Map json) => RtmServiceContext(
       areaCode: (json['areaCode'] as List<dynamic>?)
               ?.map((e) => $enumDecode(_$RtmAreaCodeEnumMap, e))
               .toList() ??

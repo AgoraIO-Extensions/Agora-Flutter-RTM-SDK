@@ -111,15 +111,23 @@ extension Dictionary where Key == String {
     
     func toRtmAttribute() -> AgoraRtmAttribute {
         let rtmAttribute = AgoraRtmAttribute()
-        rtmAttribute.key = self["key"] as! String
-        rtmAttribute.value = self["value"] as! String
+        if let key = self["key"] as? String {
+            rtmAttribute.key = key
+        }
+        if let value = self["value"] as? String {
+            rtmAttribute.value = value
+        }
         return rtmAttribute
     }
     
     func toRtmChannelAttribute() -> AgoraRtmChannelAttribute {
         let rtmAttribute = AgoraRtmChannelAttribute()
-        rtmAttribute.key = self["key"] as! String
-        rtmAttribute.value = self["value"] as! String
+        if let key = self["key"] as? String {
+            rtmAttribute.key = key
+        }
+        if let value = self["value"] as? String {
+            rtmAttribute.value = value
+        }
         return rtmAttribute
     }
     
@@ -148,7 +156,9 @@ extension Dictionary where Key == String {
     
     func toChannelAttributeOptions() -> AgoraRtmChannelAttributeOptions {
         let channelAttributeOptions = AgoraRtmChannelAttributeOptions()
-        channelAttributeOptions.enableNotificationToChannelMembers = self["enableNotificationToChannelMembers"] as! Bool
+        if let enableNotificationToChannelMembers = self["enableNotificationToChannelMembers"] as? Bool {
+            channelAttributeOptions.enableNotificationToChannelMembers = enableNotificationToChannelMembers
+        }
         return channelAttributeOptions
     }
     
@@ -158,8 +168,12 @@ extension Dictionary where Key == String {
 
     func toRtmServiceContext() -> AgoraRtmServiceContext {
         let context = AgoraRtmServiceContext()
-        context.areaCode = AgoraRtmAreaCode(rawValue: self["areaCode"] as! UInt)
-        context.proxyType = AgoraRtmCloudProxyType(rawValue: self["proxyType"] as! UInt)
+        if let areaCode = self["areaCode"] as? UInt {
+            context.areaCode = AgoraRtmAreaCode(rawValue: areaCode)
+        }
+        if let proxyType = self["proxyType"] as? UInt {
+            context.proxyType = AgoraRtmCloudProxyType(rawValue: proxyType)
+        }
         return context
     }
 }
@@ -174,7 +188,7 @@ extension Array {
     }
     
     func toStringList() -> [String] {
-        return self.map { $0 as! String }
+        return self.map { $0 as? String ?? "" }
     }
     
     func toJson() -> [[String: Any?]] {
