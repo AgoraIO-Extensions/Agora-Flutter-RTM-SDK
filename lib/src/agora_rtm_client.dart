@@ -322,7 +322,8 @@ class AgoraRtmClient {
   }
 
   Future<void> setLogFileSize(int fileSizeInKBytes) {
-    return _callNative("setLog", {'fileSizeInKBytes': fileSizeInKBytes});
+    return _callNative(
+        "setLogFileSize", {'fileSizeInKBytes': fileSizeInKBytes});
   }
 
   /// get the agora native sdk version
