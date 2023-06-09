@@ -1,5 +1,14 @@
 
 
+## [1.5.5](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.4...v1.5.5) (2023-06-09)
+
+
+### Bug Fixes
+
+* `onMemberCountUpdated` issue on iOS ([9d425f8](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/9d425f8d8446a61c84439023eaa214bc64513bd0))
+* `setLogFileSize` throw ([4570c3d](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/4570c3df11fd1add9d0d370492173c0f5fd2c2fb))
+* fromJson case ([c6b1cc5](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/c6b1cc57d2c5a57048e9d741a3cf07ce6aede343))
+
 ## [1.5.4](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.3...v1.5.4) (2023-06-05)
 
 
