@@ -82,6 +82,7 @@ fun LocalInvitation.toJson(): Map<String, Any?> {
         "channelId" to channelId,
         "response" to response,
         "state" to state,
+        "hashCode" to hashCode(),
     )
 }
 
@@ -108,6 +109,7 @@ fun RemoteInvitation.toJson(): Map<String, Any?> {
         "channelId" to channelId,
         "response" to response,
         "state" to state,
+        "hashCode" to hashCode(),
     )
 }
 
