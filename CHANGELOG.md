@@ -1,5 +1,12 @@
 
 
+## [1.5.6](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.5...v1.5.6) (2023-06-28)
+
+
+### Bug Fixes
+
+* [android] Fix acceptRemoteInvitation return error code -1 ([#152](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/issues/152)) ([a8481ec](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/a8481ec4926134ca71edf8741cfd2457eddb3c14))
+
 ## [1.5.5](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.4...v1.5.5) (2023-06-09)
 
 
