@@ -426,7 +426,7 @@ class RtmMetadataItem {
 
 @JsonSerializable(anyMap: true)
 class RtmMetadata {
-  List<RtmMetadataItem> items;
+  List<RtmMetadataItem>? items;
   int majorRevision;
 
   RtmMetadata(this.items, this.majorRevision);

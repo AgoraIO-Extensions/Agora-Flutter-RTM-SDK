@@ -216,8 +216,8 @@ Map<String, dynamic> _$RtmMetadataItemToJson(RtmMetadataItem instance) =>
     };
 
 RtmMetadata _$RtmMetadataFromJson(Map json) => RtmMetadata(
-      (json['items'] as List<dynamic>)
-          .map((e) => RtmMetadataItem.fromJson(e as Map))
+      (json['items'] as List<dynamic>?)
+          ?.map((e) => RtmMetadataItem.fromJson(e as Map))
           .toList(),
       json['majorRevision'] as int,
     );
