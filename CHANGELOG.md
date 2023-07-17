@@ -1,5 +1,12 @@
 
 
+## [1.5.7](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.6...v1.5.7) (2023-07-17)
+
+
+### Bug Fixes
+
+* ios crash while close app ([a25010e](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/a25010e2bab0a6bc90398505d95182a5a62d1847))
+
 ## [1.5.6](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.5...v1.5.6) (2023-06-28)
 
 
