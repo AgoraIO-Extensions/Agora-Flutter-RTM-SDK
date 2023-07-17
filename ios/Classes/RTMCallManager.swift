@@ -13,19 +13,31 @@ class RTMCallManager: NSObject, AgoraRtmCallDelegate, FlutterStreamHandler {
     var eventChannel: FlutterEventChannel?
     var eventSink: FlutterEventSink?
     
-    var manager: AgoraRtmCallKit?
+    var client: AgoraRtmKit?
     var remoteInvitations: [Int: AgoraRtmRemoteInvitation] = [:]
     var localInvitations: [Int: AgoraRtmLocalInvitation] = [:]
+    var manager: AgoraRtmCallKit? {
+        get {
+            return client?.rtmCallKit
+        }
+    }
     
     init(_ client: AgoraRtmKit, _ clientIndex: Int, _ messenger: FlutterBinaryMessenger) {
         eventChannel = FlutterEventChannel(
             name: "io.agora.rtm.client\(clientIndex).call_manager",
             binaryMessenger: messenger
         )
-        manager = client.getRtmCall()
+        self.client = client
         super.init()
         eventChannel?.setStreamHandler(self)
-        manager?.callDelegate = self
+        self.manager?.callDelegate = self
+    }
+    
+    deinit {
+        remoteInvitations.removeAll()
+        localInvitations.removeAll()
+        eventChannel = nil
+        client = nil
     }
     
     private func sendEvent(eventName: String, params: [String: Any?]) {

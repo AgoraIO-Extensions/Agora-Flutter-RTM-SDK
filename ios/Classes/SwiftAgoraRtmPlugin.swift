@@ -26,6 +26,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
     
     public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
         methodChannel.setMethodCallHandler(nil)
+        clients.removeAll()
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
