@@ -162,7 +162,7 @@ class AgoraRtmChannel {
     return _callNative("clearChannelMetadata", {'options': options.toJson()});
   }
 
-  Future<RtmMetadata> getChannelMetadata(s) async {
+  Future<RtmMetadata> getChannelMetadata() async {
     return RtmMetadata.fromJson(await _callNative("getChannelMetadata", null));
   }
 
