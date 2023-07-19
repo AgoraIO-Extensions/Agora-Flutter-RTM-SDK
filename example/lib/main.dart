@@ -62,12 +62,13 @@ class MyAppState extends State<MyApp> {
   void _createClient() async {
     _client = await AgoraRtmClient.createInstance('YOUR_APP_ID');
     _log(await AgoraRtmClient.getSdkVersion());
-    _client?.onMessageReceived = (AgoraRtmMessage message, String peerId) {
+    _client?.onMessageReceived = (RtmMessage message, String peerId) {
       _log("Peer msg: $peerId, msg: ${message.text}");
     };
-    _client?.onConnectionStateChanged = (int state, int reason) {
+    _client?.onConnectionStateChanged2 =
+        (RtmConnectionState state, RtmConnectionChangeReason reason) {
       _log('Connection state changed: $state, reason: $reason');
-      if (state == 5) {
+      if (state == RtmConnectionState.aborted) {
         _client?.logout();
         _log('Logout.');
         setState(() {
@@ -75,13 +76,13 @@ class MyAppState extends State<MyApp> {
         });
       }
     };
-    _client?.onLocalInvitationReceivedByPeer =
-        (AgoraRtmLocalInvitation invite) {
+    _client?.getRtmCallManager().onLocalInvitationReceivedByPeer =
+        (LocalInvitation invite) {
       _log(
           'Local invitation received by peer: ${invite.calleeId}, content: ${invite.content}');
     };
-    _client?.onRemoteInvitationReceivedByPeer =
-        (AgoraRtmRemoteInvitation invite) {
+    _client?.getRtmCallManager().onRemoteInvitationReceived =
+        (RemoteInvitation invite) {
       _log(
           'Remote invitation received by peer: ${invite.callerId}, content: ${invite.content}');
     };
@@ -90,14 +91,14 @@ class MyAppState extends State<MyApp> {
   Future<AgoraRtmChannel?> _createChannel(String name) async {
     AgoraRtmChannel? channel = await _client?.createChannel(name);
     if (channel != null) {
-      channel.onMemberJoined = (AgoraRtmMember member) {
+      channel.onMemberJoined = (RtmChannelMember member) {
         _log('Member joined: ${member.userId}, channel: ${member.channelId}');
       };
-      channel.onMemberLeft = (AgoraRtmMember member) {
+      channel.onMemberLeft = (RtmChannelMember member) {
         _log('Member left: ${member.userId}, channel: ${member.channelId}');
       };
       channel.onMessageReceived =
-          (AgoraRtmMessage message, AgoraRtmMember member) {
+          (RtmMessage message, RtmChannelMember member) {
         _log("Channel msg: ${member.userId}, msg: ${message.text}");
       };
     }
@@ -302,9 +303,9 @@ class MyAppState extends State<MyApp> {
     }
 
     try {
-      AgoraRtmMessage message = AgoraRtmMessage.fromText(text);
+      RtmMessage message = RtmMessage.fromText(text);
       _log(message.text);
-      await _client?.sendMessageToPeer(peerUid, message, false);
+      await _client?.sendMessageToPeer2(peerUid, message);
       _log('Send peer message success.');
     } catch (errorCode) {
       _log('Send peer message error: $errorCode');
@@ -325,12 +326,12 @@ class MyAppState extends State<MyApp> {
     }
 
     try {
-      AgoraRtmLocalInvitation? invitation =
+      LocalInvitation? invitation =
           await _client?.getRtmCallManager().createLocalInvitation(peerUid);
       if (invitation != null) {
         invitation.content = text;
         _log(invitation.content ?? '');
-        await _client?.sendLocalInvitation(invitation.toJson());
+        await _client?.getRtmCallManager().sendLocalInvitation(invitation);
         _log('Send local invitation success.');
       }
     } catch (errorCode) {
@@ -343,9 +344,7 @@ class MyAppState extends State<MyApp> {
       try {
         await _channel?.leave();
         _log('Leave channel success.');
-        if (_channel != null) {
-          _client?.releaseChannel(_channel!.channelId!);
-        }
+        await _channel?.release();
         _channelMessageController.clear();
 
         setState(() {
@@ -377,7 +376,7 @@ class MyAppState extends State<MyApp> {
 
   void _toggleGetMembers() async {
     try {
-      List<AgoraRtmMember>? members = await _channel?.getMembers();
+      List<RtmChannelMember>? members = await _channel?.getMembers();
       _log('Members: $members');
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
@@ -391,7 +390,7 @@ class MyAppState extends State<MyApp> {
       return;
     }
     try {
-      await _channel?.sendMessage(AgoraRtmMessage.fromText(text));
+      await _channel?.sendMessage2(RtmMessage.fromText(text));
       _log('Send channel message success.');
     } catch (errorCode) {
       _log('Send channel message error: $errorCode');
@@ -399,7 +398,7 @@ class MyAppState extends State<MyApp> {
   }
 
   void _log(String info) {
-    print(info);
+    debugPrint(info);
     setState(() {
       _infoStrings.insert(0, info);
     });
