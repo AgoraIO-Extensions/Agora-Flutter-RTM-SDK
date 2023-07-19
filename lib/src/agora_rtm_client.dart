@@ -301,11 +301,11 @@ class AgoraRtmClient {
         .toList();
   }
 
-  Future<List<RtmChannelMember>> getChannelMemberCount(
+  Future<List<RtmChannelMemberCount>> getChannelMemberCount(
       List<String> channelIds) async {
     return List<Map>.from(await _callNative(
             "getChannelMemberCount", {'channelIds': channelIds}))
-        .map((attr) => RtmChannelMember.fromJson(attr))
+        .map((attr) => RtmChannelMemberCount.fromJson(attr))
         .toList();
   }
 

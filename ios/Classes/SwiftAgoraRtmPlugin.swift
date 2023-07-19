@@ -239,9 +239,9 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                     result(["errorCode": $1.rawValue, "result": $0?.toJson()])
                 }
             case "getChannelMemberCount":
-                let channelId = args?["channelId"] as? [String]
-                client.getChannelMemberCount(channelId!) {
-                    result(["errorCode": $1.rawValue, "result": $0])
+                let channelIds = args?["channelIds"] as? [String]
+                client.getChannelMemberCount(channelIds!) {
+                    result(["errorCode": $1.rawValue, "result": $0?.toJson()])
                 }
             case "setParameters":
                 let parameters = args?["parameters"] as? String
