@@ -18,7 +18,7 @@ class RTMCallManager: NSObject, AgoraRtmCallDelegate, FlutterStreamHandler {
     var localInvitations: [Int: AgoraRtmLocalInvitation] = [:]
     var manager: AgoraRtmCallKit? {
         get {
-            return client?.rtmCallKit
+            return client?.getRtmCall()
         }
     }
     
