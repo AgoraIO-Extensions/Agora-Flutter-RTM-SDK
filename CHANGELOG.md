@@ -1,5 +1,13 @@
 
 
+## [1.5.8](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.7...v1.5.8) (2023-08-07)
+
+
+### Bug Fixes
+
+* callManager not working on iOS ([5cd710c](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/5cd710c281319c9b211e9d099537e166129fb4c1))
+* getChannelMemberCount ([29140eb](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/29140eb260acb729b0c913d5c436c2ca910cbb1e))
+
 ## [1.5.7](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.6...v1.5.7) (2023-07-17)
 
 
