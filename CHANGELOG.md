@@ -1,5 +1,12 @@
 
 
+## [1.5.9](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.8...v1.5.9) (2023-11-23)
+
+
+### Bug Fixes
+
+* some function not call result ([8b75257](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/commit/8b75257ec075dc4bb9fa155618cbe62de91395e7))
+
 ## [1.5.8](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.7...v1.5.8) (2023-08-07)
 
 
