@@ -461,21 +461,25 @@ class AgoraRtmPlugin : FlutterPlugin, MethodCallHandler {
                 "setParameters" -> {
                     val parameters = args?.get("parameters") as? String
                     client.setParameters(parameters)
+                    object : Callback<Void>(result, handler) {}.onSuccess(null)
                 }
 
                 "setLogFile" -> {
                     val filePath = args?.get("filePath") as? String
                     client.setLogFile(filePath)
+                    object : Callback<Void>(result, handler) {}.onSuccess(null)
                 }
 
                 "setLogFilter" -> {
                     val filter = args?.get("filter") as? Int
                     client.setLogFilter(filter!!)
+                    object : Callback<Void>(result, handler) {}.onSuccess(null)
                 }
 
                 "setLogFileSize" -> {
                     val fileSizeInKBytes = args?.get("fileSizeInKBytes") as? Int
                     client.setLogFileSize(fileSizeInKBytes!!)
+                    object : Callback<Void>(result, handler) {}.onSuccess(null)
                 }
 
                 else -> {
