@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:agora_rtm/agora_rtm.dart';
 import 'package:flutter/material.dart';
@@ -48,10 +47,12 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('Agora Real Time Message'),
+            title: const Text('RTM 1.x'),
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
           ),
           body: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
                 _buildLogin(),
@@ -66,12 +67,18 @@ class MyAppState extends State<MyApp> {
                 _buildInfoList(),
               ],
             ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _refreshLogs();
+            },
+            child: const Icon(Icons.refresh),
           )),
     );
   }
 
   void _createClient() async {
-    _client = await AgoraRtmClient.createInstance('YOUR_APP_ID');
+    _client = await AgoraRtmClient.createInstance('<YOUR_APPID>');
     _log(await AgoraRtmClient.getSdkVersion());
     await _client?.setParameters('{"rtm.log_filter": 15}');
     await _client?.setLogFile('');
@@ -201,8 +208,7 @@ class MyAppState extends State<MyApp> {
       };
       channel.onMessageReceived =
           (RtmMessage message, RtmChannelMember member) {
-        _log(
-            "Channel msg: ${member.userId}, msg: ${message.messageType} ${message.text}");
+        _log("Channel msg: ${member.userId}: ${message.text}");
       };
       channel.onMemberJoined = (RtmChannelMember member) {
         _log('Member joined: ${member.userId}, channel: ${member.channelId}');
@@ -215,22 +221,20 @@ class MyAppState extends State<MyApp> {
   }
 
   static TextStyle textStyle =
-      const TextStyle(fontSize: 18, color: Colors.blue);
+      const TextStyle(fontSize: 15, color: Colors.blue);
 
   Widget _buildLogin() {
     return Row(children: <Widget>[
       _isLogin
           ? Expanded(
-              child: Text('User Id: ${_userNameController.text}',
-                  style: textStyle))
-          : Expanded(
+              child: Text('Uid: ${_userNameController.text}', style: textStyle))
+          : Flexible(
               child: TextField(
                   controller: _userNameController,
-                  decoration:
-                      const InputDecoration(hintText: 'Input your user id'))),
-      OutlinedButton(
+                  decoration: const InputDecoration(hintText: 'uid'))),
+      IconButton(
+        icon: Icon(_isLogin ? Icons.logout_outlined : Icons.login_sharp),
         onPressed: _toggleLogin,
-        child: Text(_isLogin ? 'Logout' : 'Login', style: textStyle),
       )
     ]);
   }
@@ -240,14 +244,14 @@ class MyAppState extends State<MyApp> {
       return Container();
     }
     return Row(children: <Widget>[
-      Expanded(
+      Flexible(
           child: TextField(
               controller: _peerUserIdController,
               decoration:
                   const InputDecoration(hintText: 'Input peer user id'))),
-      OutlinedButton(
+      IconButton(
         onPressed: _toggleQueryPeersOnlineStatus,
-        child: Text('Query Online', style: textStyle),
+        icon: const Icon(Icons.search_outlined),
       )
     ]);
   }
@@ -256,16 +260,29 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
-      OutlinedButton(
-        onPressed: _subscribePeersOnlineStatus,
-        child: Text('Subscribe Online', style: textStyle),
-      ),
-      OutlinedButton(
-        onPressed: _unsubscribePeersOnlineStatus,
-        child: Text('Unsubscribe Online', style: textStyle),
-      )
-    ]);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: _subscribePeersOnlineStatus,
+          child: const Text(
+            'Subscribe Online',
+            style: TextStyle(),
+          ),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.green),
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+        ElevatedButton(
+            onPressed: _unsubscribePeersOnlineStatus,
+            child: const Text('Unsubscribe Online'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.orange),
+              foregroundColor: MaterialStateProperty.all(Colors.white),
+            )),
+      ],
+    );
   }
 
   Widget _buildSendPeerMessage() {
@@ -278,9 +295,9 @@ class MyAppState extends State<MyApp> {
               controller: _peerMessageController,
               decoration:
                   const InputDecoration(hintText: 'Input peer message'))),
-      OutlinedButton(
+      IconButton(
         onPressed: _sendPeerMessage,
-        child: Text('Send to Peer', style: textStyle),
+        icon: const Icon(Icons.send),
       )
     ]);
   }
@@ -295,11 +312,14 @@ class MyAppState extends State<MyApp> {
               controller: _invitationController,
               decoration:
                   const InputDecoration(hintText: 'Input invitation content'))),
-      OutlinedButton(
-        onPressed: _toggleLocalInvitation,
-        child: Text(
-            '${_localInvitation == null ? 'Send' : 'Cancel'} local invitation',
-            style: textStyle),
+      IconButton(
+        onPressed: () {
+          _toggleLocalInvitation();
+          Text(
+              '${_localInvitation == null ? 'Send' : 'Cancel'} local invitation',
+              style: textStyle);
+        },
+        icon: const Icon(Icons.mail_outline),
       )
     ]);
   }
@@ -334,10 +354,10 @@ class MyAppState extends State<MyApp> {
                   controller: _channelNameController,
                   decoration:
                       const InputDecoration(hintText: 'Input channel id'))),
-      OutlinedButton(
+      IconButton(
         onPressed: _toggleJoinChannel,
-        child: Text(_isInChannel ? 'Leave Channel' : 'Join Channel',
-            style: textStyle),
+        icon: Icon(
+            _isInChannel ? Icons.group_off_outlined : Icons.group_add_outlined),
       )
     ]);
   }
@@ -352,9 +372,9 @@ class MyAppState extends State<MyApp> {
               controller: _channelMessageController,
               decoration:
                   const InputDecoration(hintText: 'Input channel message'))),
-      OutlinedButton(
+      IconButton(
         onPressed: _sendChannelMessage,
-        child: Text('Send to Channel', style: textStyle),
+        icon: const Icon(Icons.send),
       )
     ]);
   }
@@ -363,25 +383,29 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin || !_isInChannel) {
       return Container();
     }
-    return Row(children: <Widget>[
-      OutlinedButton(
-        onPressed: _getMembers,
-        child: Text('Get Members in Channel', style: textStyle),
-      ),
-      OutlinedButton(
-        onPressed: _getMemberCount,
-        child: Text('Get Member count in Channel', style: textStyle),
-      )
-    ]);
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Flexible(
+            child: ElevatedButton(
+              onPressed: _getMembers,
+              child: const Text('Get Members'),
+            ),
+          ),
+          Flexible(
+              child: ElevatedButton(
+            onPressed: _getMemberCount,
+            child: const Text('Get Member Count'),
+          ))
+        ]);
   }
 
   Widget _buildInfoList() {
-    return Expanded(
+    return Flexible(
         child: ListView.builder(
-      itemExtent: 24,
       itemBuilder: (context, i) {
         return ListTile(
-          contentPadding: const EdgeInsets.all(0.0),
+          contentPadding: const EdgeInsets.all(5.0),
           title: Text(_infoStrings[i]),
         );
       },
@@ -608,7 +632,10 @@ class MyAppState extends State<MyApp> {
   void _getMembers() async {
     try {
       List<RtmChannelMember>? members = await _channel?.getMembers();
-      _log('Members: ${members.toString()}');
+      if (members != null) {
+        List<String> userIds = members.map((member) => member.userId).toList();
+        _log('User IDs: $userIds');
+      }
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
     }
@@ -622,9 +649,11 @@ class MyAppState extends State<MyApp> {
     }
 
     try {
-      List<RtmChannelMemberCount>? members =
-          await _client?.getChannelMemberCount([channelId]);
-      _log('Members: ${members.toString()}');
+      List<RtmChannelMember>? members = await _channel?.getMembers();
+
+      if (members != null) {
+        _log('Total members in the channel: ${members.length}');
+      }
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
     }
@@ -638,12 +667,11 @@ class MyAppState extends State<MyApp> {
     }
 
     try {
-      RtmMessage? message =
-          _client?.createRawMessage(Uint8List.fromList([]), text);
+      RtmMessage? message = _client?.createTextMessage(text);
       if (message != null) {
         _log(message.text);
         await _channel?.sendMessage2(message);
-        _log('Send channel message success');
+        _log('Send channel message success: $text');
       }
     } catch (errorCode) {
       _log('Send channel message error: $errorCode');
@@ -654,6 +682,12 @@ class MyAppState extends State<MyApp> {
     debugPrint(info);
     setState(() {
       _infoStrings.insert(0, info);
+    });
+  }
+
+  void _refreshLogs() {
+    setState(() {
+      _infoStrings.clear();
     });
   }
 }
