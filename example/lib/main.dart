@@ -77,7 +77,7 @@ class MyAppState extends State<MyApp> {
 
   void _createClient() async {
     _client =
-        await AgoraRtmClient.createInstance('aab8b8f5a8cd4469a63042fcfafe7063');
+        await AgoraRtmClient.createInstance('<YOUR_APPID>');
     _log(await AgoraRtmClient.getSdkVersion());
     await _client?.setParameters('{"rtm.log_filter": 15}');
     await _client?.setLogFile('');
