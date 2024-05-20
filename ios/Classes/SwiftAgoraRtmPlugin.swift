@@ -53,31 +53,55 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
     func handleCallManagerMethod(_ methodName: String?, _ params: [String: Any?]?, _ result: @escaping FlutterResult) {
         if let clientIndex = params?["clientIndex"] as? Int, let agoraClient = clients[clientIndex], let callManager = agoraClient.call?.manager {
             let args = params?["args"] as? [String: Any?]
+            if (agoraClient.call == nil) {
+                result(["errorCode": -1])
+                return
+            }
             switch methodName {
             case "createLocalInvitation":
                 let calleeId = args?["calleeId"] as? String
+                if (calleeId == nil) {
+                    result(["errorCode": -1])
+                    return
+                }
                 let localInvitation = AgoraRtmLocalInvitation(calleeId: calleeId!)
                 agoraClient.call!.localInvitations[localInvitation.hash] = localInvitation
                 result(["errorCode": 0, "result": localInvitation.toJson()])
             case "sendLocalInvitation":
                 let localInvitation = (args?["localInvitation"] as? [String: Any?])?.toLocalInvitation(agoraClient.call!)
+                if (localInvitation == nil) {
+                    result(["errorCode": -1])
+                    return
+                }
                 callManager.send(localInvitation!) {
                     result(["errorCode": $0.rawValue])
                 }
             case "acceptRemoteInvitation":
                 let remoteInvitation = (args?["remoteInvitation"] as? [String: Any?])?.toRemoteInvitation(agoraClient.call!)
+                if (remoteInvitation == nil) {
+                    result(["errorCode": -1])
+                    return
+                }
                 callManager.accept(remoteInvitation!) {
                     agoraClient.call!.remoteInvitations.removeValue(forKey: remoteInvitation!.hash)
                     result(["errorCode": $0.rawValue])
                 }
             case "refuseRemoteInvitation":
                 let remoteInvitation = (args?["remoteInvitation"] as? [String: Any?])?.toRemoteInvitation(agoraClient.call!)
+                if (remoteInvitation == nil) {
+                    result(["errorCode": -1])
+                    return
+                }
                 callManager.refuse(remoteInvitation!) {
                     agoraClient.call!.remoteInvitations.removeValue(forKey: remoteInvitation!.hash)
                     result(["errorCode": $0.rawValue])
                 }
             case "cancelLocalInvitation":
                 let localInvitation = (args?["localInvitation"] as? [String: Any?])?.toLocalInvitation(agoraClient.call!)
+                if (localInvitation == nil) {
+                    result(["errorCode": -1])
+                    return
+                }
                 callManager.cancel(localInvitation!) {
                     agoraClient.call!.localInvitations.removeValue(forKey: localInvitation!.hash)
                     result(["errorCode": $0.rawValue])
