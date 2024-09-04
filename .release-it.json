@@ -1,0 +1,25 @@
+{
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog",
+      "preset": {
+        "name": "conventionalcommits",
+        "types": [
+          {
+            "type": "feat",
+            "section": "Features"
+          },
+          {
+            "type": "fix",
+            "section": "Bug Fixes"
+          }
+        ]
+      }
+    },
+    "@release-it/bumper": {
+      "in": "pubspec.yaml",
+      "out": "pubspec.yaml"
+    }
+  }
+}
