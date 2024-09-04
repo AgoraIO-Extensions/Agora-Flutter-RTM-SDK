@@ -1,0 +1,16 @@
+name: 'NativeIrisTesterRtmBinding'
+description: 'Bindings to IrisApiEngine'
+
+output: 'lib/src/platform/io/iris_tester_rtm_bindings.dart'
+
+headers:
+  entry-points:
+    - 'ffigen_include/iris_debug_rtm.h'
+  include-directives:
+    - 'ffigen_include/iris_debug_rtm.h'
+
+preamble: |
+  // ignore_for_file: camel_case_types, non_constant_identifier_names
+
+llvm-path:
+  - '/opt/homebrew/opt/llvm@15'

@@ -1,0 +1,77 @@
+group = "io.agora.agorartm.agora_rtm"
+version = "1.0"
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:7.3.0")
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: "com.android.library"
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace = "io.agora.agorartm.agora_rtm"
+    }
+
+    compileSdk = 34
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdk = 16
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    sourceSets {
+        if (isDev(project)) {
+           println("Include libs/ to jniLibs.srcDirs for debugging.")
+           main.jniLibs.srcDirs += 'libs'
+        }
+    }
+
+    dependencies {
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.mockito:mockito-core:5.0.0")
+    }
+
+    testOptions {
+        unitTests.all {
+            testLogging {
+               events "passed", "skipped", "failed", "standardOut", "standardError"
+               outputs.upToDateWhen {false}
+               showStandardStreams = true
+            }
+        }
+    }
+}
+
+dependencies {
+  if (isDev(project)) {
+    println("Include libs/*jar for debugging.")
+    api fileTree(dir: "libs", include: ["*.jar"])
+  } else {
+    api 'io.agora.rtm:iris-rtm:2.2.1-build.1'
+    api 'io.agora:agora-rtm:2.2.1'
+  }
+}
+
+static boolean isDev(Project project) {
+    def devFile = new File(project.projectDir, '../.plugin_dev')
+    return devFile.exists()
+}

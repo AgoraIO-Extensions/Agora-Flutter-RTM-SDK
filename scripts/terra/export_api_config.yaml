@@ -1,0 +1,85 @@
+parsers:
+  - name: CXXParser
+    package: '@agoraio-extensions/cxx-parser'
+    args:
+      includeHeaderDirs:
+        - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include'
+      parseFiles:
+        include:
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/*.h'
+        exclude:
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/AgoraRefPtr.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/time_utils.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/AgoraOptional.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/AgoraRefPtr.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/IAgoraMediaComponentFactory.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/IAgoraParameter.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/rte*.h'
+
+  - name: IrisApiIdParser
+    package: '@agoraio-extensions/terra_shared_configs'
+
+  - name: OverrideNodeParser
+    package: '@agoraio-extensions/terra_shared_configs'
+    args:
+      customHeaderFileNamePrefix: 'Custom'
+      includeHeaderDirs:
+        - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include'
+      parseFiles:
+        include:
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/*.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/custom_headers/*.h'
+        exclude:
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/time_utils.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/IAgoraMediaComponentFactory.h'
+          - '@agoraio-extensions/terra_shared_configs:headers/rtm_2.2.1/include/rte*.h'
+
+  - name: PointerMarkerParser
+    package: '@agoraio-extensions/terra_shared_configs'
+    args:
+      configPath: configs/pointer_marker.config.ts
+
+  - path: parsers/cud_node_parser.ts
+    args:
+      configPath: configs/cud_node_parser.config.ts
+
+  - name: PointerToArrayParser
+    package: '@agoraio-extensions/terra_shared_configs'
+
+  - name: FixEnumConstantParser
+    package: '@agoraio-extensions/terra_shared_configs'
+    args:
+      skipCalEnumValue: true
+
+  - path: parsers/default_value_marker_parser.ts
+    args:
+      configPath: configs/default_value_marker_parser.config.ts
+
+  - path: parsers/dart_type_remapping_parser.ts
+    args:
+      configPath: configs/dart_type_remapping_parser.config.ts
+
+  - path: parsers/sync_function_marker_parser.ts
+    args:
+      configPath: configs/sync_function_marker_parser.config.ts
+
+  - path: parsers/dart_project_marker_parser.ts
+    args:
+      configPath: configs/dart_project_marker_parser.config.ts
+
+  # Need put it below `PointerToArrayParser`, since the `PointerToArrayParser` will change the pointer type to array type
+  - path: parsers/dart_syntax_parser.ts
+
+renderers:
+  - path: renderers/export_api_renderer.ts
+    args:
+      outputDir: 'lib/src'
+
+  # Put it to last step
+  # - name: IrisDocRenderer
+  #   package: '@agoraio-extensions/terra_shared_configs'
+  #   args:
+  #     language: dart
+  #     fmtConfig: fmt_dart.yaml
+  #     exportFilePath: ../../lib/agora_rtc_engine.dart
+  #     templateUrl: https://github.com/AgoraIO/agora_doc_source/releases/download/master-build/flutter_ng_json_template_en.json
