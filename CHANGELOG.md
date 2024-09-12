@@ -1,5 +1,7 @@
 # Changelog
 
+## 2.2.1 (2024-09-12)
+
 ## [1.5.9](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.8...v1.5.9) (2023-11-23)
 
 
