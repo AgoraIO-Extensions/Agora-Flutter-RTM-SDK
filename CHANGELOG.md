@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.1 (2024-09-12)
+
+
+### Features
+
+* Upgrade RTM Native SDK 2.2.1 ([df1a024](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/df1a024ec28da04c90cecc7729d1b8aafe7eb142))
+
 ## [1.5.9](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.8...v1.5.9) (2023-11-23)
 
 
