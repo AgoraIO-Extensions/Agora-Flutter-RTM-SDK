@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
 import 'dart:typed_data' as _i13;
+import 'dart:ui' as _i15;
 
 import 'package:agora_rtm/src/agora_rtm_base.dart' as _i12;
 import 'package:agora_rtm/src/agora_rtm_client.dart' as _i11;
@@ -117,6 +118,37 @@ class _FakeRtmEventHandler_7 extends _i1.SmartFake
 
 class _FakeFuture_8<T1> extends _i1.SmartFake implements _i8.Future<T1> {
   _FakeFuture_8(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeScopedObjects_9 extends _i1.SmartFake implements _i3.ScopedObjects {
+  _FakeScopedObjects_9(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeCallApiResult_10 extends _i1.SmartFake implements _i3.CallApiResult {
+  _FakeCallApiResult_10(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeIrisMethodChannelInternal_11 extends _i1.SmartFake
+    implements _i3.IrisMethodChannelInternal {
+  _FakeIrisMethodChannelInternal_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -2249,4 +2281,219 @@ class MockRtmResultHandlerImpl extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [IrisMethodChannel].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
+  @override
+  _i3.ScopedObjects get scopedEventHandlers => (super.noSuchMethod(
+        Invocation.getter(#scopedEventHandlers),
+        returnValue: _FakeScopedObjects_9(
+          this,
+          Invocation.getter(#scopedEventHandlers),
+        ),
+        returnValueForMissingStub: _FakeScopedObjects_9(
+          this,
+          Invocation.getter(#scopedEventHandlers),
+        ),
+      ) as _i3.ScopedObjects);
+
+  @override
+  _i8.Future<_i3.InitilizationResult?> initilize(
+          List<_i3.InitilizationArgProvider>? args) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #initilize,
+          [args],
+        ),
+        returnValue: _i8.Future<_i3.InitilizationResult?>.value(),
+        returnValueForMissingStub: _i8.Future<_i3.InitilizationResult?>.value(),
+      ) as _i8.Future<_i3.InitilizationResult?>);
+
+  @override
+  _i8.Future<_i3.CallApiResult> invokeMethod(_i3.IrisMethodCall? methodCall) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #invokeMethod,
+          [methodCall],
+        ),
+        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+          this,
+          Invocation.method(
+            #invokeMethod,
+            [methodCall],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+          this,
+          Invocation.method(
+            #invokeMethod,
+            [methodCall],
+          ),
+        )),
+      ) as _i8.Future<_i3.CallApiResult>);
+
+  @override
+  _i8.Future<List<_i3.CallApiResult>> invokeMethodList(
+          List<_i3.IrisMethodCall>? methodCalls) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #invokeMethodList,
+          [methodCalls],
+        ),
+        returnValue:
+            _i8.Future<List<_i3.CallApiResult>>.value(<_i3.CallApiResult>[]),
+        returnValueForMissingStub:
+            _i8.Future<List<_i3.CallApiResult>>.value(<_i3.CallApiResult>[]),
+      ) as _i8.Future<List<_i3.CallApiResult>>);
+
+  @override
+  _i8.Future<void> dispose() => (super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<_i3.CallApiResult> registerEventHandler(
+    _i3.ScopedEvent? scopedEvent,
+    String? params,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerEventHandler,
+          [
+            scopedEvent,
+            params,
+          ],
+        ),
+        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+          this,
+          Invocation.method(
+            #registerEventHandler,
+            [
+              scopedEvent,
+              params,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+          this,
+          Invocation.method(
+            #registerEventHandler,
+            [
+              scopedEvent,
+              params,
+            ],
+          ),
+        )),
+      ) as _i8.Future<_i3.CallApiResult>);
+
+  @override
+  _i8.Future<_i3.CallApiResult> unregisterEventHandler(
+    _i3.ScopedEvent? scopedEvent,
+    String? params,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #unregisterEventHandler,
+          [
+            scopedEvent,
+            params,
+          ],
+        ),
+        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+          this,
+          Invocation.method(
+            #unregisterEventHandler,
+            [
+              scopedEvent,
+              params,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+          this,
+          Invocation.method(
+            #unregisterEventHandler,
+            [
+              scopedEvent,
+              params,
+            ],
+          ),
+        )),
+      ) as _i8.Future<_i3.CallApiResult>);
+
+  @override
+  _i8.Future<void> unregisterEventHandlers(_i3.TypedScopedKey? scopedKey) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #unregisterEventHandlers,
+          [scopedKey],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  int getApiEngineHandle() => (super.noSuchMethod(
+        Invocation.method(
+          #getApiEngineHandle,
+          [],
+        ),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+
+  @override
+  _i15.VoidCallback addHotRestartListener(_i3.HotRestartListener? listener) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addHotRestartListener,
+          [listener],
+        ),
+        returnValue: () {},
+        returnValueForMissingStub: () {},
+      ) as _i15.VoidCallback);
+
+  @override
+  void removeHotRestartListener(_i3.HotRestartListener? listener) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #removeHotRestartListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i3.IrisMethodChannelInternal getIrisMethodChannelInternal() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getIrisMethodChannelInternal,
+          [],
+        ),
+        returnValue: _FakeIrisMethodChannelInternal_11(
+          this,
+          Invocation.method(
+            #getIrisMethodChannelInternal,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeIrisMethodChannelInternal_11(
+          this,
+          Invocation.method(
+            #getIrisMethodChannelInternal,
+            [],
+          ),
+        ),
+      ) as _i3.IrisMethodChannelInternal);
 }

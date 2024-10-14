@@ -44,10 +44,11 @@ class StreamChannelImpl extends sci_binding.StreamChannelImpl
       required String message,
       required int length,
       required TopicMessageOptions option}) async {
+    final messageUint8List = Uint8List.fromList(utf8.encode(message));
     return publishBinaryMessage(
         topic: topic,
-        message: Uint8List.fromList(utf8.encode(message)),
-        length: length,
+        message: messageUint8List,
+        length: messageUint8List.length,
         option: option);
   }
 
@@ -57,10 +58,11 @@ class StreamChannelImpl extends sci_binding.StreamChannelImpl
       required String message,
       required int length,
       required TopicMessageOptions option}) {
+    final messageUint8List = Uint8List.fromList(utf8.encode(message));
     return publishBinaryMessage(
         topic: topic,
-        message: Uint8List.fromList(utf8.encode(message)),
-        length: length,
+        message: messageUint8List,
+        length: messageUint8List.length,
         option: option);
   }
 }
