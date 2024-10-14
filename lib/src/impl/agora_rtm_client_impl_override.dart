@@ -222,17 +222,6 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
       String channelName, String message,
       {RtmChannelType channelType = RtmChannelType.message,
       String? customType}) async {
-    // final option = PublishOptions(
-    //     channelType: channelType,
-    //     messageType: RtmMessageType.string,
-    //     customType: customType);
-    // final requestId = await nativeBindingRtmClientImpl.publish(
-    //     channelName: channelName,
-    //     message: message,
-    //     length: message.length,
-    //     option: option);
-    // return rtmResultHandler.request(requestId);
-
     final option = PublishOptions(
         channelType: channelType,
         messageType: RtmMessageType.string,
@@ -260,17 +249,6 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
       String channelName, Uint8List message,
       {RtmChannelType channelType = RtmChannelType.message,
       String? customType}) async {
-    // final option = PublishOptions(
-    //     channelType: channelType,
-    //     messageType: RtmMessageType.binary,
-    //     customType: customType);
-    // final requestId = await nativeBindingRtmClientImpl.publishBinaryMessage(
-    //     channelName: channelName,
-    //     message: message,
-    //     length: message.length,
-    //     option: option);
-    // return rtmResultHandler.request(requestId);
-
     final option = PublishOptions(
         channelType: channelType,
         messageType: RtmMessageType.binary,
