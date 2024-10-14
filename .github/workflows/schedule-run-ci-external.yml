@@ -22,7 +22,7 @@ jobs:
         id: check-contributors-result
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.LABEL_ACTION_PAT }}
+          github-token: ${{ secrets.GH_TOKEN }}
           debug: true
           script: |
             const org = "AgoraIO-Extensions"
