@@ -59,6 +59,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    packagingOptions {
+      pickFirst 'lib/**/libaosl.so'
+    }
 }
 
 flutter {
