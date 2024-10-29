@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_rtm/agora_rtm.dart';
 import 'package:flutter/material.dart';
 
@@ -44,6 +45,7 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
   RtmChannelType _rtmChannelType = RtmChannelType.message;
 
   late RtmClient _rtmClient;
+  late RtcEngine _rtcEngine;
 
   @override
   void initState() {
@@ -420,6 +422,32 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                       customType: _rtmClientPublishCustomTypeController.text);
 
                   logSink.log('[PublishResult] errorCode: ${status.errorCode}');
+                }),
+              ],
+            ),
+            _card(
+              [
+                const Text('Work with Agora Rtc Engine'),
+                _button('Init RtcEngine', () async {
+                  _rtcEngine = createAgoraRtcEngine();
+                  await _rtcEngine
+                      .initialize(RtcEngineContext(appId: config.appId));
+
+                  logSink.log('RtcEngine.initialize success');
+                }),
+                _button('Join Channel', () async {
+                  await _rtcEngine.joinChannel(
+                      token: '',
+                      channelId: config.channelId,
+                      uid: 0,
+                      options: const ChannelMediaOptions());
+
+                  logSink.log('RtcEngine.joinChannel success');
+                }),
+                _button('Release', () async {
+                  await _rtcEngine.release();
+
+                  logSink.log('RtcEngine.release success');
                 }),
               ],
             ),

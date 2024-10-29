@@ -39,3 +39,15 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
   end
 end
+
+pre_install do |installer|
+  rtm_pod_path = File.join(installer.sandbox.root, 'AgoraRtm')
+  aosl_xcframework_path = File.join(rtm_pod_path, 'aosl.xcframework')
+
+  if File.exist?(aosl_xcframework_path)
+    puts "Deleting aosl.xcframework from #{aosl_xcframework_path}"
+    FileUtils.rm_rf(aosl_xcframework_path)
+  else
+    puts "aosl.xcframework not found, skipping deletion."
+  end
+end

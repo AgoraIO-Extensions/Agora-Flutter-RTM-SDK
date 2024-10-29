@@ -26,7 +26,14 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
+  agora_rtc_engine: ^6.3.2
+
   flutter_riverpod: ^1.0.0
+
+dependency_overrides: 
+  # When using agora_rtm 2.2.2 with agora_rtc_engine 6.3.2, we need to override the iris_method_channel to 2.2.2, 
+  # the issue will be fixed with the next release of agora_rtc_engine
+  iris_method_channel: ^2.2.2 
 
 dev_dependencies:
   integration_test:
