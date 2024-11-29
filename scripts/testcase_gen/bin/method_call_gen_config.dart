@@ -20,7 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 void testCases(ValueGetter<List<InitilizationArgProvider>> irisMethodChannelInitilizationArgs) {
 
@@ -94,7 +94,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 void testCases(
     ValueGetter<List<InitilizationArgProvider>> irisMethodChannelInitilizationArgs) {
@@ -164,7 +164,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 void testCases(
     ValueGetter<List<InitilizationArgProvider>> irisMethodChannelInitilizationArgs) {
@@ -234,7 +234,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 void testCases(
     ValueGetter<List<InitilizationArgProvider>> irisMethodChannelInitilizationArgs) {
@@ -304,7 +304,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 void testCases(
     ValueGetter<List<InitilizationArgProvider>> irisMethodChannelInitilizationArgs) {

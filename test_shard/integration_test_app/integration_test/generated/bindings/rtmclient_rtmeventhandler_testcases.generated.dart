@@ -15,7 +15,7 @@ import 'event_ids_mapping_gen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:iris_tester/iris_tester.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 void testCases(
     ValueGetter<IrisTester> irisTester,

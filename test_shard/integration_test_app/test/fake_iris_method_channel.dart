@@ -1,5 +1,5 @@
 import 'package:mockito/mockito.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 class FakeIrisMethodChannel extends Fake implements IrisMethodChannel {
   final List<IrisMethodCall> methodCallQueue = [];

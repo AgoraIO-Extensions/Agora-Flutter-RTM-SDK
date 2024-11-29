@@ -14,7 +14,7 @@ import 'package:agora_rtm/src/bindings/gen/agora_stream_channel_impl.dart'
 
 import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 @GenerateNiceMocks([
   MockSpec<rtm_client_impl_native_binding.RtmClientImplOverride>(),

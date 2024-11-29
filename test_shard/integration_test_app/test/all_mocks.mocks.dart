@@ -16,8 +16,8 @@ import 'package:agora_rtm/src/bindings/gen/agora_rtm_client.dart' as _i7;
 import 'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart' as _i5;
 import 'package:agora_rtm/src/bindings/gen/binding_forward_export.dart' as _i6;
 import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart' as _i14;
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart' as _i3;
 import 'package:flutter/services.dart' as _i2;
-import 'package:iris_method_channel/iris_method_channel.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i10;
 

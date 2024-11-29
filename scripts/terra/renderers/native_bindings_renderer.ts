@@ -124,7 +124,7 @@ export default function BindingsRenderer(
   ${defaultIgnoreForFile}, annotate_overrides
 
   import 'package:agora_rtm/src/binding_forward_export.dart';
-  import 'package:iris_method_channel/iris_method_channel.dart';
+  import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
   import 'call_api_event_handler_buffer_ext.dart';
 
   ${renderResults}

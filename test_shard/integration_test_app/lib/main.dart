@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 import 'package:iris_tester/iris_tester.dart';
 
 class TestInitilizationArgProvider implements InitilizationArgProvider {
