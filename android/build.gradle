@@ -1,6 +1,10 @@
 group = "io.agora.agorartm.agora_rtm"
 version = "1.0"
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 buildscript {
     repositories {
         google()
@@ -26,7 +30,7 @@ android {
         namespace = "io.agora.agorartm.agora_rtm"
     }
 
-    compileSdk = 34
+    compileSdkVersion safeExtGet('compileSdkVersion', 31)
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -34,14 +38,27 @@ android {
     }
 
     defaultConfig {
+        minSdkVersion safeExtGet('minSdkVersion', 21)
         minSdk = 16
         consumerProguardFiles 'consumer-rules.pro'
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_static'
+            }
+        }
     }
 
     sourceSets {
         if (isDev(project)) {
            println("Include libs/ to jniLibs.srcDirs for debugging.")
            main.jniLibs.srcDirs += 'libs'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path '../src/CMakeLists.txt'
         }
     }
 
