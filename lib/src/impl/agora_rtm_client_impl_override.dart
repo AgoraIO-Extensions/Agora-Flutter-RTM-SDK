@@ -33,7 +33,7 @@ import 'package:agora_rtm/src/bindings/gen/agora_rtm_client_impl.dart'
 import 'package:agora_rtm/src/impl/gen/rtm_result_handler.dart';
 import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
 import 'package:flutter/foundation.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 InitilizationArgProvider? _mockSharedNativeHandleProvider;
 @visibleForTesting

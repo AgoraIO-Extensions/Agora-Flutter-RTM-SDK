@@ -5,8 +5,8 @@ import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 
 import 'gen/native_iris_api_engine_bindings.dart' as bindings;
-import 'package:iris_method_channel/iris_method_channel.dart';
-import 'package:iris_method_channel/iris_method_channel_bindings_io.dart'
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel_bindings_io.dart'
     as iris_bindings;
 
 // ignore_for_file: public_member_api_docs

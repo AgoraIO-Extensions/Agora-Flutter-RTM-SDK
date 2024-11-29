@@ -4,7 +4,7 @@
 
 import 'binding_forward_export.dart';
 // import 'package:agora_rtc_engine/src/binding/impl_forward_export.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 class RtmEventHandlerWrapper implements EventLoopEventHandler {
   const RtmEventHandlerWrapper(this.rtmEventHandler);

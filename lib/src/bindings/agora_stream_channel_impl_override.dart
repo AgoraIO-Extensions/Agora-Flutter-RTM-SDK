@@ -4,7 +4,7 @@ import 'dart:typed_data' show Uint8List;
 import 'package:agora_rtm/src/agora_rtm_base.dart' show TopicMessageOptions;
 
 import 'gen/agora_stream_channel_impl.dart' as sci_binding;
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 class StreamChannelImpl extends sci_binding.StreamChannelImpl
     with ScopedDisposableObjectMixin {

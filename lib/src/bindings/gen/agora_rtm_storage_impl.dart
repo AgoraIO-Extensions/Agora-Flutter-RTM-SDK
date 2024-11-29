@@ -3,7 +3,7 @@
 // ignore_for_file: public_member_api_docs, unused_local_variable, unused_import, annotate_overrides
 
 import 'binding_forward_export.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 class RtmStorageImpl implements RtmStorage {
   RtmStorageImpl(this.irisMethodChannel);
