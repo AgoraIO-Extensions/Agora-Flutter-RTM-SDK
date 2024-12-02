@@ -18,7 +18,7 @@ flutter packages pub run build_runner build --delete-conflicting-outputs
 
 popd
 
-pushd ${AGORA_FLUTTER_PROJECT_PATH}/test_shard/integration_test_app
+pushd ${AGORA_FLUTTER_PROJECT_PATH}/tests/integration_test_app
 
 rm -rf $AGORA_FLUTTER_PROJECT_PATH/example/macos/Flutter/ephemeral
 rm -rf $AGORA_FLUTTER_PROJECT_PATH/example/windows/Flutter/ephemeral

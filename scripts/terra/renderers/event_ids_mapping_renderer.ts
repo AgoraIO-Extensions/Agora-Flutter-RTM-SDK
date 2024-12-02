@@ -65,9 +65,9 @@ const eventIdsMapping = {
 
   return [
     {
-      // test_shard/integration_test_app/integration_test/generated/bindings
+      // tests/integration_test_app/integration_test/generated/bindings
       file_name:
-        "test_shard/integration_test_app/integration_test/generated/bindings/event_ids_mapping_gen.dart",
+        "tests/integration_test_app/integration_test/generated/bindings/event_ids_mapping_gen.dart",
       file_content: output,
     },
   ];

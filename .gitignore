@@ -34,3 +34,4 @@ build/
 .fvm/
 .vscode
 .fvmrc
+artifacts
