@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:agora_rtm/src/agora_rtm_client_ext.dart';
 import 'package:agora_rtm/src/binding_forward_export.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 
 extension IrisMethodChannelExt on IrisMethodChannel {
   Future<RtmStatus> wrapRtmStatus(

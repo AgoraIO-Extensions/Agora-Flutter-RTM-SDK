@@ -29,7 +29,7 @@ build_android() {
         cp -RP "${IRIS_OUTPUT}/$ABI/libAgoraRtmWrapper.so" \
             "$AGORA_FLUTTER_PROJECT_PATH/android/libs/$ABI/libAgoraRtmWrapper.so" 
         
-        cp -RP "${IRIS_OUTPUT}/$ABI/libIrisDebugger.so" "$AGORA_FLUTTER_PROJECT_PATH/test_shard/iris_tester/android/libs/$ABI/libIrisDebugger.so"
+        cp -RP "${IRIS_OUTPUT}/$ABI/libIrisDebugger.so" "$AGORA_FLUTTER_PROJECT_PATH/tests/iris_tester/android/libs/$ABI/libIrisDebugger.so"
 
     done;
 

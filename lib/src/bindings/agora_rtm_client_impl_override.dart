@@ -13,7 +13,7 @@ import 'package:flutter/services.dart' show MethodChannel;
 
 import 'gen/agora_rtm_client_event_impl.dart';
 import 'gen/agora_rtm_client_impl.dart' as rtmc_binding;
-import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
 import 'agora_stream_channel_impl_override.dart';
 import 'package:async/async.dart' show AsyncMemoizer;
 import 'package:meta/meta.dart';

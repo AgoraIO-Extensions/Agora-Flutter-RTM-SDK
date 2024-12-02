@@ -10,6 +10,6 @@ dart pub get
 popd
 
 dart run ${MY_PATH}/bin/testcase_gen.dart \
-    --gen-integration-test --output-dir=${PROJECT_ROOT}/test_shard/integration_test_app
+    --gen-integration-test --output-dir=${PROJECT_ROOT}/tests/integration_test_app
 
 dart format .

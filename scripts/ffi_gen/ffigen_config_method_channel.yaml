@@ -1,0 +1,25 @@
+name: 'NativeIrisEventBinding'
+description: 'Bindings to IrisEventHandler'
+
+output: 'lib/src/method_channel/internal/platform/io/bindings/native_iris_event_bindings.dart'
+
+headers:
+  entry-points:
+    - 'src/iris_event.h'
+    
+  include-directives:
+    - 'src/iris_event.h'
+
+llvm-path:
+  - '/opt/homebrew/opt/llvm@15'
+
+# Generating typedefs need set the sdk constraints to >=2.14, remove it 
+# if we can set our sdk constraints to >=2.14
+typedefs:
+  exclude:
+    - 'Dart_Port'
+
+functions:
+  symbol-address:
+    include:
+      - 'OnEvent' # Match function name.

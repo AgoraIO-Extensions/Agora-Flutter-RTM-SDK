@@ -114,7 +114,7 @@ export default function CallApiImplRenderer(
       ${defaultIgnoreForFile}, annotate_overrides
       
       import 'binding_forward_export.dart';
-      import 'package:iris_method_channel/iris_method_channel.dart';
+      import 'package:agora_rtm/src/method_channel/iris_method_channel.dart';
       
       ${subContents}
       `;

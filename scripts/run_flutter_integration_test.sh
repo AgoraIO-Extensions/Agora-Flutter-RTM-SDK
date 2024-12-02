@@ -8,7 +8,7 @@ PROJECT_ROOT=$(realpath ${MY_PATH}/..)
 PLATFORM=$1 # android/ios/macos/windows/web
 
 if [[ ${PLATFORM} == "web" ]];then
-    pushd ${PROJECT_ROOT}/test_shard/fake_test_app
+    pushd ${PROJECT_ROOT}/tests/fake_test_app
 
     IRIS_WEB_VERSION_PATH=${PROJECT_ROOT}/scripts/iris_web_version.js
     rm -rf web/iris_web_version.js
@@ -46,7 +46,7 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
         fi
     fi
 
-    pushd ${MY_PATH}/../test_shard/integration_test_app
+    pushd ${MY_PATH}/../tests/integration_test_app
 
     flutter packages get
 
