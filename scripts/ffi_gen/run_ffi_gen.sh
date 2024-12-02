@@ -19,6 +19,7 @@ pushd ${PROJECT_ROOT}
 
 flutter packages get
 flutter pub run ffigen --config=${MY_PATH}/ffigen_config.yaml
+flutter pub run ffigen --config=${MY_PATH}/ffigen_config_method_channel.yaml
 
 popd
 

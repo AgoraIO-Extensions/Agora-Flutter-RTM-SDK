@@ -28,27 +28,27 @@ class IrisEventIO implements IrisEvent {
 
   late final NativeIrisEventBinding _nativeIrisEventBinding;
 
-  /// Initialize the [IrisEvent], which call `InitDartApiDL` directly
+  /// Initialize the [IrisEvent], which call `RtmInitDartApiDL` directly
   void initialize() {
-    _nativeIrisEventBinding.InitDartApiDL(ffi.NativeApi.initializeApiDLData);
+    _nativeIrisEventBinding.RtmInitDartApiDL(ffi.NativeApi.initializeApiDLData);
   }
 
   /// Register dart [SendPort] to send the message from native
   void registerEventHandler(SendPort sendPort) {
-    _nativeIrisEventBinding.RegisterDartPort(sendPort.nativePort);
+    _nativeIrisEventBinding.RtmRegisterDartPort(sendPort.nativePort);
   }
 
   /// Unregister dart [SendPort] which used to send the message from native
   void unregisterEventHandler(SendPort sendPort) {
-    _nativeIrisEventBinding.UnregisterDartPort(sendPort.nativePort);
+    _nativeIrisEventBinding.RtmUnregisterDartPort(sendPort.nativePort);
   }
 
   /// Clean up native resources
   void dispose() {
-    _nativeIrisEventBinding.Dispose();
+    _nativeIrisEventBinding.RtmDispose();
   }
 
   /// Get the onEvent function pointer from C
   ffi.Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<EventParam>)>>
-      get onEventPtr => _nativeIrisEventBinding.addresses.OnEvent;
+      get onEventPtr => _nativeIrisEventBinding.addresses.RtmOnEvent;
 }

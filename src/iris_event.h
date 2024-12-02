@@ -27,15 +27,15 @@ extern "C"
     } EventParam;
 
     // Initialize `dart_api_dl.h`
-    EXPORT intptr_t InitDartApiDL(void *data);
+    EXPORT intptr_t RtmInitDartApiDL(void *data);
 
-    EXPORT void Dispose();
+    EXPORT void RtmDispose();
 
-    EXPORT void OnEvent(EventParam *param);
+    EXPORT void RtmOnEvent(EventParam *param);
 
-    EXPORT void RegisterDartPort(Dart_Port send_port);
+    EXPORT void RtmRegisterDartPort(Dart_Port send_port);
 
-    EXPORT void UnregisterDartPort(Dart_Port send_port);
+    EXPORT void RtmUnregisterDartPort(Dart_Port send_port);
 
 #ifdef __cplusplus
 }

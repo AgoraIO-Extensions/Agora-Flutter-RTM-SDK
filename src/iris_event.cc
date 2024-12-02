@@ -202,7 +202,7 @@ std::unique_ptr<DartMessageHandlerManager> dartMessageHandlerManager_ = nullptr;
 int init_dart_api_times_ = 0;
 
 // Initialize `dart_api_dl.h`
-EXPORT intptr_t InitDartApiDL(void *data)
+EXPORT intptr_t RtmInitDartApiDL(void *data)
 {
     std::lock_guard<std::mutex> lock(message_handler_mutex_);
     int ret = 0;
@@ -217,7 +217,7 @@ EXPORT intptr_t InitDartApiDL(void *data)
     return ret;
 }
 
-EXPORT void Dispose()
+EXPORT void RtmDispose()
 {
     std::lock_guard<std::mutex> lock(message_handler_mutex_);
     --init_dart_api_times_;
@@ -227,7 +227,7 @@ EXPORT void Dispose()
     }
 }
 
-EXPORT void OnEvent(EventParam *param)
+EXPORT void RtmOnEvent(EventParam *param)
 {
     std::lock_guard<std::mutex> lock(message_handler_mutex_);
     if (dartMessageHandlerManager_)
@@ -236,7 +236,7 @@ EXPORT void OnEvent(EventParam *param)
     }
 }
 
-EXPORT void RegisterDartPort(Dart_Port send_port)
+EXPORT void RtmRegisterDartPort(Dart_Port send_port)
 {
     std::lock_guard<std::mutex> lock(message_handler_mutex_);
     if (dartMessageHandlerManager_)
@@ -245,7 +245,7 @@ EXPORT void RegisterDartPort(Dart_Port send_port)
     }
 }
 
-EXPORT void UnregisterDartPort(Dart_Port send_port)
+EXPORT void RtmUnregisterDartPort(Dart_Port send_port)
 {
     std::lock_guard<std::mutex> lock(message_handler_mutex_);
     if (dartMessageHandlerManager_)
