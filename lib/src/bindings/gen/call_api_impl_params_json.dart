@@ -22,7 +22,7 @@ class RtmClientLoginJson {
 class RtmClientLogoutJson {
   const RtmClientLogoutJson(this.requestId);
 
-  @JsonKey(name: 'requestId')
+  @JsonKey(name: 'requestId', defaultValue: 0)
   final int requestId;
 
   factory RtmClientLogoutJson.fromJson(Map<String, dynamic> json) =>
