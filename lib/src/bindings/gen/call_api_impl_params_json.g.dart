@@ -18,7 +18,7 @@ Map<String, dynamic> _$RtmClientLoginJsonToJson(RtmClientLoginJson instance) =>
 
 RtmClientLogoutJson _$RtmClientLogoutJsonFromJson(Map<String, dynamic> json) =>
     RtmClientLogoutJson(
-      (json['requestId'] as num).toInt(),
+      (json['requestId'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$RtmClientLogoutJsonToJson(
