@@ -8,10 +8,17 @@ enum RtmMessageQos {
 
   @JsonValue(1)
   ordered,
+  ;
+
+  /// @nodoc
+  static RtmMessageQos fromValue(int value) {
+    return $enumDecode(_$RtmMessageQosEnumMap, value);
+  }
 }
 
 extension RtmMessageQosExt on RtmMessageQos {
   /// @nodoc
+  @Deprecated('Use RtmMessageQos.fromValue instead')
   static RtmMessageQos fromValue(int value) {
     return $enumDecode(_$RtmMessageQosEnumMap, value);
   }
@@ -35,10 +42,17 @@ enum RtmMessagePriority {
 
   @JsonValue(8)
   low,
+  ;
+
+  /// @nodoc
+  static RtmMessagePriority fromValue(int value) {
+    return $enumDecode(_$RtmMessagePriorityEnumMap, value);
+  }
 }
 
 extension RtmMessagePriorityExt on RtmMessagePriority {
   /// @nodoc
+  @Deprecated('Use RtmMessagePriority.fromValue instead')
   static RtmMessagePriority fromValue(int value) {
     return $enumDecode(_$RtmMessagePriorityEnumMap, value);
   }
