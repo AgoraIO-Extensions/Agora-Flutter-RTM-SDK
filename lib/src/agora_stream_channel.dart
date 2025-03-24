@@ -250,9 +250,9 @@ abstract class StreamChannel {
 
   Future<(RtmStatus, PublishTopicMessageResult?)> publishTextMessage(
       String topic, String message,
-      {int sendTs = 0, String? customType});
+      {int? sendTs, String? customType});
 
   Future<(RtmStatus, PublishTopicMessageResult?)> publishBinaryMessage(
       String topic, Uint8List message,
-      {int sendTs = 0, String? customType});
+      {int? sendTs, String? customType});
 }

@@ -14,8 +14,8 @@ RtmConfig _$RtmConfigFromJson(Map<String, dynamic> json) => RtmConfig(
       protocolType:
           $enumDecodeNullable(_$RtmProtocolTypeEnumMap, json['protocolType']) ??
               RtmProtocolType.tcpUdp,
-      presenceTimeout: (json['presenceTimeout'] as num?)?.toInt() ?? 300,
-      heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt() ?? 5,
+      presenceTimeout: (json['presenceTimeout'] as num?)?.toInt(),
+      heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt(),
       useStringUserId: json['useStringUserId'] as bool? ?? true,
       logConfig: json['logConfig'] == null
           ? null
@@ -34,27 +34,24 @@ RtmConfig _$RtmConfigFromJson(Map<String, dynamic> json) => RtmConfig(
               json['privateConfig'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$RtmConfigToJson(RtmConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull(
-      'areaCode', const RtmAreaCodeListConverter().toJson(instance.areaCode));
-  writeNotNull('protocolType', _$RtmProtocolTypeEnumMap[instance.protocolType]);
-  writeNotNull('presenceTimeout', instance.presenceTimeout);
-  writeNotNull('heartbeatInterval', instance.heartbeatInterval);
-  writeNotNull('useStringUserId', instance.useStringUserId);
-  writeNotNull('logConfig', instance.logConfig?.toJson());
-  writeNotNull('proxyConfig', instance.proxyConfig?.toJson());
-  writeNotNull('encryptionConfig', instance.encryptionConfig?.toJson());
-  writeNotNull('privateConfig', instance.privateConfig?.toJson());
-  return val;
-}
+Map<String, dynamic> _$RtmConfigToJson(RtmConfig instance) => <String, dynamic>{
+      if (const RtmAreaCodeListConverter().toJson(instance.areaCode)
+          case final value?)
+        'areaCode': value,
+      if (_$RtmProtocolTypeEnumMap[instance.protocolType] case final value?)
+        'protocolType': value,
+      if (instance.presenceTimeout case final value?) 'presenceTimeout': value,
+      if (instance.heartbeatInterval case final value?)
+        'heartbeatInterval': value,
+      if (instance.useStringUserId case final value?) 'useStringUserId': value,
+      if (instance.logConfig?.toJson() case final value?) 'logConfig': value,
+      if (instance.proxyConfig?.toJson() case final value?)
+        'proxyConfig': value,
+      if (instance.encryptionConfig?.toJson() case final value?)
+        'encryptionConfig': value,
+      if (instance.privateConfig?.toJson() case final value?)
+        'privateConfig': value,
+    };
 
 const _$RtmProtocolTypeEnumMap = {
   RtmProtocolType.tcpUdp: 0,
@@ -82,26 +79,24 @@ LinkStateEvent _$LinkStateEventFromJson(Map<String, dynamic> json) =>
       timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$LinkStateEventToJson(LinkStateEvent instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('currentState', _$RtmLinkStateEnumMap[instance.currentState]);
-  writeNotNull('previousState', _$RtmLinkStateEnumMap[instance.previousState]);
-  writeNotNull('serviceType', _$RtmServiceTypeEnumMap[instance.serviceType]);
-  writeNotNull('operation', _$RtmLinkOperationEnumMap[instance.operation]);
-  writeNotNull('reason', instance.reason);
-  writeNotNull('affectedChannels', instance.affectedChannels);
-  writeNotNull('unrestoredChannels', instance.unrestoredChannels);
-  writeNotNull('isResumed', instance.isResumed);
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$LinkStateEventToJson(LinkStateEvent instance) =>
+    <String, dynamic>{
+      if (_$RtmLinkStateEnumMap[instance.currentState] case final value?)
+        'currentState': value,
+      if (_$RtmLinkStateEnumMap[instance.previousState] case final value?)
+        'previousState': value,
+      if (_$RtmServiceTypeEnumMap[instance.serviceType] case final value?)
+        'serviceType': value,
+      if (_$RtmLinkOperationEnumMap[instance.operation] case final value?)
+        'operation': value,
+      if (instance.reason case final value?) 'reason': value,
+      if (instance.affectedChannels case final value?)
+        'affectedChannels': value,
+      if (instance.unrestoredChannels case final value?)
+        'unrestoredChannels': value,
+      if (instance.isResumed case final value?) 'isResumed': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmLinkStateEnumMap = {
   RtmLinkState.idle: 0,
@@ -144,25 +139,19 @@ MessageEvent _$MessageEventFromJson(Map<String, dynamic> json) => MessageEvent(
       timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$MessageEventToJson(MessageEvent instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('messageType', _$RtmMessageTypeEnumMap[instance.messageType]);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelTopic', instance.channelTopic);
-  writeNotNull('messageLength', instance.messageLength);
-  writeNotNull('publisher', instance.publisher);
-  writeNotNull('customType', instance.customType);
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$MessageEventToJson(MessageEvent instance) =>
+    <String, dynamic>{
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmMessageTypeEnumMap[instance.messageType] case final value?)
+        'messageType': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.channelTopic case final value?) 'channelTopic': value,
+      if (instance.messageLength case final value?) 'messageLength': value,
+      if (instance.publisher case final value?) 'publisher': value,
+      if (instance.customType case final value?) 'customType': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmChannelTypeEnumMap = {
   RtmChannelType.none: 0,
@@ -195,26 +184,21 @@ PresenceEvent _$PresenceEventFromJson(Map<String, dynamic> json) =>
       timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$PresenceEventToJson(PresenceEvent instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('type', _$RtmPresenceEventTypeEnumMap[instance.type]);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('publisher', instance.publisher);
-  writeNotNull(
-      'stateItems', instance.stateItems?.map((e) => e.toJson()).toList());
-  writeNotNull('interval', instance.interval?.toJson());
-  writeNotNull('snapshot', instance.snapshot?.toJson());
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$PresenceEventToJson(PresenceEvent instance) =>
+    <String, dynamic>{
+      if (_$RtmPresenceEventTypeEnumMap[instance.type] case final value?)
+        'type': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.publisher case final value?) 'publisher': value,
+      if (instance.stateItems?.map((e) => e.toJson()).toList()
+          case final value?)
+        'stateItems': value,
+      if (instance.interval?.toJson() case final value?) 'interval': value,
+      if (instance.snapshot?.toJson() case final value?) 'snapshot': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmPresenceEventTypeEnumMap = {
   RtmPresenceEventType.none: 0,
@@ -242,22 +226,18 @@ IntervalInfo _$IntervalInfoFromJson(Map<String, dynamic> json) => IntervalInfo(
           .toList(),
     );
 
-Map<String, dynamic> _$IntervalInfoToJson(IntervalInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('joinUserList', instance.joinUserList?.toJson());
-  writeNotNull('leaveUserList', instance.leaveUserList?.toJson());
-  writeNotNull('timeoutUserList', instance.timeoutUserList?.toJson());
-  writeNotNull(
-      'userStateList', instance.userStateList?.map((e) => e.toJson()).toList());
-  return val;
-}
+Map<String, dynamic> _$IntervalInfoToJson(IntervalInfo instance) =>
+    <String, dynamic>{
+      if (instance.joinUserList?.toJson() case final value?)
+        'joinUserList': value,
+      if (instance.leaveUserList?.toJson() case final value?)
+        'leaveUserList': value,
+      if (instance.timeoutUserList?.toJson() case final value?)
+        'timeoutUserList': value,
+      if (instance.userStateList?.map((e) => e.toJson()).toList()
+          case final value?)
+        'userStateList': value,
+    };
 
 SnapshotInfo _$SnapshotInfoFromJson(Map<String, dynamic> json) => SnapshotInfo(
       userStateList: (json['userStateList'] as List<dynamic>?)
@@ -265,19 +245,12 @@ SnapshotInfo _$SnapshotInfoFromJson(Map<String, dynamic> json) => SnapshotInfo(
           .toList(),
     );
 
-Map<String, dynamic> _$SnapshotInfoToJson(SnapshotInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull(
-      'userStateList', instance.userStateList?.map((e) => e.toJson()).toList());
-  return val;
-}
+Map<String, dynamic> _$SnapshotInfoToJson(SnapshotInfo instance) =>
+    <String, dynamic>{
+      if (instance.userStateList?.map((e) => e.toJson()).toList()
+          case final value?)
+        'userStateList': value,
+    };
 
 TopicEvent _$TopicEventFromJson(Map<String, dynamic> json) => TopicEvent(
       type: $enumDecodeNullable(_$RtmTopicEventTypeEnumMap, json['type']),
@@ -289,23 +262,17 @@ TopicEvent _$TopicEventFromJson(Map<String, dynamic> json) => TopicEvent(
       timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$TopicEventToJson(TopicEvent instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('type', _$RtmTopicEventTypeEnumMap[instance.type]);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('publisher', instance.publisher);
-  writeNotNull(
-      'topicInfos', instance.topicInfos?.map((e) => e.toJson()).toList());
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$TopicEventToJson(TopicEvent instance) =>
+    <String, dynamic>{
+      if (_$RtmTopicEventTypeEnumMap[instance.type] case final value?)
+        'type': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.publisher case final value?) 'publisher': value,
+      if (instance.topicInfos?.map((e) => e.toJson()).toList()
+          case final value?)
+        'topicInfos': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmTopicEventTypeEnumMap = {
   RtmTopicEventType.none: 0,
@@ -326,23 +293,17 @@ LockEvent _$LockEventFromJson(Map<String, dynamic> json) => LockEvent(
       timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$LockEventToJson(LockEvent instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('eventType', _$RtmLockEventTypeEnumMap[instance.eventType]);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('lockDetailList',
-      instance.lockDetailList?.map((e) => e.toJson()).toList());
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$LockEventToJson(LockEvent instance) => <String, dynamic>{
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmLockEventTypeEnumMap[instance.eventType] case final value?)
+        'eventType': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.lockDetailList?.map((e) => e.toJson()).toList()
+          case final value?)
+        'lockDetailList': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmLockEventTypeEnumMap = {
   RtmLockEventType.none: 0,
@@ -368,23 +329,18 @@ StorageEvent _$StorageEventFromJson(Map<String, dynamic> json) => StorageEvent(
       timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$StorageEventToJson(StorageEvent instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('storageType', _$RtmStorageTypeEnumMap[instance.storageType]);
-  writeNotNull('eventType', _$RtmStorageEventTypeEnumMap[instance.eventType]);
-  writeNotNull('target', instance.target);
-  writeNotNull('data', instance.data?.toJson());
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$StorageEventToJson(StorageEvent instance) =>
+    <String, dynamic>{
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmStorageTypeEnumMap[instance.storageType] case final value?)
+        'storageType': value,
+      if (_$RtmStorageEventTypeEnumMap[instance.eventType] case final value?)
+        'eventType': value,
+      if (instance.target case final value?) 'target': value,
+      if (instance.data?.toJson() case final value?) 'data': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmStorageTypeEnumMap = {
   RtmStorageType.none: 0,

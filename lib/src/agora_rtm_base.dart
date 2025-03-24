@@ -895,9 +895,7 @@ extension RtmPresenceEventTypeExt on RtmPresenceEventType {
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RtmLogConfig {
   const RtmLogConfig(
-      {this.filePath,
-      this.fileSizeInKB = defaultLogSizeInKb,
-      this.level = RtmLogLevel.info});
+      {this.filePath, this.fileSizeInKB, this.level = RtmLogLevel.info});
 
   @JsonKey(name: 'filePath')
   final String? filePath;
@@ -977,7 +975,7 @@ class StateItem {
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class LockDetail {
-  const LockDetail({this.lockName, this.owner, this.ttl = 0});
+  const LockDetail({this.lockName, this.owner, this.ttl});
 
   @JsonKey(name: 'lockName')
   final String? lockName;
@@ -1101,9 +1099,7 @@ class PublishOptions {
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class TopicMessageOptions {
   const TopicMessageOptions(
-      {this.messageType = RtmMessageType.binary,
-      this.sendTs = 0,
-      this.customType});
+      {this.messageType = RtmMessageType.binary, this.sendTs, this.customType});
 
   @JsonKey(name: 'messageType')
   final RtmMessageType? messageType;
@@ -1145,7 +1141,7 @@ class RtmProxyConfig {
   const RtmProxyConfig(
       {this.proxyType = RtmProxyType.none,
       this.server,
-      this.port = 0,
+      this.port,
       this.account,
       this.password});
 

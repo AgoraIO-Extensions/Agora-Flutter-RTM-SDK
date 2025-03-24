@@ -20,11 +20,7 @@ class MetadataOptions {
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class MetadataItem {
   const MetadataItem(
-      {this.key,
-      this.value,
-      this.authorUserId,
-      this.revision = -1,
-      this.updateTs = 0});
+      {this.key, this.value, this.authorUserId, this.revision, this.updateTs});
 
   @JsonKey(name: 'key')
   final String? key;
@@ -50,7 +46,7 @@ class MetadataItem {
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class Metadata {
   const Metadata(
-      {this.majorRevision = -1, this.items = const [], this.itemCount = 0});
+      {this.majorRevision, this.items = const [], this.itemCount = 0});
 
   @JsonKey(name: 'majorRevision')
   final int? majorRevision;
@@ -150,7 +146,7 @@ abstract class RtmStorage {
       String channelName,
       RtmChannelType channelType,
       List<MetadataItem> metadata,
-      {int majorRevision = -1,
+      {int? majorRevision,
       bool recordTs = false,
       bool recordUserId = false,
       String lockName = ''});
@@ -159,14 +155,14 @@ abstract class RtmStorage {
       String channelName,
       RtmChannelType channelType,
       List<MetadataItem> metadata,
-      {int majorRevision = -1,
+      {int? majorRevision,
       bool recordTs = false,
       bool recordUserId = false,
       String lockName = ''});
 
   Future<(RtmStatus, RemoveChannelMetadataResult?)> removeChannelMetadata(
       String channelName, RtmChannelType channelType,
-      {int majorRevision = -1,
+      {int? majorRevision,
       List<MetadataItem> metadata = const [],
       bool recordTs = false,
       bool recordUserId = false,
@@ -177,19 +173,15 @@ abstract class RtmStorage {
 
   Future<(RtmStatus, SetUserMetadataResult?)> setUserMetadata(
       String userId, List<MetadataItem> metadata,
-      {int majorRevision = -1,
-      bool recordTs = false,
-      bool recordUserId = false});
+      {int? majorRevision, bool recordTs = false, bool recordUserId = false});
 
   Future<(RtmStatus, UpdateUserMetadataResult?)> updateUserMetadata(
       String userId, List<MetadataItem> metadata,
-      {int majorRevision = -1,
-      bool recordTs = false,
-      bool recordUserId = false});
+      {int? majorRevision, bool recordTs = false, bool recordUserId = false});
 
   Future<(RtmStatus, RemoveUserMetadataResult?)> removeUserMetadata(
       String userId,
-      {int majorRevision = -1,
+      {int? majorRevision,
       List<MetadataItem> metadata = const [],
       bool recordTs = false,
       bool recordUserId = false});

@@ -15,18 +15,10 @@ RtmEventHandlerOnLinkStateEventJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnLinkStateEventJsonToJson(
-    RtmEventHandlerOnLinkStateEventJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('event', instance.event?.toJson());
-  return val;
-}
+        RtmEventHandlerOnLinkStateEventJson instance) =>
+    <String, dynamic>{
+      if (instance.event?.toJson() case final value?) 'event': value,
+    };
 
 RtmEventHandlerOnMessageEventJson _$RtmEventHandlerOnMessageEventJsonFromJson(
         Map<String, dynamic> json) =>
@@ -37,18 +29,10 @@ RtmEventHandlerOnMessageEventJson _$RtmEventHandlerOnMessageEventJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnMessageEventJsonToJson(
-    RtmEventHandlerOnMessageEventJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('event', instance.event?.toJson());
-  return val;
-}
+        RtmEventHandlerOnMessageEventJson instance) =>
+    <String, dynamic>{
+      if (instance.event?.toJson() case final value?) 'event': value,
+    };
 
 RtmEventHandlerOnPresenceEventJson _$RtmEventHandlerOnPresenceEventJsonFromJson(
         Map<String, dynamic> json) =>
@@ -59,18 +43,10 @@ RtmEventHandlerOnPresenceEventJson _$RtmEventHandlerOnPresenceEventJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnPresenceEventJsonToJson(
-    RtmEventHandlerOnPresenceEventJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('event', instance.event?.toJson());
-  return val;
-}
+        RtmEventHandlerOnPresenceEventJson instance) =>
+    <String, dynamic>{
+      if (instance.event?.toJson() case final value?) 'event': value,
+    };
 
 RtmEventHandlerOnTopicEventJson _$RtmEventHandlerOnTopicEventJsonFromJson(
         Map<String, dynamic> json) =>
@@ -81,18 +57,10 @@ RtmEventHandlerOnTopicEventJson _$RtmEventHandlerOnTopicEventJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnTopicEventJsonToJson(
-    RtmEventHandlerOnTopicEventJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('event', instance.event?.toJson());
-  return val;
-}
+        RtmEventHandlerOnTopicEventJson instance) =>
+    <String, dynamic>{
+      if (instance.event?.toJson() case final value?) 'event': value,
+    };
 
 RtmEventHandlerOnLockEventJson _$RtmEventHandlerOnLockEventJsonFromJson(
         Map<String, dynamic> json) =>
@@ -103,18 +71,10 @@ RtmEventHandlerOnLockEventJson _$RtmEventHandlerOnLockEventJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnLockEventJsonToJson(
-    RtmEventHandlerOnLockEventJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('event', instance.event?.toJson());
-  return val;
-}
+        RtmEventHandlerOnLockEventJson instance) =>
+    <String, dynamic>{
+      if (instance.event?.toJson() case final value?) 'event': value,
+    };
 
 RtmEventHandlerOnStorageEventJson _$RtmEventHandlerOnStorageEventJsonFromJson(
         Map<String, dynamic> json) =>
@@ -125,18 +85,10 @@ RtmEventHandlerOnStorageEventJson _$RtmEventHandlerOnStorageEventJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnStorageEventJsonToJson(
-    RtmEventHandlerOnStorageEventJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('event', instance.event?.toJson());
-  return val;
-}
+        RtmEventHandlerOnStorageEventJson instance) =>
+    <String, dynamic>{
+      if (instance.event?.toJson() case final value?) 'event': value,
+    };
 
 RtmEventHandlerOnJoinResultJson _$RtmEventHandlerOnJoinResultJsonFromJson(
         Map<String, dynamic> json) =>
@@ -148,21 +100,14 @@ RtmEventHandlerOnJoinResultJson _$RtmEventHandlerOnJoinResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnJoinResultJsonToJson(
-    RtmEventHandlerOnJoinResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnJoinResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.ok: 0,
@@ -278,21 +223,14 @@ RtmEventHandlerOnLeaveResultJson _$RtmEventHandlerOnLeaveResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnLeaveResultJsonToJson(
-    RtmEventHandlerOnLeaveResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnLeaveResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnPublishTopicMessageResultJson
     _$RtmEventHandlerOnPublishTopicMessageResultJsonFromJson(
@@ -306,21 +244,14 @@ RtmEventHandlerOnPublishTopicMessageResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnPublishTopicMessageResultJsonToJson(
-    RtmEventHandlerOnPublishTopicMessageResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('topic', instance.topic);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnPublishTopicMessageResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.topic case final value?) 'topic': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnJoinTopicResultJson
     _$RtmEventHandlerOnJoinTopicResultJsonFromJson(Map<String, dynamic> json) =>
@@ -335,23 +266,16 @@ RtmEventHandlerOnJoinTopicResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnJoinTopicResultJsonToJson(
-    RtmEventHandlerOnJoinTopicResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('topic', instance.topic);
-  writeNotNull('meta', instance.meta);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnJoinTopicResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (instance.topic case final value?) 'topic': value,
+      if (instance.meta case final value?) 'meta': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnLeaveTopicResultJson
     _$RtmEventHandlerOnLeaveTopicResultJsonFromJson(
@@ -367,23 +291,16 @@ RtmEventHandlerOnLeaveTopicResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnLeaveTopicResultJsonToJson(
-    RtmEventHandlerOnLeaveTopicResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('topic', instance.topic);
-  writeNotNull('meta', instance.meta);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnLeaveTopicResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (instance.topic case final value?) 'topic': value,
+      if (instance.meta case final value?) 'meta': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnSubscribeTopicResultJson
     _$RtmEventHandlerOnSubscribeTopicResultJsonFromJson(
@@ -404,24 +321,19 @@ RtmEventHandlerOnSubscribeTopicResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnSubscribeTopicResultJsonToJson(
-    RtmEventHandlerOnSubscribeTopicResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('topic', instance.topic);
-  writeNotNull('succeedUsers', instance.succeedUsers?.toJson());
-  writeNotNull('failedUsers', instance.failedUsers?.toJson());
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnSubscribeTopicResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (instance.topic case final value?) 'topic': value,
+      if (instance.succeedUsers?.toJson() case final value?)
+        'succeedUsers': value,
+      if (instance.failedUsers?.toJson() case final value?)
+        'failedUsers': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnUnsubscribeTopicResultJson
     _$RtmEventHandlerOnUnsubscribeTopicResultJsonFromJson(
@@ -435,21 +347,14 @@ RtmEventHandlerOnUnsubscribeTopicResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnUnsubscribeTopicResultJsonToJson(
-    RtmEventHandlerOnUnsubscribeTopicResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('topic', instance.topic);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnUnsubscribeTopicResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.topic case final value?) 'topic': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnGetSubscribedUserListResultJson
     _$RtmEventHandlerOnGetSubscribedUserListResultJsonFromJson(
@@ -466,22 +371,15 @@ RtmEventHandlerOnGetSubscribedUserListResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnGetSubscribedUserListResultJsonToJson(
-    RtmEventHandlerOnGetSubscribedUserListResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('topic', instance.topic);
-  writeNotNull('users', instance.users?.toJson());
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnGetSubscribedUserListResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (instance.topic case final value?) 'topic': value,
+      if (instance.users?.toJson() case final value?) 'users': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnConnectionStateChangedJson
     _$RtmEventHandlerOnConnectionStateChangedJsonFromJson(
@@ -495,20 +393,14 @@ RtmEventHandlerOnConnectionStateChangedJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnConnectionStateChangedJsonToJson(
-    RtmEventHandlerOnConnectionStateChangedJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('state', _$RtmConnectionStateEnumMap[instance.state]);
-  writeNotNull('reason', _$RtmConnectionChangeReasonEnumMap[instance.reason]);
-  return val;
-}
+        RtmEventHandlerOnConnectionStateChangedJson instance) =>
+    <String, dynamic>{
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmConnectionStateEnumMap[instance.state] case final value?)
+        'state': value,
+      if (_$RtmConnectionChangeReasonEnumMap[instance.reason] case final value?)
+        'reason': value,
+    };
 
 const _$RtmConnectionStateEnumMap = {
   RtmConnectionState.disconnected: 1,
@@ -557,18 +449,10 @@ RtmEventHandlerOnTokenPrivilegeWillExpireJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnTokenPrivilegeWillExpireJsonToJson(
-    RtmEventHandlerOnTokenPrivilegeWillExpireJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelName', instance.channelName);
-  return val;
-}
+        RtmEventHandlerOnTokenPrivilegeWillExpireJson instance) =>
+    <String, dynamic>{
+      if (instance.channelName case final value?) 'channelName': value,
+    };
 
 RtmEventHandlerOnSubscribeResultJson
     _$RtmEventHandlerOnSubscribeResultJsonFromJson(Map<String, dynamic> json) =>
@@ -580,20 +464,13 @@ RtmEventHandlerOnSubscribeResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnSubscribeResultJsonToJson(
-    RtmEventHandlerOnSubscribeResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnSubscribeResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnUnsubscribeResultJson
     _$RtmEventHandlerOnUnsubscribeResultJsonFromJson(
@@ -606,20 +483,13 @@ RtmEventHandlerOnUnsubscribeResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnUnsubscribeResultJsonToJson(
-    RtmEventHandlerOnUnsubscribeResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnUnsubscribeResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnPublishResultJson _$RtmEventHandlerOnPublishResultJsonFromJson(
         Map<String, dynamic> json) =>
@@ -629,19 +499,12 @@ RtmEventHandlerOnPublishResultJson _$RtmEventHandlerOnPublishResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnPublishResultJsonToJson(
-    RtmEventHandlerOnPublishResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnPublishResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnLoginResultJson _$RtmEventHandlerOnLoginResultJsonFromJson(
         Map<String, dynamic> json) =>
@@ -651,19 +514,12 @@ RtmEventHandlerOnLoginResultJson _$RtmEventHandlerOnLoginResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnLoginResultJsonToJson(
-    RtmEventHandlerOnLoginResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnLoginResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnLogoutResultJson _$RtmEventHandlerOnLogoutResultJsonFromJson(
         Map<String, dynamic> json) =>
@@ -673,19 +529,12 @@ RtmEventHandlerOnLogoutResultJson _$RtmEventHandlerOnLogoutResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnLogoutResultJsonToJson(
-    RtmEventHandlerOnLogoutResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnLogoutResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnRenewTokenResultJson
     _$RtmEventHandlerOnRenewTokenResultJsonFromJson(
@@ -700,21 +549,15 @@ RtmEventHandlerOnRenewTokenResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnRenewTokenResultJsonToJson(
-    RtmEventHandlerOnRenewTokenResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('serverType', _$RtmServiceTypeEnumMap[instance.serverType]);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnRenewTokenResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (_$RtmServiceTypeEnumMap[instance.serverType] case final value?)
+        'serverType': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 const _$RtmServiceTypeEnumMap = {
   RtmServiceType.none: 0,
@@ -735,21 +578,15 @@ RtmEventHandlerOnSetChannelMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnSetChannelMetadataResultJsonToJson(
-    RtmEventHandlerOnSetChannelMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnSetChannelMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 const _$RtmChannelTypeEnumMap = {
   RtmChannelType.none: 0,
@@ -771,21 +608,15 @@ RtmEventHandlerOnUpdateChannelMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnUpdateChannelMetadataResultJsonToJson(
-    RtmEventHandlerOnUpdateChannelMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnUpdateChannelMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnRemoveChannelMetadataResultJson
     _$RtmEventHandlerOnRemoveChannelMetadataResultJsonFromJson(
@@ -800,21 +631,15 @@ RtmEventHandlerOnRemoveChannelMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnRemoveChannelMetadataResultJsonToJson(
-    RtmEventHandlerOnRemoveChannelMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnRemoveChannelMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnGetChannelMetadataResultJson
     _$RtmEventHandlerOnGetChannelMetadataResultJsonFromJson(
@@ -832,22 +657,16 @@ RtmEventHandlerOnGetChannelMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnGetChannelMetadataResultJsonToJson(
-    RtmEventHandlerOnGetChannelMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('data', instance.data?.toJson());
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnGetChannelMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.data?.toJson() case final value?) 'data': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnSetUserMetadataResultJson
     _$RtmEventHandlerOnSetUserMetadataResultJsonFromJson(
@@ -860,20 +679,13 @@ RtmEventHandlerOnSetUserMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnSetUserMetadataResultJsonToJson(
-    RtmEventHandlerOnSetUserMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnSetUserMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnUpdateUserMetadataResultJson
     _$RtmEventHandlerOnUpdateUserMetadataResultJsonFromJson(
@@ -886,20 +698,13 @@ RtmEventHandlerOnUpdateUserMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnUpdateUserMetadataResultJsonToJson(
-    RtmEventHandlerOnUpdateUserMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnUpdateUserMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnRemoveUserMetadataResultJson
     _$RtmEventHandlerOnRemoveUserMetadataResultJsonFromJson(
@@ -912,20 +717,13 @@ RtmEventHandlerOnRemoveUserMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnRemoveUserMetadataResultJsonToJson(
-    RtmEventHandlerOnRemoveUserMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnRemoveUserMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnGetUserMetadataResultJson
     _$RtmEventHandlerOnGetUserMetadataResultJsonFromJson(
@@ -941,21 +739,14 @@ RtmEventHandlerOnGetUserMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnGetUserMetadataResultJsonToJson(
-    RtmEventHandlerOnGetUserMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('data', instance.data?.toJson());
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnGetUserMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (instance.data?.toJson() case final value?) 'data': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnSubscribeUserMetadataResultJson
     _$RtmEventHandlerOnSubscribeUserMetadataResultJsonFromJson(
@@ -968,20 +759,13 @@ RtmEventHandlerOnSubscribeUserMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnSubscribeUserMetadataResultJsonToJson(
-    RtmEventHandlerOnSubscribeUserMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnSubscribeUserMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnUnsubscribeUserMetadataResultJson
     _$RtmEventHandlerOnUnsubscribeUserMetadataResultJsonFromJson(
@@ -994,20 +778,13 @@ RtmEventHandlerOnUnsubscribeUserMetadataResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnUnsubscribeUserMetadataResultJsonToJson(
-    RtmEventHandlerOnUnsubscribeUserMetadataResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('userId', instance.userId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnUnsubscribeUserMetadataResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userId case final value?) 'userId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnSetLockResultJson _$RtmEventHandlerOnSetLockResultJsonFromJson(
         Map<String, dynamic> json) =>
@@ -1021,22 +798,16 @@ RtmEventHandlerOnSetLockResultJson _$RtmEventHandlerOnSetLockResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnSetLockResultJsonToJson(
-    RtmEventHandlerOnSetLockResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('lockName', instance.lockName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnSetLockResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.lockName case final value?) 'lockName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnRemoveLockResultJson
     _$RtmEventHandlerOnRemoveLockResultJsonFromJson(
@@ -1052,22 +823,16 @@ RtmEventHandlerOnRemoveLockResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnRemoveLockResultJsonToJson(
-    RtmEventHandlerOnRemoveLockResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('lockName', instance.lockName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnRemoveLockResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.lockName case final value?) 'lockName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnReleaseLockResultJson
     _$RtmEventHandlerOnReleaseLockResultJsonFromJson(
@@ -1083,22 +848,16 @@ RtmEventHandlerOnReleaseLockResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnReleaseLockResultJsonToJson(
-    RtmEventHandlerOnReleaseLockResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('lockName', instance.lockName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnReleaseLockResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.lockName case final value?) 'lockName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnAcquireLockResultJson
     _$RtmEventHandlerOnAcquireLockResultJsonFromJson(
@@ -1115,23 +874,17 @@ RtmEventHandlerOnAcquireLockResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnAcquireLockResultJsonToJson(
-    RtmEventHandlerOnAcquireLockResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('lockName', instance.lockName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  writeNotNull('errorDetails', instance.errorDetails);
-  return val;
-}
+        RtmEventHandlerOnAcquireLockResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.lockName case final value?) 'lockName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+      if (instance.errorDetails case final value?) 'errorDetails': value,
+    };
 
 RtmEventHandlerOnRevokeLockResultJson
     _$RtmEventHandlerOnRevokeLockResultJsonFromJson(
@@ -1147,22 +900,16 @@ RtmEventHandlerOnRevokeLockResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnRevokeLockResultJsonToJson(
-    RtmEventHandlerOnRevokeLockResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('lockName', instance.lockName);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnRevokeLockResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.lockName case final value?) 'lockName': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnGetLocksResultJson
     _$RtmEventHandlerOnGetLocksResultJsonFromJson(Map<String, dynamic> json) =>
@@ -1180,24 +927,19 @@ RtmEventHandlerOnGetLocksResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnGetLocksResultJsonToJson(
-    RtmEventHandlerOnGetLocksResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('lockDetailList',
-      instance.lockDetailList?.map((e) => e.toJson()).toList());
-  writeNotNull('count', instance.count);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnGetLocksResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (instance.lockDetailList?.map((e) => e.toJson()).toList()
+          case final value?)
+        'lockDetailList': value,
+      if (instance.count case final value?) 'count': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnWhoNowResultJson _$RtmEventHandlerOnWhoNowResultJsonFromJson(
         Map<String, dynamic> json) =>
@@ -1212,23 +954,17 @@ RtmEventHandlerOnWhoNowResultJson _$RtmEventHandlerOnWhoNowResultJsonFromJson(
     );
 
 Map<String, dynamic> _$RtmEventHandlerOnWhoNowResultJsonToJson(
-    RtmEventHandlerOnWhoNowResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull(
-      'userStateList', instance.userStateList?.map((e) => e.toJson()).toList());
-  writeNotNull('count', instance.count);
-  writeNotNull('nextPage', instance.nextPage);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnWhoNowResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userStateList?.map((e) => e.toJson()).toList()
+          case final value?)
+        'userStateList': value,
+      if (instance.count case final value?) 'count': value,
+      if (instance.nextPage case final value?) 'nextPage': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnGetOnlineUsersResultJson
     _$RtmEventHandlerOnGetOnlineUsersResultJsonFromJson(
@@ -1245,23 +981,17 @@ RtmEventHandlerOnGetOnlineUsersResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnGetOnlineUsersResultJsonToJson(
-    RtmEventHandlerOnGetOnlineUsersResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull(
-      'userStateList', instance.userStateList?.map((e) => e.toJson()).toList());
-  writeNotNull('count', instance.count);
-  writeNotNull('nextPage', instance.nextPage);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnGetOnlineUsersResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.userStateList?.map((e) => e.toJson()).toList()
+          case final value?)
+        'userStateList': value,
+      if (instance.count case final value?) 'count': value,
+      if (instance.nextPage case final value?) 'nextPage': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnWhereNowResultJson
     _$RtmEventHandlerOnWhereNowResultJsonFromJson(Map<String, dynamic> json) =>
@@ -1276,21 +1006,15 @@ RtmEventHandlerOnWhereNowResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnWhereNowResultJsonToJson(
-    RtmEventHandlerOnWhereNowResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channels', instance.channels?.map((e) => e.toJson()).toList());
-  writeNotNull('count', instance.count);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnWhereNowResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channels?.map((e) => e.toJson()).toList() case final value?)
+        'channels': value,
+      if (instance.count case final value?) 'count': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnGetUserChannelsResultJson
     _$RtmEventHandlerOnGetUserChannelsResultJsonFromJson(
@@ -1306,21 +1030,14 @@ RtmEventHandlerOnGetUserChannelsResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnGetUserChannelsResultJsonToJson(
-    RtmEventHandlerOnGetUserChannelsResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('channels', instance.channels?.toJson());
-  writeNotNull('count', instance.count);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnGetUserChannelsResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.channels?.toJson() case final value?) 'channels': value,
+      if (instance.count case final value?) 'count': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnPresenceSetStateResultJson
     _$RtmEventHandlerOnPresenceSetStateResultJsonFromJson(
@@ -1332,19 +1049,12 @@ RtmEventHandlerOnPresenceSetStateResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnPresenceSetStateResultJsonToJson(
-    RtmEventHandlerOnPresenceSetStateResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnPresenceSetStateResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnPresenceRemoveStateResultJson
     _$RtmEventHandlerOnPresenceRemoveStateResultJsonFromJson(
@@ -1356,19 +1066,12 @@ RtmEventHandlerOnPresenceRemoveStateResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnPresenceRemoveStateResultJsonToJson(
-    RtmEventHandlerOnPresenceRemoveStateResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnPresenceRemoveStateResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };
 
 RtmEventHandlerOnPresenceGetStateResultJson
     _$RtmEventHandlerOnPresenceGetStateResultJsonFromJson(
@@ -1383,17 +1086,10 @@ RtmEventHandlerOnPresenceGetStateResultJson
         );
 
 Map<String, dynamic> _$RtmEventHandlerOnPresenceGetStateResultJsonToJson(
-    RtmEventHandlerOnPresenceGetStateResultJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('state', instance.state?.toJson());
-  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
-  return val;
-}
+        RtmEventHandlerOnPresenceGetStateResultJson instance) =>
+    <String, dynamic>{
+      if (instance.requestId case final value?) 'requestId': value,
+      if (instance.state?.toJson() case final value?) 'state': value,
+      if (_$RtmErrorCodeEnumMap[instance.errorCode] case final value?)
+        'errorCode': value,
+    };

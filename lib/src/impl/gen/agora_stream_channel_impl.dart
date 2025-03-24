@@ -196,7 +196,7 @@ class StreamChannelImpl implements StreamChannel {
   @override
   Future<(RtmStatus, PublishTopicMessageResult?)> publishTextMessage(
       String topic, String message,
-      {int sendTs = 0, String? customType}) async {
+      {int? sendTs, String? customType}) async {
     final option = TopicMessageOptions(sendTs: sendTs, customType: customType);
     try {
       final requestId = await nativeBindingStreamChannelImpl.publishTextMessage(
@@ -219,7 +219,7 @@ class StreamChannelImpl implements StreamChannel {
   @override
   Future<(RtmStatus, PublishTopicMessageResult?)> publishBinaryMessage(
       String topic, Uint8List message,
-      {int sendTs = 0, String? customType}) async {
+      {int? sendTs, String? customType}) async {
     final option = TopicMessageOptions(sendTs: sendTs, customType: customType);
     try {
       final requestId =

@@ -6,8 +6,8 @@ class RtmConfig {
   const RtmConfig(
       {this.areaCode = const {RtmAreaCode.glob},
       this.protocolType = RtmProtocolType.tcpUdp,
-      this.presenceTimeout = 300,
-      this.heartbeatInterval = 5,
+      this.presenceTimeout,
+      this.heartbeatInterval,
       this.useStringUserId = true,
       this.logConfig,
       this.proxyConfig,

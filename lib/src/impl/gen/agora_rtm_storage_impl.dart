@@ -16,7 +16,7 @@ class RtmStorageImpl implements RtmStorage {
       String channelName,
       RtmChannelType channelType,
       List<MetadataItem> metadata,
-      {int majorRevision = -1,
+      {int? majorRevision,
       bool recordTs = false,
       bool recordUserId = false,
       String lockName = ''}) async {
@@ -50,7 +50,7 @@ class RtmStorageImpl implements RtmStorage {
       String channelName,
       RtmChannelType channelType,
       List<MetadataItem> metadata,
-      {int majorRevision = -1,
+      {int? majorRevision,
       bool recordTs = false,
       bool recordUserId = false,
       String lockName = ''}) async {
@@ -82,7 +82,7 @@ class RtmStorageImpl implements RtmStorage {
   @override
   Future<(RtmStatus, RemoveChannelMetadataResult?)> removeChannelMetadata(
       String channelName, RtmChannelType channelType,
-      {int majorRevision = -1,
+      {int? majorRevision,
       List<MetadataItem> metadata = const [],
       bool recordTs = false,
       bool recordUserId = false,
@@ -133,7 +133,7 @@ class RtmStorageImpl implements RtmStorage {
   @override
   Future<(RtmStatus, SetUserMetadataResult?)> setUserMetadata(
       String userId, List<MetadataItem> metadata,
-      {int majorRevision = -1,
+      {int? majorRevision,
       bool recordTs = false,
       bool recordUserId = false}) async {
     final data = Metadata(
@@ -160,7 +160,7 @@ class RtmStorageImpl implements RtmStorage {
   @override
   Future<(RtmStatus, UpdateUserMetadataResult?)> updateUserMetadata(
       String userId, List<MetadataItem> metadata,
-      {int majorRevision = -1,
+      {int? majorRevision,
       bool recordTs = false,
       bool recordUserId = false}) async {
     final data = Metadata(
@@ -187,7 +187,7 @@ class RtmStorageImpl implements RtmStorage {
   @override
   Future<(RtmStatus, RemoveUserMetadataResult?)> removeUserMetadata(
       String userId,
-      {int majorRevision = -1,
+      {int? majorRevision,
       List<MetadataItem> metadata = const [],
       bool recordTs = false,
       bool recordUserId = false}) async {
