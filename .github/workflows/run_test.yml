@@ -110,9 +110,7 @@ jobs:
       - uses: futureware-tech/simulator-action@v3
         with:
           model: 'iPhone 15'
-      - run: |
-          brew install coreutils
-          bash scripts/run_flutter_integration_test.sh "ios"
+      - run: bash scripts/run_flutter_integration_test.sh "ios"
       - name: Get ios crash logs
         if: always()
         run: |
