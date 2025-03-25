@@ -1,4 +1,4 @@
-name: Publish to Pub.dev 🚀
+name: 'run: publish to pub.dev'
 
 on:
   workflow_dispatch:
