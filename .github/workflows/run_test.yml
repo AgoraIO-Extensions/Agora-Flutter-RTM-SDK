@@ -58,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.7.0", "3.24.5"]
+        version: ["3.10.0", "3.24.5"]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.7.0", "3.24.5"]
+        version: ["3.10.0", "3.24.5"]
     runs-on: macos-latest
     timeout-minutes: 120
     env:
@@ -140,7 +140,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.7.12", "3.24.5"] # Need 3.7.12 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
+        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -164,7 +164,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.7.12", "3.24.5"] # Need 3.7.12 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
+        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v3
@@ -188,7 +188,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.7.0"]
+        version: ["3.10.0"]
     runs-on: macos-latest
     timeout-minutes: 120
     steps:
