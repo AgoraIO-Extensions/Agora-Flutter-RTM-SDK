@@ -79,7 +79,7 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
 
     final bindingRtmClientImpl = rtmClientNativeBinding ??
         rtm_client_impl_override.RtmClientImplOverride.create(
-          IrisMethodChannel(IrisApiEngineNativeBindingDelegateProvider()),
+          IrisMethodOverride(IrisApiEngineNativeBindingDelegateProvider()),
         );
 
     _initializedStatus = await bindingRtmClientImpl.initialize(
