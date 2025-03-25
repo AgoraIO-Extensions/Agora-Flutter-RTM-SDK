@@ -1,15 +1,16 @@
 group = "io.agora.agorartm.agora_rtm"
 version = "1.0"
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
 
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.3.0")
-    }
 }
 
 rootProject.allprojects {
@@ -22,20 +23,21 @@ rootProject.allprojects {
 apply plugin: "com.android.library"
 
 android {
+    // Conditional for compatibility with AGP <4.2.
     if (project.android.hasProperty("namespace")) {
         namespace = "io.agora.agorartm.agora_rtm"
     }
+    compileSdkVersion safeExtGet('compileSdkVersion', 34)
 
-    compileSdk = 34
+    defaultConfig {
+        minSdkVersion safeExtGet('minSdkVersion', 21)
+
+        consumerProguardFiles 'consumer-rules.pro'
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    defaultConfig {
-        minSdk = 16
-        consumerProguardFiles 'consumer-rules.pro'
     }
 
     sourceSets {

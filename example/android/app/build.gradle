@@ -26,6 +26,8 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace "io.agora.agorartm.agora_rtm_example"
+
     compileSdkVersion 34
 
     compileOptions {
@@ -57,6 +59,13 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+
+            // flutter 3.10 have issue when do R8
+            // this is only a workaround to avoid the issue
+            // ERROR: R8: Missing class org.kxml2.io.KXmlParser,org.kxml2.io.KXmlSerializer (referenced from: java.util.List kotlinx.coroutines.internal.FastServiceLoader.load(java.lang.Class, java.lang.ClassLoader))
+            // https://github.com/flutter/flutter/issues/127388
+            minifyEnabled false
+            shrinkResources false
         }
     }
 

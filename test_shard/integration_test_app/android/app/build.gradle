@@ -26,6 +26,8 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    namespace "io.agora.integration_test_app.integration_test_app"
+
     compileSdkVersion 34
 
     compileOptions {
