@@ -1,4 +1,4 @@
-name: CI
+name: 'run: test'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -7,11 +7,11 @@ concurrency:
 on:
   workflow_call:
     secrets:
-      MY_APP_ID:
+      APP_ID:
         required: true
 
 jobs:
-  pub_publish_check:
+  flutter_codestyle_check:
     name: Flutter codestyle/analyze check
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     runs-on: ubuntu-latest
@@ -20,6 +20,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
       - name: Check Dart Format
         run: bash scripts/dart_pub_publish_check.sh
       - uses: axel-op/dart-package-analyzer@v3
@@ -31,7 +32,7 @@ jobs:
           TOTAL: ${{ steps.analysis.outputs.total }}
           TOTAL_MAX: ${{ steps.analysis.outputs.total_max }}
         run: |
-          if (( $TOTAL_MAX - $TOTAL > 30 ))
+          if (( $TOTAL_MAX - $TOTAL > 20 ))
           then
             echo Pub Score too low.
             exit 1
@@ -46,32 +47,22 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
       - name: Run flutter test
         run: flutter test
         working-directory: test_shard/integration_test_app
-
-  # pub_publish_check:
-  #   name: pub publish check
-  #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: 'stable'
-  #         cache: true
-  #     - run: bash ci/dart_pub_publish_check.sh
 
   integration_test_android:
     name: Run Flutter Android Integration Tests
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
+      fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.0"]
+        version: ["3.10.0", "3.24.5"]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      TEST_APP_ID: ${{ secrets.MY_APP_ID }}
+      TEST_APP_ID: ${{ secrets.APP_ID }}
     steps:
       - uses: actions/checkout@v3
       - name: Install JDK
@@ -82,6 +73,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.version }}
+          cache: true
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -102,12 +94,13 @@ jobs:
     name: Run Flutter iOS Integration Tests
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
+      fail-fast: false
       matrix:
-        version: ["3.10.0", "3.16"]
-    runs-on: macos-12
+        version: ["3.10.0", "3.24.5"]
+    runs-on: macos-latest
     timeout-minutes: 120
     env:
-      TEST_APP_ID: ${{ secrets.MY_APP_ID }}
+      TEST_APP_ID: ${{ secrets.APP_ID }}
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -116,10 +109,8 @@ jobs:
           cache: true
       - uses: futureware-tech/simulator-action@v3
         with:
-          model: 'iPhone 14 Pro Max'
-      - run: |
-          brew install coreutils
-          bash scripts/run_flutter_integration_test.sh "ios"
+          model: 'iPhone 15'
+      - run: bash scripts/run_flutter_integration_test.sh "ios"
       - name: Get ios crash logs
         if: always()
         run: |
@@ -132,7 +123,7 @@ jobs:
           mkdir -p ${OUTPUT_CRASH_DIR}
 
           # Copy all files
-          cp -RP $CRASH_DIR* $OUTPUT_CRASH_DIR
+          cp -RP $CRASH_DIR* $OUTPUT_CRASH_DIR || true
         
       - name: Upload ios logs
         uses: actions/upload-artifact@v4
@@ -141,111 +132,13 @@ jobs:
           name: logs-ios-${{ matrix.version }}
           path: logs-ios/*
 
-  # integration_test_macos:
-  #   name: Run Flutter macOS Integration Tests
-  #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
-  #   strategy:
-  #     matrix:
-  #       version: ["3.10.0", "3.24.0"]
-  #   runs-on: macos-12
-  #   timeout-minutes: 120
-  #   env:
-  #     TEST_APP_ID: ${{ secrets.MY_APP_ID }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         flutter-version: ${{ matrix.version }}
-  #         cache: true
-  #     - run: flutter config --enable-macos-desktop
-  #     - run: bash ci/run_flutter_macos_integration_test.sh
-  #     - name: Get iris logs macos
-  #       if: always()
-  #       run: |
-  #         sleep 30
-
-  #         mkdir iris-logs-macos
-  #         if [ -f "${HOME}/Library/Containers/com.example.fakeTestApp/Data/Library/agora-iris.log" ]; then
-  #           cp -RP ${HOME}/Library/Containers/com.example.fakeTestApp/Data/Library/agora-iris.log ./iris-logs-macos/agora-iris-fake-test.log
-  #         fi
-  #         if [ -f "${HOME}/Library/Containers/com.example.integrationTestApp/Data/Library/agora-iris.log" ]; then
-  #           cp -RP ${HOME}/Library/Containers/com.example.integrationTestApp/Data/Library/agora-iris.log ./iris-logs-macos/agora-iris-integration-test.log
-  #         fi
-
-  #         CRASH_DIR="${HOME}/Library/Logs/DiagnosticReports/"
-  #         OUTPUT_CRASH_DIR=./iris-logs-macos/crash
-  #         mkdir -p ${OUTPUT_CRASH_DIR}
-
-  #         # Copy all files
-  #         cp -RP $CRASH_DIR* $OUTPUT_CRASH_DIR
-          
-  #     - name: Upload iris logs macos
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: iris-logs-macos-${{ matrix.version }}
-  #         path: iris-logs-macos/*
-
-  # integration_test_windows:
-  #   name: Run Flutter Windows Integration Tests
-  #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
-  #   strategy:
-  #     matrix:
-  #       version: ["3.10.0", "3.24.0"]
-  #   runs-on: windows-2019
-  #   timeout-minutes: 120
-  #   env:
-  #     TEST_APP_ID: ${{ secrets.MY_APP_ID }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         flutter-version: ${{ matrix.version }}
-  #         cache: true
-  #     - name: Set up crash dump environment
-  #       run: .\ci\setup-crash-dumps.ps1
-  #       shell: powershell
-  #     - run: flutter config --enable-windows-desktop
-  #     - name: Run windows integration test
-  #       shell: bash
-  #       run: |
-  #         bash ci/run_flutter_windows_integration_test.sh
-
-  #     - name: Upload crash dumps if exist
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: windows-crash-dumps-${{ matrix.version }}
-  #         path: ./CrashDumps/*
-
-  # integration_test_web:
-  #   name: Run Flutter Web Integration Tests
-  #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
-  #   strategy:
-  #     matrix:
-  #       version: ['3.x']
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 60
-  #   env:
-  #     TEST_APP_ID: ${{ secrets.MY_APP_ID }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         flutter-version: ${{ matrix.version }}
-  #         cache: true
-  #     - name: Run web integration test
-  #       shell: bash
-  #       run: |
-  #         chromedriver --port=4444 --trace-buffer-size=100000 &
-  #         bash ci/run_flutter_integration_test.sh web
-
   build_android_ubuntu:
     name: Build Android on Ubuntu
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
+      fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.0"]
+        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -257,6 +150,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.version }}
+          cache: true
       - run: flutter pub get
       - name: Run flutter build apk
         run: flutter build apk
@@ -266,8 +160,9 @@ jobs:
     name: Build Android on Windows
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
+      fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.0"]
+        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v3
@@ -289,9 +184,10 @@ jobs:
     name: Build iOS
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
+      fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.0"]
-    runs-on: macos-12
+        version: ["3.10.0"]
+    runs-on: macos-latest
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3
@@ -304,13 +200,13 @@ jobs:
         run: flutter build ios --no-codesign
         working-directory: example
 
-  # # This job aim to cover https://github.com/flutter/flutter/issues/135739
+  # This job aim to cover https://github.com/flutter/flutter/issues/135739
   build_ios_xcode_15:
     name: Build iOS with xcode 15.x
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       matrix:
-        version: ['3.x']
+        version: ["3.24.5"]
     runs-on: macos-13
     timeout-minutes: 120
     steps:

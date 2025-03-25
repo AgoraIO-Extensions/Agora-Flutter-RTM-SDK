@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.iris_tester_example">
+    package="io.agora.iris_tester_example">
    <application
         android:label="iris_tester_example"
         android:name="${applicationName}"
