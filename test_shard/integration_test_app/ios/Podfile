@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-# platform :ios, '11.0'
+# platform :ios, '12.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -59,5 +59,20 @@ post_install do |installer|
       config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "i386"
     end
+  end
+end
+
+
+pre_install do |installer|
+  # Define the path for the AgoraRtm framework
+  rtm_pod_path = File.join(installer.sandbox.root, 'AgoraRtm')
+  # Full path to aosl.xcframework
+  aosl_xcframework_path = File.join(rtm_pod_path, 'aosl.xcframework')
+  # Check if the file exists, and if it does, delete it
+  if File.exist?(aosl_xcframework_path)
+    puts "Deleting aosl.xcframework from #{aosl_xcframework_path}"
+    FileUtils.rm_rf(aosl_xcframework_path)
+  else
+    puts "aosl.xcframework not found, skipping deletion."
   end
 end

@@ -37,8 +37,7 @@ dependencies:
   iris_tester:
     path: ../iris_tester
 
-  # iris_tester:
-  #   path: ../iris_tester
+  agora_rtc_engine: ^6.5.1
 
 
   # The following adds the Cupertino Icons font to your application.

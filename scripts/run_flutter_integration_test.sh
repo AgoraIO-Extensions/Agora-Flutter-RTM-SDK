@@ -52,6 +52,8 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
 
     flutter test integration_test/binding_apis_call_fake_test.dart --dart-define=TEST_APP_ID="${TEST_APP_ID}" --verbose
 
+    flutter test integration_test/integration_test.dart
+
     popd
 else
     echo "Not implemented"
