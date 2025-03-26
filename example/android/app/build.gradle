@@ -79,6 +79,8 @@ flutter {
 }
 
 dependencies {
+    implementation 'io.agora.infra:aosl:1.2.13'
+
     def devFile = project.file("${rootProject.projectDir.getParentFile().parentFile.parentFile}/android/.plugin_dev")
     if (devFile.exists()) {
         implementation fileTree(dir: "${rootProject.projectDir.getParentFile().parentFile.parentFile}/android/libs", include: ["*.aar"])

@@ -26,7 +26,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
-  agora_rtc_engine: ^6.3.2
+  agora_rtc_engine: ^6.5.1
 
   flutter_riverpod: ^1.0.0
 
