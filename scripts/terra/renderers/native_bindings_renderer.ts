@@ -247,7 +247,7 @@ function callApiImplBlock(
     return ${methodName}Json.${toDartStyleNaming(outVariable.name)};
     `);
   } else if (returnTypeNode.__TYPE == CXXTYPE.Enumz) {
-    returnBlock = `return ${dartName(returnTypeNode)}Ext.fromValue(result);`;
+    returnBlock = `return ${dartName(returnTypeNode)}.fromValue(result);`;
   } else if (method.return_type.name != "void") {
     let returnType = dartName(method.return_type);
     returnBlock = `return result as ${returnType};`;

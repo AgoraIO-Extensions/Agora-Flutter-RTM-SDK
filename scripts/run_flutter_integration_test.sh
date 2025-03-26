@@ -50,9 +50,11 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
 
     flutter packages get
 
+    flutter test --verbose
+
     flutter test integration_test/binding_apis_call_fake_test.dart --dart-define=TEST_APP_ID="${TEST_APP_ID}" --verbose
 
-    flutter test integration_test/integration_test.dart
+    flutter test integration_test/integration_test.dart --verbose
 
     popd
 else

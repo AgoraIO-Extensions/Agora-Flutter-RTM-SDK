@@ -1,4 +1,4 @@
-import 'package:paraphrase/paraphrase.dart';
+import 'package:testcase_gen/core/paraphrase.dart';
 import 'package:testcase_gen/default_generator.dart';
 import 'package:testcase_gen/templated_generator.dart';
 
@@ -256,6 +256,28 @@ test('{{TEST_CASE_NAME}}', () async {
               'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart'),
         }
       },
+    ),
+    EnumTemplatedTestCase(
+      testCaseFileTemplate: '''
+$defaultHeader
+
+import 'package:agora_rtm/agora_rtm.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void testCases() {
+
+  {{TEST_CASES_CONTENT}}
+}
+''',
+      testCaseTemplate: '''
+test('{{TEST_CASE_NAME}}', () async {
+    {{TEST_CASE_BODY}}
+  },
+);
+''',
+      outputDir: outputDir,
+      skipMemberFunctions: [],
+      outputFileSuffixName: 'unit_test',
     ),
   ];
   return templatedTestCases;
