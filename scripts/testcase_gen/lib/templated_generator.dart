@@ -1,5 +1,5 @@
 import 'package:dart_style/dart_style.dart';
-import 'package:paraphrase/paraphrase.dart';
+import 'package:testcase_gen/core/paraphrase.dart';
 import 'dart:io';
 
 import 'package:testcase_gen/default_generator.dart';
@@ -118,6 +118,31 @@ class CustomTemplatedTestCase extends MethoCallTemplatedTestCase {
   final Map<String, Object> extraArgs;
 }
 
+class EnumTemplatedTestCase extends TemplatedTestCase {
+  EnumTemplatedTestCase({
+    required String testCaseFileTemplate,
+    required String testCaseTemplate,
+    required String outputDir,
+    required String outputFileSuffixName,
+    List<String> skipMemberFunctions = const [],
+    required this.customMethodCodeGenerator,
+  }) : super(
+          className: "",
+          testCaseFileTemplate: testCaseFileTemplate,
+          testCaseTemplate: testCaseTemplate,
+          outputDir: outputDir,
+          outputFileSuffixName: outputFileSuffixName,
+          skipMemberFunctions: skipMemberFunctions,
+        );
+
+  final String Function(
+      TemplatedGenerator templatedGenerator,
+      ParseResult parseResult,
+      Clazz clazz,
+      Method method,
+      CustomTemplatedTestCase template) customMethodCodeGenerator;
+}
+
 class TemplatedGenerator extends DefaultGenerator {
   const TemplatedGenerator(this.templatedTestCases);
 
@@ -161,6 +186,15 @@ class TemplatedGenerator extends DefaultGenerator {
         );
         outputFileName =
             '${templated.className.toLowerCase()}_${templated.outputFileSuffixName}.generated.dart';
+      } else if (templated is EnumTemplatedTestCase) {
+        output = _generateEnumCasesWithTemplate(
+          enums: parseResult.enums,
+          testCaseTemplate: templated.testCaseTemplate,
+          testCaseFileTemplate: templated.testCaseFileTemplate,
+          skipEnums: templated.skipMemberFunctions,
+        );
+        outputFileName =
+            'enums_${templated.outputFileSuffixName}.generated.dart';
       } else if (templated is MethoCallTemplatedTestCase) {
         late Clazz clazz;
         try {
@@ -584,4 +618,41 @@ await Future.delayed(const Duration(milliseconds: 500));
 
     return output;
   }
+}
+
+String _generateEnumCasesWithTemplate({
+  required List<Enumz> enums,
+  required String testCaseTemplate,
+  required String testCaseFileTemplate,
+  List<String> skipEnums = const [],
+}) {
+  final testCases = <String>[];
+
+  for (final enumz in enums) {
+    if (skipEnums.contains(enumz.name)) {
+      print('_generateEnumCasesWithTemplate skip ${enumz.name}');
+      continue;
+    }
+
+    String testCase = testCaseTemplate.replaceAll(
+      '{{TEST_CASE_NAME}}',
+      enumz.name,
+    );
+
+    testCase = testCase.replaceAll('{{TEST_CASE_BODY}}', '''
+      for (final e in ${enumz.name}.values) {
+        expect(${enumz.name}.fromValue(e.value()), isA<${enumz.name}>());
+        expect(${enumz.name}.fromValue(e.value()) == e, isTrue);
+      }
+    ''');
+
+    testCases.add(testCase);
+  }
+
+  final output = testCaseFileTemplate.replaceAll(
+    '{{TEST_CASES_CONTENT}}',
+    testCases.join('\n'),
+  );
+
+  return output;
 }

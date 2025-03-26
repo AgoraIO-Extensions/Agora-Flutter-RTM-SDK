@@ -1,4 +1,4 @@
-import 'package:paraphrase/paraphrase.dart';
+import 'package:testcase_gen/core/paraphrase.dart';
 import 'package:testcase_gen/default_generator.dart';
 import 'package:testcase_gen/templated_generator.dart';
 
@@ -257,8 +257,42 @@ test('{{TEST_CASE_NAME}}', () async {
         }
       },
     ),
+    EnumTemplatedTestCase(
+      testCaseFileTemplate: '''
+$defaultHeader
+
+import 'package:agora_rtm/agora_rtm.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void testCases() {
+
+  {{TEST_CASES_CONTENT}}
+}
+''',
+      testCaseTemplate: '''
+test('{{TEST_CASE_NAME}}', () async {
+    {{TEST_CASE_BODY}}
+  },
+);
+''',
+      outputDir: outputDir,
+      skipMemberFunctions: [],
+      outputFileSuffixName: 'unit_test',
+      customMethodCodeGenerator: _enumUnitTestCodeGenerator,
+    ),
   ];
   return templatedTestCases;
+}
+
+String _enumUnitTestCodeGenerator(
+    TemplatedGenerator templatedGenerator,
+    ParseResult parseResult,
+    Clazz clazz,
+    Method method,
+    CustomTemplatedTestCase templated) {
+  StringBuffer initializerBuilder = StringBuffer();
+
+  return initializerBuilder.toString();
 }
 
 String _mockUnitTestCodeGenerator(

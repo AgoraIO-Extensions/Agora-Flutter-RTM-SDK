@@ -390,10 +390,17 @@ enum ${enumName} {
     `;
     })
     .join("\n\n")}
+    ;
+
+    /// @nodoc
+    static ${enumName} fromValue(int value) {
+      return $enumDecode(_$${enumName}EnumMap, value);
+    }
 }
 
 extension ${enumName}Ext on ${enumName} {
   /// @nodoc
+  @Deprecated('Use ${enumName}.fromValue instead')
   static ${enumName} fromValue(int value) {
     return $enumDecode(_$${enumName}EnumMap, value);
   }

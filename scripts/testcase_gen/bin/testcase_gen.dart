@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:paraphrase/paraphrase.dart';
 import 'package:file/file.dart' as file;
 import 'package:file/local.dart';
 import 'package:path/path.dart' as path;
 import 'package:testcase_gen/templated_generator.dart';
 
+import 'package:testcase_gen/core/paraphrase.dart';
 import 'event_handler_gen_config.dart';
 import 'method_call_gen_config.dart';
 import 'unit_test_gen_config.dart';

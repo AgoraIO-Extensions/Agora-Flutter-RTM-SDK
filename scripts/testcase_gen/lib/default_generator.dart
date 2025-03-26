@@ -1,4 +1,4 @@
-import 'package:paraphrase/paraphrase.dart';
+import 'package:testcase_gen/core/paraphrase.dart';
 import 'package:testcase_gen/generator.dart';
 
 const ignoreForFile = '// ignore_for_file: '
