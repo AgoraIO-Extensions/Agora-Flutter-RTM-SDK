@@ -12,6 +12,13 @@ class RtmResultHandlerImpl extends rtm_result.RtmResultHandler {
 
   @override
   Future<T> request<T>(int requestId) {
+    // Return null immediately if requestId is 0 (invalid request).
+    // This prevents the completer.future from hanging indefinitely,
+    // as invalid requestIds will never receive a completion signal.
+    if (requestId == 0) {
+      return Future.value(null as T);
+    }
+
     if (_pendingResponses.containsKey(requestId)) {
       final response = _pendingResponses.remove(requestId);
       return Future.value(response! as T);
