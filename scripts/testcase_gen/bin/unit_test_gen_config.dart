@@ -278,21 +278,9 @@ test('{{TEST_CASE_NAME}}', () async {
       outputDir: outputDir,
       skipMemberFunctions: [],
       outputFileSuffixName: 'unit_test',
-      customMethodCodeGenerator: _enumUnitTestCodeGenerator,
     ),
   ];
   return templatedTestCases;
-}
-
-String _enumUnitTestCodeGenerator(
-    TemplatedGenerator templatedGenerator,
-    ParseResult parseResult,
-    Clazz clazz,
-    Method method,
-    CustomTemplatedTestCase templated) {
-  StringBuffer initializerBuilder = StringBuffer();
-
-  return initializerBuilder.toString();
 }
 
 String _mockUnitTestCodeGenerator(

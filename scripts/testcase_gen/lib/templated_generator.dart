@@ -122,14 +122,13 @@ class CustomTemplatedTestCase extends MethoCallTemplatedTestCase {
 }
 
 class EnumTemplatedTestCase extends TemplatedTestCase {
-  EnumTemplatedTestCase({
-    required String testCaseFileTemplate,
-    required String testCaseTemplate,
-    required String outputDir,
-    required String outputFileSuffixName,
-    List<String> skipMemberFunctions = const [],
-    required this.customMethodCodeGenerator,
-  }) : super(
+  EnumTemplatedTestCase(
+      {required String testCaseFileTemplate,
+      required String testCaseTemplate,
+      required String outputDir,
+      required String outputFileSuffixName,
+      List<String> skipMemberFunctions = const []})
+      : super(
           className: "",
           testCaseFileTemplate: testCaseFileTemplate,
           testCaseTemplate: testCaseTemplate,
@@ -137,13 +136,6 @@ class EnumTemplatedTestCase extends TemplatedTestCase {
           outputFileSuffixName: outputFileSuffixName,
           skipMemberFunctions: skipMemberFunctions,
         );
-
-  final String Function(
-      TemplatedGenerator templatedGenerator,
-      ParseResult parseResult,
-      Clazz clazz,
-      Method method,
-      CustomTemplatedTestCase template) customMethodCodeGenerator;
 }
 
 class TemplatedGenerator extends DefaultGenerator {
