@@ -1,21 +1,15 @@
 # Changelog
 
-## [2.2.2](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/2.2.1...2.2.2) (2024-10-29)
+## [1.6.1](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.1) (2025-07-22)
 
-### Features
 
-* Update iris_method_channel: ^2.2.2 ([#179](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/179)) ([4e870a4](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/4e870a4006bd160abb6273773d546649ce3fc238))
+
+# [1.6.0](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.1) (2025-04-22)
+
 
 ### Bug Fixes
 
-* Fix use incorrect length value in RtmClientImplOverride.publish/StreamChannelImpl.publishTopicMessage ([#177](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/177)) ([b8e9ed1](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/b8e9ed14173744676fc7585d2a24ec288894a7c9))
-
-## 2.2.1 (2024-09-12)
-
-
-### Features
-
-* Upgrade RTM Native SDK 2.2.1 ([df1a024](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/df1a024ec28da04c90cecc7729d1b8aafe7eb142))
+* ios crashes ([#168](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/168)) ([edc900f](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/edc900f4c54925904d6f816eb13afbe31ac2c039)), closes [#167](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/167)
 
 ## [1.5.9](https://github.com/AgoraIO/Agora-Flutter-RTM-SDK/compare/v1.5.8...v1.5.9) (2023-11-23)
 
