@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.2](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.2) (2025-07-22)
+
+### Features
+* previous 1.6.1 was published incorrectly
+* Add AGP namespace support([56d8f21](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/pull/196/files))
+
 ## [1.6.1](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.1) (2025-07-22)
 
 ### Features
