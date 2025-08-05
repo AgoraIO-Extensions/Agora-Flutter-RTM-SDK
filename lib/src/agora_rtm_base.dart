@@ -1335,3 +1335,62 @@ class RtmPrivateConfig {
 
   Map<String, dynamic> toJson() => _$RtmPrivateConfigToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class GetHistoryMessagesOptions {
+  const GetHistoryMessagesOptions({
+    this.messageCount,
+    this.start,
+    this.end,
+  });
+
+  @JsonKey(name: 'messageCount')
+  final int? messageCount;
+
+  @JsonKey(name: 'start')
+  final int? start;
+
+  @JsonKey(name: 'end')
+  final int? end;
+
+  factory GetHistoryMessagesOptions.fromJson(Map<String, dynamic> json) =>
+      _$GetHistoryMessagesOptionsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetHistoryMessagesOptionsToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class HistoryMessage {
+  const HistoryMessage({
+    this.messageType = RtmMessageType
+        .binary, // RTM_MESSAGE_TYPE_BINARY 映射到 RtmMessageType.binary
+    this.publisher,
+    this.message,
+    this.messageLength,
+    this.customType,
+    this.timestamp,
+  });
+
+  @JsonKey(name: 'messageType')
+  final RtmMessageType? messageType;
+
+  @JsonKey(name: 'publisher')
+  final String? publisher;
+
+  @JsonKey(name: 'message', includeFromJson: false, includeToJson: false)
+  final Uint8List? message;
+
+  @JsonKey(name: 'messageLength')
+  final int? messageLength;
+
+  @JsonKey(name: 'customType')
+  final String? customType;
+
+  @JsonKey(name: 'timestamp')
+  final int? timestamp;
+
+  factory HistoryMessage.fromJson(Map<String, dynamic> json) =>
+      _$HistoryMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HistoryMessageToJson(this);
+}

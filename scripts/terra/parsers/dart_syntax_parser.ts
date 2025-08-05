@@ -185,62 +185,79 @@ const _cppStdTypeToDartTypeMappping: Map<string, string> = new Map([
 ]);
 
 function _dartTypeName(parseResult: ParseResult, type: SimpleType): string {
-  let typeNode = parseResult.resolveNodeByType(type);
-  let dartType = typeNode.name.trimNamespace();
-  if (typeNode.__TYPE == CXXTYPE.Clazz || typeNode.__TYPE == CXXTYPE.Struct) {
-    dartType = _dartClassName(dartType);
-  } else if (typeNode.__TYPE == CXXTYPE.Enumz) {
-    if (dartType.length == 0) {
-      dartType = (typeNode.parent?.name.trimNamespace() ?? "") + "Enum";
-    } else {
+  try {
+    let typeNode = parseResult.resolveNodeByType(type);
+    let dartType = typeNode.name.trimNamespace();
+
+    console.log(`xpz Type conversion: ${type.name} -> ${dartType}`);
+
+    if (typeNode.__TYPE == CXXTYPE.Clazz || typeNode.__TYPE == CXXTYPE.Struct) {
       dartType = _dartClassName(dartType);
-    }
-  } else if (
-    typeNode.isSimpleType() &&
-    typeNode.asSimpleType().kind == SimpleTypeKind.template_t &&
-    typeNode.asSimpleType().template_arguments.length > 0
-  ) {
-    dartType = typeNode.asSimpleType().template_arguments[0].trimNamespace();
-  }
-
-  if (
-    (dartType == "unsigned char" || dartType == "uint8_t") &&
-    (type.kind == SimpleTypeKind.pointer_t ||
-      type.kind == SimpleTypeKind.array_t)
-  ) {
-    dartType = "Uint8List";
-  } else {
-    if (_cppStdTypeToDartTypeMappping.has(dartType)) {
-      dartType = _cppStdTypeToDartTypeMappping.get(dartType)!;
-    }
-    if (_cppTypedefToDartTypeMappping.has(dartType)) {
-      dartType = _cppTypedefToDartTypeMappping.get(dartType)!;
-    }
-    if (dartType.includes("_")) {
-      dartType = nameWithUnderscoresToCamelCase(dartType, true);
-    }
-
-    // String type
-    if (
-      type.name == "char" &&
-      (type.kind == SimpleTypeKind.array_t ||
-        type.kind == SimpleTypeKind.pointer_t)
+      console.log(`xpz   Class/Struct conversion: ${dartType}`);
+    } else if (typeNode.__TYPE == CXXTYPE.Enumz) {
+      if (dartType.length == 0) {
+        dartType = (typeNode.parent?.name.trimNamespace() ?? "") + "Enum";
+      } else {
+        dartType = _dartClassName(dartType);
+      }
+      console.log(`xpz   Enum conversion: ${dartType}`);
+    } else if (
+      typeNode.isSimpleType() &&
+      typeNode.asSimpleType().kind == SimpleTypeKind.template_t &&
+      typeNode.asSimpleType().template_arguments.length > 0
     ) {
-      if (type.source.endsWith("**")) {
-        dartType = "List<" + dartType + ">";
-      }
+      dartType = typeNode.asSimpleType().template_arguments[0].trimNamespace();
+      console.log(`xpz   Template conversion: ${dartType}`);
+    }
+
+    if (
+      (dartType == "unsigned char" || dartType == "uint8_t") &&
+      (type.kind == SimpleTypeKind.pointer_t ||
+        type.kind == SimpleTypeKind.array_t)
+    ) {
+      dartType = "Uint8List";
+      console.log(`xpz   Binary data conversion: ${dartType}`);
     } else {
-      if (type.kind == SimpleTypeKind.array_t) {
-        dartType = "List<" + dartType + ">";
+      if (_cppStdTypeToDartTypeMappping.has(dartType)) {
+        dartType = _cppStdTypeToDartTypeMappping.get(dartType)!;
+        console.log(`xpz   Standard type mapping: ${dartType}`);
+      }
+      if (_cppTypedefToDartTypeMappping.has(dartType)) {
+        dartType = _cppTypedefToDartTypeMappping.get(dartType)!;
+        console.log(`xpz   Typedef mapping: ${dartType}`);
+      }
+      if (dartType.includes("_")) {
+        dartType = nameWithUnderscoresToCamelCase(dartType, true);
+        console.log(`xpz   Underscore conversion: ${dartType}`);
+      }
+
+      // String type
+      if (
+        type.name == "char" &&
+        (type.kind == SimpleTypeKind.array_t ||
+          type.kind == SimpleTypeKind.pointer_t)
+      ) {
+        if (type.source.endsWith("**")) {
+          dartType = "List<" + dartType + ">";
+        }
+      } else {
+        if (type.kind == SimpleTypeKind.array_t) {
+          dartType = "List<" + dartType + ">";
+        }
+      }
+
+      if (isUIntPtr(parseResult, type)) {
+        dartType = "int";
       }
     }
 
-    if (isUIntPtr(parseResult, type)) {
-      dartType = "int";
-    }
+    console.log(`xpz Final type: ${dartType}`);
+    return dartType;
+  } catch (error) {
+    console.error(`xpz ERROR in _dartTypeName for type ${type.name}:`, error);
+    console.error(`xpz   Type details:`, type);
+    throw error;
   }
-
-  return dartType;
 }
 
 export default function DartSyntaxParser(
@@ -250,7 +267,12 @@ export default function DartSyntaxParser(
 ): ParseResult | undefined {
   let cxxFiles = preParseResult!.nodes as CXXFile[];
 
+  console.log("xpz ============= Dart Syntax Parser Debug Info =============");
+  console.log(`xpz Processing ${cxxFiles.length} CXX files`);
+
   cxxFiles.forEach((cxxFile: CXXFile) => {
+    console.log(`xpz Processing file: ${cxxFile.fileName}`);
+
     setUserdata(cxxFile, userDataKey, {
       dartFileName: _dartFileName(cxxFile.fileName),
     });
@@ -258,9 +280,21 @@ export default function DartSyntaxParser(
     cxxFile.nodes.forEach((node) => {
       if (node.__TYPE == CXXTYPE.Clazz || node.__TYPE == CXXTYPE.Struct) {
         let clazz = node as Clazz;
+        let dartName = _dartClassName(clazz.name);
+
+        console.log(`xpz Converting C++ ${node.__TYPE}: ${clazz.name} -> Dart class: ${dartName}`);
+
+        // 检查是否是我们要找的类
+        if (clazz.name.includes("GetHistoryMessagesOptions") || clazz.name.includes("HistoryMessage")) {
+          console.log(`xpz Found target class: ${clazz.name} in file: ${cxxFile.fileName}`);
+          console.log(`xpz   Full scope: ${clazz.fullName}`);
+          console.log(`xpz   Namespaces: ${clazz.namespaces.join("::")}`);
+          console.log(`xpz   Member variables count: ${clazz.member_variables.length}`);
+          console.log(`xpz   Methods count: ${clazz.methods.length}`);
+        }
 
         setUserdata(clazz, userDataKey, {
-          dartName: _dartClassName(clazz.name),
+          dartName: dartName,
         });
 
         clazz.methods.forEach((method) => {
@@ -312,16 +346,30 @@ export default function DartSyntaxParser(
         });
 
         clazz.member_variables.forEach((member) => {
-          setUserdata(member, userDataKey, {
-            dartName: toDartStyleNaming(member.name),
-          });
+          console.log(`xpz Processing member variable: ${member.name} of type: ${member.type.name}`);
 
-          setUserdata(member.type, userDataKey, {
-            dartName: _dartTypeName(preParseResult!, member.type),
-          });
+          try {
+            const dartMemberName = toDartStyleNaming(member.name);
+            const dartTypeName = _dartTypeName(preParseResult!, member.type);
+
+            console.log(`xpz   C++ member: ${member.name} (${member.type.name}) -> Dart: ${dartMemberName} (${dartTypeName})`);
+
+            setUserdata(member, userDataKey, {
+              dartName: dartMemberName,
+            });
+
+            setUserdata(member.type, userDataKey, {
+              dartName: dartTypeName,
+            });
+          } catch (error) {
+            console.error(`xpz ERROR processing member variable ${member.name}:`, error);
+            console.error(`xpz   Member type:`, member.type);
+            console.error(`xzp   Member full info:`, member);
+          }
         });
       } else if (node.__TYPE == CXXTYPE.TypeAlias) {
         let typeAlias = node as TypeAlias;
+        console.log(`xpz Processing type alias: ${typeAlias.name}`);
         setUserdata(typeAlias, userDataKey, {
           dartName: toDartStyleNaming(typeAlias.name),
         });
@@ -330,6 +378,7 @@ export default function DartSyntaxParser(
         });
       } else if (node.__TYPE == CXXTYPE.Enumz) {
         let enumz = node as Enumz;
+        console.log(`xpz Processing enum: ${enumz.name}`);
         setUserdata(enumz, userDataKey, {
           dartName: _dartClassName(enumz.name),
         });
@@ -340,6 +389,7 @@ export default function DartSyntaxParser(
         });
       } else if (node.isVariable()) {
         let v = node.asVariable();
+        console.log(`xpz Processing variable: ${v.name}`);
         setUserdata(v, userDataKey, {
           dartName: toDartStyleNaming(v.name),
         });
@@ -350,7 +400,15 @@ export default function DartSyntaxParser(
       }
     });
   });
-
+  (preParseResult!.nodes as CXXFile[]).map((cxxFile) => {
+    let subContents = cxxFile.nodes
+      .map((node) => {
+        console.log(`xpz Processing node 传递前: type:${node.__TYPE} name: ${node.name}`);
+        return "";
+      })
+      .join("\n\n");
+  });
+  console.log("xpz ============= Dart Syntax Parser Debug Info End =============");
   return preParseResult;
 }
 

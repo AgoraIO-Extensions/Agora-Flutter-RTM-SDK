@@ -216,6 +216,15 @@ export function renderJsonSerializable(
     parentNode?: CXXTerraNode;
   }
 ) {
+
+  if (jsonClassName === 'GetHistoryMessagesOptions' || jsonClassName === 'HistoryMessage') {
+    console.log(`xpz Generating JsonSerializable class: ${jsonClassName}`);
+    console.log(`xpz   Member variables count: ${memberVariables.length}`);
+
+    memberVariables.forEach(member => {
+      console.log(`xpz   Member: ${dartName(member)} (${dartName(member.type)})`);
+    });
+  }
   let forceExplicitNullableType: boolean =
     options?.forceExplicitNullableType ?? true;
   let forceNamingConstructor: boolean = options?.forceNamingConstructor ?? true;
