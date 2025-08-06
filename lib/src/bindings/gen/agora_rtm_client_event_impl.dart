@@ -984,6 +984,31 @@ class RtmEventHandlerWrapper implements EventLoopEventHandler {
         state = state.fillBuffers(buffers);
         rtmEventHandler.onPresenceGetStateResult!(requestId, state, errorCode);
         return true;
+
+      case 'onGetHistoryMessagesResult_c5dd08c':
+        if (rtmEventHandler.onGetHistoryMessagesResult == null) {
+          return true;
+        }
+        final jsonMap = jsonDecode(eventData);
+        RtmEventHandlerOnGetHistoryMessagesResultJson paramJson =
+            RtmEventHandlerOnGetHistoryMessagesResultJson.fromJson(jsonMap);
+        paramJson = paramJson.fillBuffers(buffers);
+        int? requestId = paramJson.requestId;
+        List<HistoryMessage>? messageList = paramJson.messageList;
+        int? count = paramJson.count;
+        int? newStart = paramJson.newStart;
+        RtmErrorCode? errorCode = paramJson.errorCode;
+        if (requestId == null ||
+            messageList == null ||
+            count == null ||
+            newStart == null ||
+            errorCode == null) {
+          return true;
+        }
+        messageList = messageList.map((e) => e.fillBuffers(buffers)).toList();
+        rtmEventHandler.onGetHistoryMessagesResult!(
+            requestId, messageList, count, newStart, errorCode);
+        return true;
     }
     return false;
   }

@@ -116,5 +116,8 @@ const eventIdsMapping = {
   ],
   "RtmEventHandler_onPresenceGetStateResult": [
     "RtmEventHandler_onPresenceGetStateResult_3d764cc"
+  ],
+  "RtmEventHandler_onGetHistoryMessagesResult": [
+    "RtmEventHandler_onGetHistoryMessagesResult_c5dd08c"
   ]
 };

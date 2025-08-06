@@ -2519,4 +2519,56 @@ void testCases(
     },
     timeout: const Timeout(Duration(minutes: 2)),
   );
+
+  testWidgets(
+    'RtmEventHandler.onGetHistoryMessagesResult',
+    (WidgetTester tester) async {
+      final onGetHistoryMessagesResultCompleter = Completer<bool>();
+      final theRtmEventHandler = RtmEventHandler(
+        onGetHistoryMessagesResult: (int requestId, List messageList, int count,
+            int newStart, RtmErrorCode errorCode) {
+          onGetHistoryMessagesResultCompleter.complete(true);
+        },
+      );
+
+      final rtmClient = await _createBindingRtmClient(theRtmEventHandler);
+
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      {
+        int requestId = 5;
+        List<HistoryMessage> messageList = [];
+        int count = 5;
+        int newStart = 5;
+        RtmErrorCode errorCode = RtmErrorCode.ok;
+
+        final eventJson = {};
+
+        final eventIds =
+            eventIdsMapping['RtmEventHandler_onGetHistoryMessagesResult'] ?? [];
+        for (final event in eventIds) {
+          final ret = irisTester().fireEvent(event, params: eventJson);
+          // Delay 200 milliseconds to ensure the callback is called.
+          await Future.delayed(const Duration(milliseconds: 200));
+          // TODO(littlegnal): Most of callbacks on web are not implemented, we're temporarily skip these callbacks at this time.
+          if (kIsWeb && ret) {
+            if (!onGetHistoryMessagesResultCompleter.isCompleted) {
+              onGetHistoryMessagesResultCompleter.complete(true);
+            }
+          }
+        }
+      }
+
+      final eventCalled = await onGetHistoryMessagesResultCompleter.future;
+      expect(eventCalled, isTrue);
+
+      {}
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      await rtmClient.release();
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
 }

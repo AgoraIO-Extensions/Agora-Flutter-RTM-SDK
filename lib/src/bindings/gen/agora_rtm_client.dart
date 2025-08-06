@@ -48,6 +48,7 @@ class RtmEventHandler {
     this.onPresenceSetStateResult,
     this.onPresenceRemoveStateResult,
     this.onPresenceGetStateResult,
+    this.onGetHistoryMessagesResult,
   });
 
   final void Function(LinkStateEvent event)? onLinkStateEvent;
@@ -222,6 +223,13 @@ class RtmEventHandler {
 
   final void Function(int requestId, UserState state, RtmErrorCode errorCode)?
       onPresenceGetStateResult;
+
+  final void Function(
+      int requestId,
+      List<HistoryMessage> messageList,
+      int count,
+      int newStart,
+      RtmErrorCode errorCode)? onGetHistoryMessagesResult;
 }
 
 abstract class RtmClient {
@@ -236,6 +244,8 @@ abstract class RtmClient {
   Future<RtmLock> getLock();
 
   Future<RtmPresence> getPresence();
+
+  Future<RtmHistory> getHistory();
 
   Future<int> renewToken(String token);
 
