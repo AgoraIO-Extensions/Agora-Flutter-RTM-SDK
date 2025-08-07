@@ -26,6 +26,7 @@ export interface DartSyntaxParserValue {
 function _dartClassName(name: string): string {
   // `IRtcEngine` -> `RtcEngine`
   // `Input` -> `Input`
+  console.log(`xpz _dartClassName: ${name}`);
   if (
     name !== name.toUpperCase() && // not all uppercase
     name.startsWith("I") &&
@@ -34,7 +35,7 @@ function _dartClassName(name: string): string {
   ) {
     name = name.replace("I", "");
   }
-
+  console.log(`xpz _dartClassName: ${name}`);
   return nameWithUnderscoresToCamelCase(name, true);
 }
 
