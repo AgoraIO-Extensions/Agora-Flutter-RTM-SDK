@@ -68,21 +68,11 @@ export default function ExportRtmApiInterfaceRenderer(
   args: ExportRtmApiInterfaceRendererArgs,
   parseResult: ParseResult
 ): RenderResult[] {
-  console.log(`\nxpz ============= ExportRtmApiInterfaceRenderer Debug Info =============`);
-  (parseResult!.nodes as CXXFile[]).map((cxxFile) => {
-    let subContents = cxxFile.nodes
-      .map((node) => {
-        console.log(`xpz Processing node 未过滤: type:${node.__TYPE} name: ${node.name}`);
-        return "";
-      })
-      .join("\n\n");
-  });
   let renderResults = (parseResult!.nodes as CXXFile[]).map((cxxFile) => {
     let subContents = cxxFile.nodes
       .filter((it) => !isNativeBindingsNode(it))
       .filter((it) => it.name.length > 0)
       .map((node) => {
-        console.log(`xpz Processing node: type:${node.__TYPE} name: ${node.name}`);
         switch (node.__TYPE) {
           case CXXTYPE.Clazz: {
             let clazz = node as Clazz;
@@ -94,25 +84,6 @@ export default function ExportRtmApiInterfaceRenderer(
             }
           }
           case CXXTYPE.Struct: {
-            const structName = node.asStruct().name;
-            console.log(`xpz Processing struct: ${structName}`);
-
-            // 特别关注我们关心的类
-            if (structName.includes('GetHistoryMessagesOptions') || structName.includes('HistoryMessage')) {
-              console.log(`xpz Found target struct: ${structName}`);
-              console.log(`xpz   Member variables: ${node.asStruct().member_variables.map(m => m.name).join(', ')}`);
-
-              const dartStructName = dartName(node.asStruct());
-              console.log(`xpz   Dart struct name: ${dartStructName}`);
-
-              // 检查成员变量的类型转换
-              node.asStruct().member_variables.forEach(member => {
-                const dartMemberName = dartName(member);
-                const dartTypeName = dartName(member.type);
-                console.log(`xpz   Member: ${member.name} -> ${dartMemberName} (${dartTypeName})`);
-              });
-            }
-
             return renderJsonSerializable(
               parseResult,
               dartName(node.asStruct()),
@@ -155,13 +126,6 @@ export default function ExportRtmApiInterfaceRenderer(
           ${subContents}
           `);
 
-    // 检查生成的文件内容
-    if (dartFileName(cxxFile).includes('rtm_history')) {
-      console.log(`xpz Generated file: ${path.join(args.outputDir ?? "", `${dartFileName(cxxFile)}.dart`)}`);
-      console.log(`xpz File content preview:`);
-      console.log(content.substring(0, 500) + '...');
-    }
-
     return {
       file_name: path.join(
         args.outputDir ?? "",
@@ -170,17 +134,7 @@ export default function ExportRtmApiInterfaceRenderer(
       file_content: content,
     };
   });
-  const historyFile = renderResults.find(result =>
-    result.file_name.includes('rtm_history.dart')
-  );
-  if (historyFile) {
-    console.log(`xpz Final render result for history file:`);
-    console.log(`xpz   File path: ${historyFile.file_name}`);
-    console.log(`xpz   Content preview:`);
-    console.log(historyFile.file_content.substring(0, 500) + '...');
-  } else {
-    console.log(`xpz WARNING: No history file found in render results!`);
-  }
+
   return [
     ...renderResults,
     ...implRendererResults(parseResult, args.outputDir ?? ""),
