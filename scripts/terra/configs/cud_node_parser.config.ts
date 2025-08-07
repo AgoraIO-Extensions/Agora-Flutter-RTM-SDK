@@ -117,6 +117,20 @@ const updateNodes = [
       },
     },
   },
+  {
+    node: {
+      __TYPE: CXXTYPE.MemberFunction,
+      name: "onGetHistoryMessagesResult",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmEventHandler",
+    },
+    updated: {
+      __TYPE: CXXTYPE.MemberFunction,
+      name: "onHistoryGetMessagesResult",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmEventHandler",
+    },
+  },
 ];
 
 module.exports = {
