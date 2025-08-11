@@ -109,6 +109,30 @@ void testCases(
   );
 
   testWidgets(
+    'RtmClient.getHistory',
+    (WidgetTester tester) async {
+      RtmClient rtmClient = await _createBindingRtmClient();
+      await rtmClient.setParameters('{"rtm.log_filter":2063}');
+
+      try {
+        await rtmClient.getHistory();
+      } catch (e) {
+        if (e is! AgoraRtmException) {
+          debugPrint('[RtmClient.getHistory] error: ${e.toString()}');
+          rethrow;
+        }
+
+        if (e.code != -4) {
+          // Only not supported error supported.
+          rethrow;
+        }
+      }
+
+      await rtmClient.release();
+    },
+  );
+
+  testWidgets(
     'RtmClient.renewToken',
     (WidgetTester tester) async {
       RtmClient rtmClient = await _createBindingRtmClient();
@@ -148,10 +172,12 @@ void testCases(
         RtmChannelType optionChannelType = RtmChannelType.none;
         RtmMessageType optionMessageType = RtmMessageType.binary;
         String optionCustomType = "hello";
+        bool optionStoreInHistory = true;
         PublishOptions option = PublishOptions(
           channelType: optionChannelType,
           messageType: optionMessageType,
           customType: optionCustomType,
+          storeInHistory: optionStoreInHistory,
         );
         await rtmClient.publish(
           channelName: channelName,
@@ -282,10 +308,12 @@ void testCases(
         RtmChannelType optionChannelType = RtmChannelType.none;
         RtmMessageType optionMessageType = RtmMessageType.binary;
         String optionCustomType = "hello";
+        bool optionStoreInHistory = true;
         PublishOptions option = PublishOptions(
           channelType: optionChannelType,
           messageType: optionMessageType,
           customType: optionCustomType,
+          storeInHistory: optionStoreInHistory,
         );
         await rtmClient.publishBinaryMessage(
           channelName: channelName,

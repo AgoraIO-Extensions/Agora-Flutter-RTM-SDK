@@ -145,6 +145,30 @@ void testCases() {
   );
 
   test(
+    'RtmClient.getHistory',
+    () async {
+      final mockRtmClientNativeBinding = MockRtmClientImplOverride();
+      final mockRtmResultHandlerImpl = MockRtmResultHandlerImpl();
+      final (_, rtmClient) =
+          await agora_rtm_client_impl.RtmClientImplOverride.create(
+        'app_id',
+        'user_id',
+        rtmClientNativeBinding: mockRtmClientNativeBinding,
+        rtmResultHandlerImpl: mockRtmResultHandlerImpl,
+      );
+
+      {
+        when(mockRtmClientNativeBinding.getHistory())
+            .thenAnswer((_) async => theRtmHistory);
+      }
+
+      await rtmClient.getHistory();
+
+      await rtmClient.release();
+    },
+  );
+
+  test(
     'RtmClient.renewToken',
     () async {
       final mockRtmClientNativeBinding = MockRtmClientImplOverride();
@@ -212,10 +236,12 @@ void testCases() {
         RtmChannelType optionChannelType = RtmChannelType.none;
         RtmMessageType optionMessageType = RtmMessageType.binary;
         String optionCustomType = "hello";
+        bool optionStoreInHistory = true;
         PublishOptions option = PublishOptions(
           channelType: optionChannelType,
           messageType: optionMessageType,
           customType: optionCustomType,
+          storeInHistory: optionStoreInHistory,
         );
         when(mockRtmClientNativeBinding.publish(
           channelName: channelName,
@@ -234,11 +260,13 @@ void testCases() {
       String message = "hello";
       RtmChannelType channelType = RtmChannelType.none;
       String customType = "hello";
+      bool storeInHistory = true;
       final ret = await rtmClient.publish(
         channelName,
         message,
         channelType: channelType,
         customType: customType,
+        storeInHistory: storeInHistory,
       );
       expect(ret, expectedResultHandlerReturnValue);
 
@@ -406,10 +434,12 @@ void testCases() {
         RtmChannelType optionChannelType = RtmChannelType.none;
         RtmMessageType optionMessageType = RtmMessageType.binary;
         String optionCustomType = "hello";
+        bool optionStoreInHistory = true;
         PublishOptions option = PublishOptions(
           channelType: optionChannelType,
           messageType: optionMessageType,
           customType: optionCustomType,
+          storeInHistory: optionStoreInHistory,
         );
         when(mockRtmClientNativeBinding.publishBinaryMessage(
           channelName: channelName,
@@ -428,11 +458,13 @@ void testCases() {
       Uint8List message = Uint8List.fromList([1, 1, 1, 1, 1]);
       RtmChannelType channelType = RtmChannelType.none;
       String customType = "hello";
+      bool storeInHistory = true;
       final ret = await rtmClient.publishBinaryMessage(
         channelName,
         message,
         channelType: channelType,
         customType: customType,
+        storeInHistory: storeInHistory,
       );
       expect(ret, expectedResultHandlerReturnValue);
 

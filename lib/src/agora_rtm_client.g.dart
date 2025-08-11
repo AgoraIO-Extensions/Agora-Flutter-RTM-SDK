@@ -17,6 +17,7 @@ RtmConfig _$RtmConfigFromJson(Map<String, dynamic> json) => RtmConfig(
       presenceTimeout: (json['presenceTimeout'] as num?)?.toInt() ?? 300,
       heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt() ?? 5,
       useStringUserId: json['useStringUserId'] as bool? ?? true,
+      ispPolicyEnabled: json['ispPolicyEnabled'] as bool? ?? false,
       logConfig: json['logConfig'] == null
           ? null
           : RtmLogConfig.fromJson(json['logConfig'] as Map<String, dynamic>),
@@ -49,6 +50,7 @@ Map<String, dynamic> _$RtmConfigToJson(RtmConfig instance) {
   writeNotNull('presenceTimeout', instance.presenceTimeout);
   writeNotNull('heartbeatInterval', instance.heartbeatInterval);
   writeNotNull('useStringUserId', instance.useStringUserId);
+  writeNotNull('ispPolicyEnabled', instance.ispPolicyEnabled);
   writeNotNull('logConfig', instance.logConfig?.toJson());
   writeNotNull('proxyConfig', instance.proxyConfig?.toJson());
   writeNotNull('encryptionConfig', instance.encryptionConfig?.toJson());
@@ -71,6 +73,8 @@ LinkStateEvent _$LinkStateEventFromJson(Map<String, dynamic> json) =>
           $enumDecodeNullable(_$RtmServiceTypeEnumMap, json['serviceType']),
       operation:
           $enumDecodeNullable(_$RtmLinkOperationEnumMap, json['operation']),
+      reasonCode: $enumDecodeNullable(
+          _$RtmLinkStateChangeReasonEnumMap, json['reasonCode']),
       reason: json['reason'] as String?,
       affectedChannels: (json['affectedChannels'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -95,6 +99,8 @@ Map<String, dynamic> _$LinkStateEventToJson(LinkStateEvent instance) {
   writeNotNull('previousState', _$RtmLinkStateEnumMap[instance.previousState]);
   writeNotNull('serviceType', _$RtmServiceTypeEnumMap[instance.serviceType]);
   writeNotNull('operation', _$RtmLinkOperationEnumMap[instance.operation]);
+  writeNotNull(
+      'reasonCode', _$RtmLinkStateChangeReasonEnumMap[instance.reasonCode]);
   writeNotNull('reason', instance.reason);
   writeNotNull('affectedChannels', instance.affectedChannels);
   writeNotNull('unrestoredChannels', instance.unrestoredChannels);
@@ -129,6 +135,47 @@ const _$RtmLinkOperationEnumMap = {
   RtmLinkOperation.heartbeatLost: 7,
   RtmLinkOperation.serverTimeout: 8,
   RtmLinkOperation.networkChange: 9,
+};
+
+const _$RtmLinkStateChangeReasonEnumMap = {
+  RtmLinkStateChangeReason.unknown: 0,
+  RtmLinkStateChangeReason.login: 1,
+  RtmLinkStateChangeReason.loginSuccess: 2,
+  RtmLinkStateChangeReason.loginTimeout: 3,
+  RtmLinkStateChangeReason.loginNotAuthorized: 4,
+  RtmLinkStateChangeReason.loginRejected: 5,
+  RtmLinkStateChangeReason.relogin: 6,
+  RtmLinkStateChangeReason.logout: 7,
+  RtmLinkStateChangeReason.autoReconnect: 8,
+  RtmLinkStateChangeReason.reconnectTimeout: 9,
+  RtmLinkStateChangeReason.reconnectSuccess: 10,
+  RtmLinkStateChangeReason.join: 11,
+  RtmLinkStateChangeReason.joinSuccess: 12,
+  RtmLinkStateChangeReason.joinFailed: 13,
+  RtmLinkStateChangeReason.rejoin: 14,
+  RtmLinkStateChangeReason.leave: 15,
+  RtmLinkStateChangeReason.invalidToken: 16,
+  RtmLinkStateChangeReason.tokenExpired: 17,
+  RtmLinkStateChangeReason.inconsistentAppId: 18,
+  RtmLinkStateChangeReason.invalidChannelName: 19,
+  RtmLinkStateChangeReason.invalidUserId: 20,
+  RtmLinkStateChangeReason.notInitialized: 21,
+  RtmLinkStateChangeReason.rtmServiceNotConnected: 22,
+  RtmLinkStateChangeReason.channelInstanceExceedLimitation: 23,
+  RtmLinkStateChangeReason.operationRateExceedLimitation: 24,
+  RtmLinkStateChangeReason.channelInErrorState: 25,
+  RtmLinkStateChangeReason.presenceNotConnected: 26,
+  RtmLinkStateChangeReason.sameUidLogin: 27,
+  RtmLinkStateChangeReason.kickedOutByServer: 28,
+  RtmLinkStateChangeReason.keepAliveTimeout: 29,
+  RtmLinkStateChangeReason.connectionError: 30,
+  RtmLinkStateChangeReason.presenceNotReady: 31,
+  RtmLinkStateChangeReason.networkChange: 32,
+  RtmLinkStateChangeReason.serviceNotSupported: 33,
+  RtmLinkStateChangeReason.streamChannelNotAvailable: 34,
+  RtmLinkStateChangeReason.storageNotAvailable: 35,
+  RtmLinkStateChangeReason.lockNotAvailable: 36,
+  RtmLinkStateChangeReason.loginTooFrequent: 37,
 };
 
 MessageEvent _$MessageEventFromJson(Map<String, dynamic> json) => MessageEvent(

@@ -128,6 +128,142 @@ extension RtmServiceTypeExt on RtmServiceType {
 }
 
 @JsonEnum(alwaysCreate: true)
+enum RtmLinkStateChangeReason {
+  @JsonValue(0)
+  unknown,
+
+  @JsonValue(1)
+  login,
+
+  @JsonValue(2)
+  loginSuccess,
+
+  @JsonValue(3)
+  loginTimeout,
+
+  @JsonValue(4)
+  loginNotAuthorized,
+
+  @JsonValue(5)
+  loginRejected,
+
+  @JsonValue(6)
+  relogin,
+
+  @JsonValue(7)
+  logout,
+
+  @JsonValue(8)
+  autoReconnect,
+
+  @JsonValue(9)
+  reconnectTimeout,
+
+  @JsonValue(10)
+  reconnectSuccess,
+
+  @JsonValue(11)
+  join,
+
+  @JsonValue(12)
+  joinSuccess,
+
+  @JsonValue(13)
+  joinFailed,
+
+  @JsonValue(14)
+  rejoin,
+
+  @JsonValue(15)
+  leave,
+
+  @JsonValue(16)
+  invalidToken,
+
+  @JsonValue(17)
+  tokenExpired,
+
+  @JsonValue(18)
+  inconsistentAppId,
+
+  @JsonValue(19)
+  invalidChannelName,
+
+  @JsonValue(20)
+  invalidUserId,
+
+  @JsonValue(21)
+  notInitialized,
+
+  @JsonValue(22)
+  rtmServiceNotConnected,
+
+  @JsonValue(23)
+  channelInstanceExceedLimitation,
+
+  @JsonValue(24)
+  operationRateExceedLimitation,
+
+  @JsonValue(25)
+  channelInErrorState,
+
+  @JsonValue(26)
+  presenceNotConnected,
+
+  @JsonValue(27)
+  sameUidLogin,
+
+  @JsonValue(28)
+  kickedOutByServer,
+
+  @JsonValue(29)
+  keepAliveTimeout,
+
+  @JsonValue(30)
+  connectionError,
+
+  @JsonValue(31)
+  presenceNotReady,
+
+  @JsonValue(32)
+  networkChange,
+
+  @JsonValue(33)
+  serviceNotSupported,
+
+  @JsonValue(34)
+  streamChannelNotAvailable,
+
+  @JsonValue(35)
+  storageNotAvailable,
+
+  @JsonValue(36)
+  lockNotAvailable,
+
+  @JsonValue(37)
+  loginTooFrequent,
+  ;
+
+  /// @nodoc
+  static RtmLinkStateChangeReason fromValue(int value) {
+    return $enumDecode(_$RtmLinkStateChangeReasonEnumMap, value);
+  }
+}
+
+extension RtmLinkStateChangeReasonExt on RtmLinkStateChangeReason {
+  /// @nodoc
+  @Deprecated('Use RtmLinkStateChangeReason.fromValue instead')
+  static RtmLinkStateChangeReason fromValue(int value) {
+    return $enumDecode(_$RtmLinkStateChangeReasonEnumMap, value);
+  }
+
+  /// @nodoc
+  int value() {
+    return _$RtmLinkStateChangeReasonEnumMap[this]!;
+  }
+}
+
+@JsonEnum(alwaysCreate: true)
 enum RtmProtocolType {
   @JsonValue(0)
   tcpUdp,
@@ -346,6 +482,9 @@ enum RtmErrorCode {
   @JsonValue(-10025)
   notConnected,
 
+  @JsonValue(-10026)
+  renewTokenTimeout,
+
   @JsonValue(-11001)
   channelNotJoined,
 
@@ -447,6 +586,15 @@ enum RtmErrorCode {
 
   @JsonValue(-11034)
   channelJoinCanceled,
+
+  @JsonValue(-11035)
+  channelReceiverOfflineButStoreSucceeded,
+
+  @JsonValue(-11036)
+  channelReceiverOfflineAndStoreFailed,
+
+  @JsonValue(-11037)
+  channelMessageDeliveredButStoreFailed,
 
   @JsonValue(-12001)
   storageOperationFailed,
@@ -570,6 +718,21 @@ enum RtmErrorCode {
 
   @JsonValue(-14009)
   lockNotAvailable,
+
+  @JsonValue(-15001)
+  historyOperationFailed,
+
+  @JsonValue(-15002)
+  historyInvalidTimestamp,
+
+  @JsonValue(-15003)
+  historyOperationTimeout,
+
+  @JsonValue(-15004)
+  historyOperationNotPermitted,
+
+  @JsonValue(-15005)
+  historyNotAvailable,
   ;
 
   /// @nodoc
@@ -1207,7 +1370,8 @@ class PublishOptions {
   const PublishOptions(
       {this.channelType = RtmChannelType.message,
       this.messageType = RtmMessageType.binary,
-      this.customType});
+      this.customType,
+      this.storeInHistory = false});
 
   @JsonKey(name: 'channelType')
   final RtmChannelType? channelType;
@@ -1217,6 +1381,9 @@ class PublishOptions {
 
   @JsonKey(name: 'customType')
   final String? customType;
+
+  @JsonKey(name: 'storeInHistory')
+  final bool? storeInHistory;
 
   factory PublishOptions.fromJson(Map<String, dynamic> json) =>
       _$PublishOptionsFromJson(json);
@@ -1334,4 +1501,54 @@ class RtmPrivateConfig {
       _$RtmPrivateConfigFromJson(json);
 
   Map<String, dynamic> toJson() => _$RtmPrivateConfigToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class GetHistoryMessagesOptions {
+  const GetHistoryMessagesOptions(
+      {this.messageCount = 100, this.start = 0, this.end = 0});
+
+  @JsonKey(name: 'messageCount')
+  final int? messageCount;
+
+  @JsonKey(name: 'start')
+  final int? start;
+
+  @JsonKey(name: 'end')
+  final int? end;
+
+  factory GetHistoryMessagesOptions.fromJson(Map<String, dynamic> json) =>
+      _$GetHistoryMessagesOptionsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetHistoryMessagesOptionsToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class HistoryMessage {
+  const HistoryMessage(
+      {this.messageType = RtmMessageType.binary,
+      this.publisher,
+      this.message,
+      this.customType,
+      this.timestamp = 0});
+
+  @JsonKey(name: 'messageType')
+  final RtmMessageType? messageType;
+
+  @JsonKey(name: 'publisher')
+  final String? publisher;
+
+  @JsonKey(name: 'message')
+  final String? message;
+
+  @JsonKey(name: 'customType')
+  final String? customType;
+
+  @JsonKey(name: 'timestamp')
+  final int? timestamp;
+
+  factory HistoryMessage.fromJson(Map<String, dynamic> json) =>
+      _$HistoryMessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HistoryMessageToJson(this);
 }

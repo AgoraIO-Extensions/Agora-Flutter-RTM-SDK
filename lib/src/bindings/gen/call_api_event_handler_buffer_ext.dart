@@ -206,6 +206,30 @@ extension RtmPrivateConfigBufferExt on RtmPrivateConfig {
   }
 }
 
+extension GetHistoryMessagesOptionsBufferExt on GetHistoryMessagesOptions {
+  GetHistoryMessagesOptions fillBuffers(List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
+extension HistoryMessageBufferExt on HistoryMessage {
+  HistoryMessage fillBuffers(List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
 extension RtmConfigBufferExt on RtmConfig {
   RtmConfig fillBuffers(List<Uint8List> bufferList) {
     if (bufferList.isEmpty) return this;
