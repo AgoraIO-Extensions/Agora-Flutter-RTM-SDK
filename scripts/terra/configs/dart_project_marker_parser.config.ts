@@ -311,15 +311,6 @@ module.exports = {
         to: _toMetadata,
       },
     },
-    {
-      node: {
-        __TYPE: CXXTYPE.MemberFunction,
-        name: "onGetHistoryMessagesResult",
-        namespaces: ["agora", "rtm"],
-        parent_full_scope_name: "agora::rtm::IRtmEventHandler",
-      },
-      displayName: "onGetHistoryMessagesResult",
-    },
   ],
   trimNamePrefixConfigs: [
     {
