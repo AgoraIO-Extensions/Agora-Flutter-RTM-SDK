@@ -157,12 +157,9 @@ void testCases() {
         rtmResultHandlerImpl: mockRtmResultHandlerImpl,
       );
 
-      {
-        when(mockRtmClientNativeBinding.getHistory())
-            .thenAnswer((_) async => theRtmHistory);
-      }
+      {}
 
-      await rtmClient.getHistory();
+      rtmClient.getHistory();
 
       await rtmClient.release();
     },

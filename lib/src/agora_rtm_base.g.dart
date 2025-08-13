@@ -14,20 +14,13 @@ RtmLogConfig _$RtmLogConfigFromJson(Map<String, dynamic> json) => RtmLogConfig(
           RtmLogLevel.info,
     );
 
-Map<String, dynamic> _$RtmLogConfigToJson(RtmLogConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('filePath', instance.filePath);
-  writeNotNull('fileSizeInKB', instance.fileSizeInKB);
-  writeNotNull('level', _$RtmLogLevelEnumMap[instance.level]);
-  return val;
-}
+Map<String, dynamic> _$RtmLogConfigToJson(RtmLogConfig instance) =>
+    <String, dynamic>{
+      if (instance.filePath case final value?) 'filePath': value,
+      if (instance.fileSizeInKB case final value?) 'fileSizeInKB': value,
+      if (_$RtmLogLevelEnumMap[instance.level] case final value?)
+        'level': value,
+    };
 
 const _$RtmLogLevelEnumMap = {
   RtmLogLevel.none: 0,
@@ -42,18 +35,9 @@ UserList _$UserListFromJson(Map<String, dynamic> json) => UserList(
           (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$UserListToJson(UserList instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('users', instance.users);
-  return val;
-}
+Map<String, dynamic> _$UserListToJson(UserList instance) => <String, dynamic>{
+      if (instance.users case final value?) 'users': value,
+    };
 
 PublisherInfo _$PublisherInfoFromJson(Map<String, dynamic> json) =>
     PublisherInfo(
@@ -61,19 +45,11 @@ PublisherInfo _$PublisherInfoFromJson(Map<String, dynamic> json) =>
       publisherMeta: json['publisherMeta'] as String?,
     );
 
-Map<String, dynamic> _$PublisherInfoToJson(PublisherInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('publisherUserId', instance.publisherUserId);
-  writeNotNull('publisherMeta', instance.publisherMeta);
-  return val;
-}
+Map<String, dynamic> _$PublisherInfoToJson(PublisherInfo instance) =>
+    <String, dynamic>{
+      if (instance.publisherUserId case final value?) 'publisherUserId': value,
+      if (instance.publisherMeta case final value?) 'publisherMeta': value,
+    };
 
 TopicInfo _$TopicInfoFromJson(Map<String, dynamic> json) => TopicInfo(
       topic: json['topic'] as String?,
@@ -82,39 +58,22 @@ TopicInfo _$TopicInfoFromJson(Map<String, dynamic> json) => TopicInfo(
           .toList(),
     );
 
-Map<String, dynamic> _$TopicInfoToJson(TopicInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('topic', instance.topic);
-  writeNotNull(
-      'publishers', instance.publishers?.map((e) => e.toJson()).toList());
-  return val;
-}
+Map<String, dynamic> _$TopicInfoToJson(TopicInfo instance) => <String, dynamic>{
+      if (instance.topic case final value?) 'topic': value,
+      if (instance.publishers?.map((e) => e.toJson()).toList()
+          case final value?)
+        'publishers': value,
+    };
 
 StateItem _$StateItemFromJson(Map<String, dynamic> json) => StateItem(
       key: json['key'] as String?,
       value: json['value'] as String?,
     );
 
-Map<String, dynamic> _$StateItemToJson(StateItem instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('key', instance.key);
-  writeNotNull('value', instance.value);
-  return val;
-}
+Map<String, dynamic> _$StateItemToJson(StateItem instance) => <String, dynamic>{
+      if (instance.key case final value?) 'key': value,
+      if (instance.value case final value?) 'value': value,
+    };
 
 LockDetail _$LockDetailFromJson(Map<String, dynamic> json) => LockDetail(
       lockName: json['lockName'] as String?,
@@ -122,20 +81,12 @@ LockDetail _$LockDetailFromJson(Map<String, dynamic> json) => LockDetail(
       ttl: (json['ttl'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$LockDetailToJson(LockDetail instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('lockName', instance.lockName);
-  writeNotNull('owner', instance.owner);
-  writeNotNull('ttl', instance.ttl);
-  return val;
-}
+Map<String, dynamic> _$LockDetailToJson(LockDetail instance) =>
+    <String, dynamic>{
+      if (instance.lockName case final value?) 'lockName': value,
+      if (instance.owner case final value?) 'owner': value,
+      if (instance.ttl case final value?) 'ttl': value,
+    };
 
 UserState _$UserStateFromJson(Map<String, dynamic> json) => UserState(
       userId: json['userId'] as String?,
@@ -144,19 +95,11 @@ UserState _$UserStateFromJson(Map<String, dynamic> json) => UserState(
           .toList(),
     );
 
-Map<String, dynamic> _$UserStateToJson(UserState instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('userId', instance.userId);
-  writeNotNull('states', instance.states?.map((e) => e.toJson()).toList());
-  return val;
-}
+Map<String, dynamic> _$UserStateToJson(UserState instance) => <String, dynamic>{
+      if (instance.userId case final value?) 'userId': value,
+      if (instance.states?.map((e) => e.toJson()).toList() case final value?)
+        'states': value,
+    };
 
 SubscribeOptions _$SubscribeOptionsFromJson(Map<String, dynamic> json) =>
     SubscribeOptions(
@@ -167,22 +110,14 @@ SubscribeOptions _$SubscribeOptionsFromJson(Map<String, dynamic> json) =>
       beQuiet: json['beQuiet'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$SubscribeOptionsToJson(SubscribeOptions instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('withMessage', instance.withMessage);
-  writeNotNull('withMetadata', instance.withMetadata);
-  writeNotNull('withPresence', instance.withPresence);
-  writeNotNull('withLock', instance.withLock);
-  writeNotNull('beQuiet', instance.beQuiet);
-  return val;
-}
+Map<String, dynamic> _$SubscribeOptionsToJson(SubscribeOptions instance) =>
+    <String, dynamic>{
+      if (instance.withMessage case final value?) 'withMessage': value,
+      if (instance.withMetadata case final value?) 'withMetadata': value,
+      if (instance.withPresence case final value?) 'withPresence': value,
+      if (instance.withLock case final value?) 'withLock': value,
+      if (instance.beQuiet case final value?) 'beQuiet': value,
+    };
 
 ChannelInfo _$ChannelInfoFromJson(Map<String, dynamic> json) => ChannelInfo(
       channelName: json['channelName'] as String?,
@@ -190,19 +125,12 @@ ChannelInfo _$ChannelInfoFromJson(Map<String, dynamic> json) => ChannelInfo(
           $enumDecodeNullable(_$RtmChannelTypeEnumMap, json['channelType']),
     );
 
-Map<String, dynamic> _$ChannelInfoToJson(ChannelInfo instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  return val;
-}
+Map<String, dynamic> _$ChannelInfoToJson(ChannelInfo instance) =>
+    <String, dynamic>{
+      if (instance.channelName case final value?) 'channelName': value,
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+    };
 
 const _$RtmChannelTypeEnumMap = {
   RtmChannelType.none: 0,
@@ -218,20 +146,12 @@ PresenceOptions _$PresenceOptionsFromJson(Map<String, dynamic> json) =>
       page: json['page'] as String? ?? '',
     );
 
-Map<String, dynamic> _$PresenceOptionsToJson(PresenceOptions instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('includeUserId', instance.includeUserId);
-  writeNotNull('includeState', instance.includeState);
-  writeNotNull('page', instance.page);
-  return val;
-}
+Map<String, dynamic> _$PresenceOptionsToJson(PresenceOptions instance) =>
+    <String, dynamic>{
+      if (instance.includeUserId case final value?) 'includeUserId': value,
+      if (instance.includeState case final value?) 'includeState': value,
+      if (instance.page case final value?) 'page': value,
+    };
 
 PublishOptions _$PublishOptionsFromJson(Map<String, dynamic> json) =>
     PublishOptions(
@@ -245,21 +165,15 @@ PublishOptions _$PublishOptionsFromJson(Map<String, dynamic> json) =>
       storeInHistory: json['storeInHistory'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$PublishOptionsToJson(PublishOptions instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelType', _$RtmChannelTypeEnumMap[instance.channelType]);
-  writeNotNull('messageType', _$RtmMessageTypeEnumMap[instance.messageType]);
-  writeNotNull('customType', instance.customType);
-  writeNotNull('storeInHistory', instance.storeInHistory);
-  return val;
-}
+Map<String, dynamic> _$PublishOptionsToJson(PublishOptions instance) =>
+    <String, dynamic>{
+      if (_$RtmChannelTypeEnumMap[instance.channelType] case final value?)
+        'channelType': value,
+      if (_$RtmMessageTypeEnumMap[instance.messageType] case final value?)
+        'messageType': value,
+      if (instance.customType case final value?) 'customType': value,
+      if (instance.storeInHistory case final value?) 'storeInHistory': value,
+    };
 
 const _$RtmMessageTypeEnumMap = {
   RtmMessageType.binary: 0,
@@ -275,20 +189,14 @@ TopicMessageOptions _$TopicMessageOptionsFromJson(Map<String, dynamic> json) =>
       customType: json['customType'] as String?,
     );
 
-Map<String, dynamic> _$TopicMessageOptionsToJson(TopicMessageOptions instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('messageType', _$RtmMessageTypeEnumMap[instance.messageType]);
-  writeNotNull('sendTs', instance.sendTs);
-  writeNotNull('customType', instance.customType);
-  return val;
-}
+Map<String, dynamic> _$TopicMessageOptionsToJson(
+        TopicMessageOptions instance) =>
+    <String, dynamic>{
+      if (_$RtmMessageTypeEnumMap[instance.messageType] case final value?)
+        'messageType': value,
+      if (instance.sendTs case final value?) 'sendTs': value,
+      if (instance.customType case final value?) 'customType': value,
+    };
 
 GetOnlineUsersOptions _$GetOnlineUsersOptionsFromJson(
         Map<String, dynamic> json) =>
@@ -299,20 +207,12 @@ GetOnlineUsersOptions _$GetOnlineUsersOptionsFromJson(
     );
 
 Map<String, dynamic> _$GetOnlineUsersOptionsToJson(
-    GetOnlineUsersOptions instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('includeUserId', instance.includeUserId);
-  writeNotNull('includeState', instance.includeState);
-  writeNotNull('page', instance.page);
-  return val;
-}
+        GetOnlineUsersOptions instance) =>
+    <String, dynamic>{
+      if (instance.includeUserId case final value?) 'includeUserId': value,
+      if (instance.includeState case final value?) 'includeState': value,
+      if (instance.page case final value?) 'page': value,
+    };
 
 RtmProxyConfig _$RtmProxyConfigFromJson(Map<String, dynamic> json) =>
     RtmProxyConfig(
@@ -325,22 +225,15 @@ RtmProxyConfig _$RtmProxyConfigFromJson(Map<String, dynamic> json) =>
       password: json['password'] as String?,
     );
 
-Map<String, dynamic> _$RtmProxyConfigToJson(RtmProxyConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('proxyType', _$RtmProxyTypeEnumMap[instance.proxyType]);
-  writeNotNull('server', instance.server);
-  writeNotNull('port', instance.port);
-  writeNotNull('account', instance.account);
-  writeNotNull('password', instance.password);
-  return val;
-}
+Map<String, dynamic> _$RtmProxyConfigToJson(RtmProxyConfig instance) =>
+    <String, dynamic>{
+      if (_$RtmProxyTypeEnumMap[instance.proxyType] case final value?)
+        'proxyType': value,
+      if (instance.server case final value?) 'server': value,
+      if (instance.port case final value?) 'port': value,
+      if (instance.account case final value?) 'account': value,
+      if (instance.password case final value?) 'password': value,
+    };
 
 const _$RtmProxyTypeEnumMap = {
   RtmProxyType.none: 0,
@@ -356,20 +249,13 @@ RtmEncryptionConfig _$RtmEncryptionConfigFromJson(Map<String, dynamic> json) =>
       encryptionKey: json['encryptionKey'] as String?,
     );
 
-Map<String, dynamic> _$RtmEncryptionConfigToJson(RtmEncryptionConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull(
-      'encryptionMode', _$RtmEncryptionModeEnumMap[instance.encryptionMode]);
-  writeNotNull('encryptionKey', instance.encryptionKey);
-  return val;
-}
+Map<String, dynamic> _$RtmEncryptionConfigToJson(
+        RtmEncryptionConfig instance) =>
+    <String, dynamic>{
+      if (_$RtmEncryptionModeEnumMap[instance.encryptionMode] case final value?)
+        'encryptionMode': value,
+      if (instance.encryptionKey case final value?) 'encryptionKey': value,
+    };
 
 const _$RtmEncryptionModeEnumMap = {
   RtmEncryptionMode.none: 0,
@@ -388,20 +274,14 @@ RtmPrivateConfig _$RtmPrivateConfigFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$RtmPrivateConfigToJson(RtmPrivateConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('serviceType',
-      const RtmServiceTypeListConverter().toJson(instance.serviceType));
-  writeNotNull('accessPointHosts', instance.accessPointHosts);
-  return val;
-}
+Map<String, dynamic> _$RtmPrivateConfigToJson(RtmPrivateConfig instance) =>
+    <String, dynamic>{
+      if (const RtmServiceTypeListConverter().toJson(instance.serviceType)
+          case final value?)
+        'serviceType': value,
+      if (instance.accessPointHosts case final value?)
+        'accessPointHosts': value,
+    };
 
 GetHistoryMessagesOptions _$GetHistoryMessagesOptionsFromJson(
         Map<String, dynamic> json) =>
@@ -412,20 +292,12 @@ GetHistoryMessagesOptions _$GetHistoryMessagesOptionsFromJson(
     );
 
 Map<String, dynamic> _$GetHistoryMessagesOptionsToJson(
-    GetHistoryMessagesOptions instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('messageCount', instance.messageCount);
-  writeNotNull('start', instance.start);
-  writeNotNull('end', instance.end);
-  return val;
-}
+        GetHistoryMessagesOptions instance) =>
+    <String, dynamic>{
+      if (instance.messageCount case final value?) 'messageCount': value,
+      if (instance.start case final value?) 'start': value,
+      if (instance.end case final value?) 'end': value,
+    };
 
 HistoryMessage _$HistoryMessageFromJson(Map<String, dynamic> json) =>
     HistoryMessage(
@@ -433,27 +305,20 @@ HistoryMessage _$HistoryMessageFromJson(Map<String, dynamic> json) =>
           $enumDecodeNullable(_$RtmMessageTypeEnumMap, json['messageType']) ??
               RtmMessageType.binary,
       publisher: json['publisher'] as String?,
-      message: json['message'] as String?,
+      messageLength: (json['messageLength'] as num?)?.toInt() ?? 0,
       customType: json['customType'] as String?,
       timestamp: (json['timestamp'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$HistoryMessageToJson(HistoryMessage instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('messageType', _$RtmMessageTypeEnumMap[instance.messageType]);
-  writeNotNull('publisher', instance.publisher);
-  writeNotNull('message', instance.message);
-  writeNotNull('customType', instance.customType);
-  writeNotNull('timestamp', instance.timestamp);
-  return val;
-}
+Map<String, dynamic> _$HistoryMessageToJson(HistoryMessage instance) =>
+    <String, dynamic>{
+      if (_$RtmMessageTypeEnumMap[instance.messageType] case final value?)
+        'messageType': value,
+      if (instance.publisher case final value?) 'publisher': value,
+      if (instance.messageLength case final value?) 'messageLength': value,
+      if (instance.customType case final value?) 'customType': value,
+      if (instance.timestamp case final value?) 'timestamp': value,
+    };
 
 const _$RtmLinkStateEnumMap = {
   RtmLinkState.idle: 0,

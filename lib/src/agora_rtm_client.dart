@@ -391,7 +391,7 @@ abstract class RtmClient {
 
   RtmPresence getPresence();
 
-  Future<(RtmStatus, RtmHistory?)> getHistory();
+  RtmHistory getHistory();
 
   Future<(RtmStatus, RenewTokenResult?)> renewToken(String token);
 

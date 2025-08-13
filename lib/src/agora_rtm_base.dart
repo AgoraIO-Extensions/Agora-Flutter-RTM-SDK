@@ -1529,6 +1529,7 @@ class HistoryMessage {
       {this.messageType = RtmMessageType.binary,
       this.publisher,
       this.message,
+      this.messageLength = 0,
       this.customType,
       this.timestamp = 0});
 
@@ -1538,8 +1539,11 @@ class HistoryMessage {
   @JsonKey(name: 'publisher')
   final String? publisher;
 
-  @JsonKey(name: 'message')
-  final String? message;
+  @JsonKey(name: 'message', ignore: true)
+  final Uint8List? message;
+
+  @JsonKey(name: 'messageLength')
+  final int? messageLength;
 
   @JsonKey(name: 'customType')
   final String? customType;

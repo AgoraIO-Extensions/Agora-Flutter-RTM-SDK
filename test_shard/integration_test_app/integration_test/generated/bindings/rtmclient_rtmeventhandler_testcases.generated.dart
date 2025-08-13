@@ -2544,13 +2544,16 @@ void testCases(
         final List<HistoryMessage> messageList = () {
           RtmMessageType messageListItemMessageType = RtmMessageType.binary;
           String messageListItemPublisher = "hello";
-          String messageListItemMessage = "hello";
+          Uint8List messageListItemMessage =
+              Uint8List.fromList([1, 1, 1, 1, 1]);
+          int messageListItemMessageLength = 5;
           String messageListItemCustomType = "hello";
           int messageListItemTimestamp = 5;
           HistoryMessage messageListItem = HistoryMessage(
             messageType: messageListItemMessageType,
             publisher: messageListItemPublisher,
             message: messageListItemMessage,
+            messageLength: messageListItemMessageLength,
             customType: messageListItemCustomType,
             timestamp: messageListItemTimestamp,
           );

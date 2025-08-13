@@ -68,8 +68,8 @@ dependencies {
     println("Include libs/*jar for debugging.")
     api fileTree(dir: "libs", include: ["*.jar"])
   } else {
-    api 'io.agora.rtm:iris-rtm:2.2.1-build.1'
-    api 'io.agora:agora-rtm:2.2.1'
+    api 'io.agora.rtm:iris-rtm:2.2.5-build.2'
+    api 'io.agora:agora-rtm:2.2.5'
   }
 }
 

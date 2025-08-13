@@ -100,7 +100,7 @@ class RtmClientImpl implements RtmClient {
   }
 
   @override
-  Future<(RtmStatus, RtmHistory?)> getHistory() async {
+  RtmHistory getHistory() {
     // This function's implementation can't be generated automatically, please implement it manually.
     throw UnimplementedError();
   }
