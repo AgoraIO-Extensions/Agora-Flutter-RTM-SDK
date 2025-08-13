@@ -58,6 +58,8 @@ void testCases(
         RtmLinkState eventPreviousState = RtmLinkState.idle;
         RtmServiceType eventServiceType = RtmServiceType.none;
         RtmLinkOperation eventOperation = RtmLinkOperation.login;
+        RtmLinkStateChangeReason eventReasonCode =
+            RtmLinkStateChangeReason.unknown;
         String eventReason = "hello";
         List<String> eventAffectedChannels = List.filled(5, "hello");
         List<String> eventUnrestoredChannels = List.filled(5, "hello");
@@ -68,6 +70,7 @@ void testCases(
           previousState: eventPreviousState,
           serviceType: eventServiceType,
           operation: eventOperation,
+          reasonCode: eventReasonCode,
           reason: eventReason,
           affectedChannels: eventAffectedChannels,
           unrestoredChannels: eventUnrestoredChannels,
@@ -2509,6 +2512,77 @@ void testCases(
       }
 
       final eventCalled = await onPresenceGetStateResultCompleter.future;
+      expect(eventCalled, isTrue);
+
+      {}
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      await rtmClient.release();
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
+
+  testWidgets(
+    'RtmEventHandler.onHistoryGetMessagesResult',
+    (WidgetTester tester) async {
+      final onHistoryGetMessagesResultCompleter = Completer<bool>();
+      final theRtmEventHandler = RtmEventHandler(
+        onHistoryGetMessagesResult: (int requestId, List messageList, int count,
+            int newStart, RtmErrorCode errorCode) {
+          onHistoryGetMessagesResultCompleter.complete(true);
+        },
+      );
+
+      final rtmClient = await _createBindingRtmClient(theRtmEventHandler);
+
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      {
+        int requestId = 5;
+        final List<HistoryMessage> messageList = () {
+          RtmMessageType messageListItemMessageType = RtmMessageType.binary;
+          String messageListItemPublisher = "hello";
+          Uint8List messageListItemMessage =
+              Uint8List.fromList([1, 1, 1, 1, 1]);
+          int messageListItemMessageLength = 5;
+          String messageListItemCustomType = "hello";
+          int messageListItemTimestamp = 5;
+          HistoryMessage messageListItem = HistoryMessage(
+            messageType: messageListItemMessageType,
+            publisher: messageListItemPublisher,
+            message: messageListItemMessage,
+            messageLength: messageListItemMessageLength,
+            customType: messageListItemCustomType,
+            timestamp: messageListItemTimestamp,
+          );
+
+          return List.filled(5, messageListItem);
+        }();
+
+        int count = 5;
+        int newStart = 5;
+        RtmErrorCode errorCode = RtmErrorCode.ok;
+
+        final eventJson = {};
+
+        final eventIds =
+            eventIdsMapping['RtmEventHandler_onHistoryGetMessagesResult'] ?? [];
+        for (final event in eventIds) {
+          final ret = irisTester().fireEvent(event, params: eventJson);
+          // Delay 200 milliseconds to ensure the callback is called.
+          await Future.delayed(const Duration(milliseconds: 200));
+          // TODO(littlegnal): Most of callbacks on web are not implemented, we're temporarily skip these callbacks at this time.
+          if (kIsWeb && ret) {
+            if (!onHistoryGetMessagesResultCompleter.isCompleted) {
+              onHistoryGetMessagesResultCompleter.complete(true);
+            }
+          }
+        }
+      }
+
+      final eventCalled = await onHistoryGetMessagesResultCompleter.future;
       expect(eventCalled, isTrue);
 
       {}

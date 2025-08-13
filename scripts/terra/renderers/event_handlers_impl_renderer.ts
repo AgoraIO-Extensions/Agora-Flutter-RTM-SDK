@@ -131,7 +131,23 @@ ${(function () {
       }
       if (actualNode.__TYPE == CXXTYPE.Struct) {
         if (it.type.kind == SimpleTypeKind.array_t) {
-          return `${memberName} = ${memberName}.map((e) => e.fillBuffers(buffers)).toList();`;
+          let bufferCount =
+            actualNode.asStruct()!.member_variables.filter(
+              (m) => dartName(m.type) == "Uint8List"
+            ).length;
+
+          if (bufferCount <= 1) {
+            return `${memberName} = ${memberName}.asMap().entries.map((entry) => entry.value.fillBuffers([if (entry.key < buffers.length) buffers[entry.key]])).toList();`;
+          } else {
+            let listArgs = new Array(bufferCount)
+              .fill(0)
+              .map(
+                (_: any, idx: number) =>
+                  `if (entry.key * ${bufferCount} + ${idx} < buffers.length) buffers[entry.key * ${bufferCount} + ${idx}]`
+              )
+              .join(", ");
+            return `${memberName} = ${memberName}.asMap().entries.map((entry) => entry.value.fillBuffers([${listArgs}])).toList();`;
+          }
         } else {
           return `${memberName} = ${memberName}.fillBuffers(buffers);`;
         }

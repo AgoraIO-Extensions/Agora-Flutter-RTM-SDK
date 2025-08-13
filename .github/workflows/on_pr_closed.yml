@@ -12,7 +12,7 @@ jobs:
   # 3. The PR has `ci:prepare_release` label
   release_if_merged:
     if: ${{ github.event.pull_request.merged == true && 
-            (github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'master') && 
+            github.event.pull_request.base.ref == 'main' && 
             contains(github.event.pull_request.labels.*.name, 'ci:prepare_release') }}
     outputs:
       release_version: ${{steps.release.outputs.version}}
