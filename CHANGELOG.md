@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.3](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.3) (2025-08-26)
+
+
+
+## [1.6.2](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.3) (2025-07-22)
+
+
+
+# [1.6.0](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.3) (2025-04-22)
+
+
+### Bug Fixes
+
+* ios crashes ([#168](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/168)) ([edc900f](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/edc900f4c54925904d6f816eb13afbe31ac2c039)), closes [#167](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/167)
+
 ## [1.6.2](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/v1.5.9...v1.6.2) (2025-07-22)
 
 ### Features
