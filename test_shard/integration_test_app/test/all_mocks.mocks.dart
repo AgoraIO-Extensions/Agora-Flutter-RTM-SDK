@@ -105,9 +105,19 @@ class _FakeRtmPresence_6 extends _i1.SmartFake implements _i6.RtmPresence {
         );
 }
 
-class _FakeRtmEventHandler_7 extends _i1.SmartFake
+class _FakeRtmHistory_7 extends _i1.SmartFake implements _i6.RtmHistory {
+  _FakeRtmHistory_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeRtmEventHandler_8 extends _i1.SmartFake
     implements _i7.RtmEventHandler {
-  _FakeRtmEventHandler_7(
+  _FakeRtmEventHandler_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -116,8 +126,8 @@ class _FakeRtmEventHandler_7 extends _i1.SmartFake
         );
 }
 
-class _FakeFuture_8<T1> extends _i1.SmartFake implements _i8.Future<T1> {
-  _FakeFuture_8(
+class _FakeFuture_9<T1> extends _i1.SmartFake implements _i8.Future<T1> {
+  _FakeFuture_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -126,8 +136,8 @@ class _FakeFuture_8<T1> extends _i1.SmartFake implements _i8.Future<T1> {
         );
 }
 
-class _FakeScopedObjects_9 extends _i1.SmartFake implements _i3.ScopedObjects {
-  _FakeScopedObjects_9(
+class _FakeScopedObjects_10 extends _i1.SmartFake implements _i3.ScopedObjects {
+  _FakeScopedObjects_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -136,8 +146,8 @@ class _FakeScopedObjects_9 extends _i1.SmartFake implements _i3.ScopedObjects {
         );
 }
 
-class _FakeCallApiResult_10 extends _i1.SmartFake implements _i3.CallApiResult {
-  _FakeCallApiResult_10(
+class _FakeCallApiResult_11 extends _i1.SmartFake implements _i3.CallApiResult {
+  _FakeCallApiResult_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -146,9 +156,9 @@ class _FakeCallApiResult_10 extends _i1.SmartFake implements _i3.CallApiResult {
         );
 }
 
-class _FakeIrisMethodChannelInternal_11 extends _i1.SmartFake
+class _FakeIrisMethodChannelInternal_12 extends _i1.SmartFake
     implements _i3.IrisMethodChannelInternal {
-  _FakeIrisMethodChannelInternal_11(
+  _FakeIrisMethodChannelInternal_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -448,6 +458,29 @@ class MockRtmClientImplOverride extends _i1.Mock
           ),
         )),
       ) as _i8.Future<_i6.RtmPresence>);
+
+  @override
+  _i8.Future<_i6.RtmHistory> getHistory() => (super.noSuchMethod(
+        Invocation.method(
+          #getHistory,
+          [],
+        ),
+        returnValue: _i8.Future<_i6.RtmHistory>.value(_FakeRtmHistory_7(
+          this,
+          Invocation.method(
+            #getHistory,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i6.RtmHistory>.value(_FakeRtmHistory_7(
+          this,
+          Invocation.method(
+            #getHistory,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i6.RtmHistory>);
 
   @override
   _i8.Future<int> renewToken(String? token) => (super.noSuchMethod(
@@ -1294,6 +1327,16 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
       ) as _i8.Future<int>);
 
   @override
+  _i8.Future<void> setParameters(String? parameters) => (super.noSuchMethod(
+        Invocation.method(
+          #setParameters,
+          [parameters],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
   _i8.Future<void> release() => (super.noSuchMethod(
         Invocation.method(
           #release,
@@ -1356,11 +1399,11 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   _i7.RtmEventHandler get rtmEventHandler => (super.noSuchMethod(
         Invocation.getter(#rtmEventHandler),
-        returnValue: _FakeRtmEventHandler_7(
+        returnValue: _FakeRtmEventHandler_8(
           this,
           Invocation.getter(#rtmEventHandler),
         ),
-        returnValueForMissingStub: _FakeRtmEventHandler_7(
+        returnValueForMissingStub: _FakeRtmEventHandler_8(
           this,
           Invocation.getter(#rtmEventHandler),
         ),
@@ -1392,7 +1435,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
               ),
               (T v) => _i8.Future<T>.value(v),
             ) ??
-            _FakeFuture_8<T>(
+            _FakeFuture_9<T>(
               this,
               Invocation.method(
                 #request,
@@ -1409,7 +1452,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
               ),
               (T v) => _i8.Future<T>.value(v),
             ) ??
-            _FakeFuture_8<T>(
+            _FakeFuture_9<T>(
               this,
               Invocation.method(
                 #request,
@@ -2281,6 +2324,28 @@ class MockRtmResultHandlerImpl extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  void onHistoryGetMessagesResult(
+    int? requestId,
+    List<_i12.HistoryMessage>? messageList,
+    int? count,
+    int? newStart,
+    _i12.RtmErrorCode? errorCode,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #onHistoryGetMessagesResult,
+          [
+            requestId,
+            messageList,
+            count,
+            newStart,
+            errorCode,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [IrisMethodChannel].
@@ -2290,11 +2355,11 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
   @override
   _i3.ScopedObjects get scopedEventHandlers => (super.noSuchMethod(
         Invocation.getter(#scopedEventHandlers),
-        returnValue: _FakeScopedObjects_9(
+        returnValue: _FakeScopedObjects_10(
           this,
           Invocation.getter(#scopedEventHandlers),
         ),
-        returnValueForMissingStub: _FakeScopedObjects_9(
+        returnValueForMissingStub: _FakeScopedObjects_10(
           this,
           Invocation.getter(#scopedEventHandlers),
         ),
@@ -2319,7 +2384,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
           #invokeMethod,
           [methodCall],
         ),
-        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_11(
           this,
           Invocation.method(
             #invokeMethod,
@@ -2327,7 +2392,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
           ),
         )),
         returnValueForMissingStub:
-            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_11(
           this,
           Invocation.method(
             #invokeMethod,
@@ -2373,7 +2438,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
             params,
           ],
         ),
-        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_11(
           this,
           Invocation.method(
             #registerEventHandler,
@@ -2384,7 +2449,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
           ),
         )),
         returnValueForMissingStub:
-            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_11(
           this,
           Invocation.method(
             #registerEventHandler,
@@ -2409,7 +2474,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
             params,
           ],
         ),
-        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+        returnValue: _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_11(
           this,
           Invocation.method(
             #unregisterEventHandler,
@@ -2420,7 +2485,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
           ),
         )),
         returnValueForMissingStub:
-            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_10(
+            _i8.Future<_i3.CallApiResult>.value(_FakeCallApiResult_11(
           this,
           Invocation.method(
             #unregisterEventHandler,
@@ -2481,14 +2546,14 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
           #getIrisMethodChannelInternal,
           [],
         ),
-        returnValue: _FakeIrisMethodChannelInternal_11(
+        returnValue: _FakeIrisMethodChannelInternal_12(
           this,
           Invocation.method(
             #getIrisMethodChannelInternal,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeIrisMethodChannelInternal_11(
+        returnValueForMissingStub: _FakeIrisMethodChannelInternal_12(
           this,
           Invocation.method(
             #getIrisMethodChannelInternal,

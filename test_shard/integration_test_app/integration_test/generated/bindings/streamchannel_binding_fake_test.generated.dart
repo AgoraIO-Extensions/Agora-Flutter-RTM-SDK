@@ -369,6 +369,35 @@ void testCases(
   );
 
   testWidgets(
+    'StreamChannel.setParameters',
+    (WidgetTester tester) async {
+      final rtmClient = await _createBindingRtmClient();
+      await rtmClient.setParameters('{"rtm.log_filter":2063}');
+      final streamChannel =
+          await rtmClient.createStreamChannel('stream_channel');
+
+      try {
+        String parameters = "hello";
+        await streamChannel.setParameters(
+          parameters,
+        );
+      } catch (e) {
+        if (e is! AgoraRtmException) {
+          debugPrint('[StreamChannel.setParameters] error: ${e.toString()}');
+          rethrow;
+        }
+
+        if (e.code != -4) {
+          // Only not supported error supported.
+          rethrow;
+        }
+      }
+
+      await rtmClient.release();
+    },
+  );
+
+  testWidgets(
     'StreamChannel.release',
     (WidgetTester tester) async {
       final rtmClient = await _createBindingRtmClient();

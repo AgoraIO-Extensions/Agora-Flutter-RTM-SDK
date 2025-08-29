@@ -1,5 +1,6 @@
 export 'agora_rtm_base.dart';
 export 'agora_rtm_client.dart';
+export 'agora_rtm_history.dart';
 export 'agora_rtm_lock.dart';
 export 'agora_rtm_presence.dart';
 export 'agora_rtm_storage.dart';

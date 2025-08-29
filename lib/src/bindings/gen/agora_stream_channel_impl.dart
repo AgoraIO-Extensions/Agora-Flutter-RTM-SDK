@@ -232,6 +232,23 @@ class StreamChannelImpl implements StreamChannel {
   }
 
   @override
+  Future<void> setParameters(String parameters) async {
+    final apiType =
+        '${isOverrideClassName ? className : 'StreamChannel'}_setParameters_3a2037f';
+    final param = createParams({'parameters': parameters});
+    final callApiResult = await irisMethodChannel.invokeMethod(
+        IrisMethodCall(apiType, jsonEncode(param), buffers: null));
+    if (callApiResult.irisReturnCode < 0) {
+      throwExceptionHandler(code: callApiResult.irisReturnCode);
+    }
+    final rm = callApiResult.data;
+    final result = rm['result'];
+    if (result < 0) {
+      throwExceptionHandler(code: result);
+    }
+  }
+
+  @override
   Future<void> release() async {
     final apiType =
         '${isOverrideClassName ? className : 'StreamChannel'}_release';

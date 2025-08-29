@@ -21,5 +21,11 @@ module.exports = {
       namespaces: ["agora", "rtm"],
       parent_full_scope_name: "agora::rtm::IRtmClient",
     },
+    {
+      __TYPE: CXXTYPE.MemberFunction,
+      name: "getHistory",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmClient",
+    },
   ],
 } as SyncFunctionsMarkerParserConfig;

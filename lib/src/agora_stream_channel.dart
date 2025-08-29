@@ -260,6 +260,8 @@ abstract class StreamChannel {
   Future<(RtmStatus, GetSubscribedUserListResult?)> getSubscribedUserList(
       String topic);
 
+  Future<RtmStatus> setParameters(String parameters);
+
   Future<RtmStatus> release();
 
   Future<(RtmStatus, PublishTopicMessageResult?)> publishTextMessage(

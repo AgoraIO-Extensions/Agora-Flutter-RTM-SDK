@@ -2,6 +2,7 @@ import 'package:agora_rtm/src/agora_rtm_base.dart';
 import 'package:agora_rtm/src/agora_rtm_client.dart';
 import 'package:agora_rtm/src/agora_rtm_client_ext.dart'
     show AgoraRtmException, RtmStatus;
+import 'package:agora_rtm/src/agora_rtm_history.dart';
 import 'package:agora_rtm/src/agora_rtm_lock.dart';
 import 'package:agora_rtm/src/agora_rtm_presence.dart';
 import 'package:agora_rtm/src/agora_rtm_storage.dart';
@@ -34,6 +35,10 @@ import 'package:agora_rtm/src/impl/gen/rtm_result_handler.dart';
 import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:iris_method_channel/iris_method_channel.dart';
+import 'package:agora_rtm/src/impl/gen/agora_rtm_history_impl.dart'
+    as rtm_history_impl;
+import 'package:agora_rtm/src/bindings/gen/agora_rtm_history_impl.dart'
+    as rtm_history_impl_binding;
 
 InitilizationArgProvider? _mockSharedNativeHandleProvider;
 @visibleForTesting
@@ -101,6 +106,7 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
   RtmStorage? _storage;
   RtmLock? _lock;
   RtmPresence? _presence;
+  RtmHistory? _history;
 
   void _setListenerIfNeeded(String key, Object? listener) {
     if (listener != null) {
@@ -185,6 +191,19 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
   }
 
   @override
+  RtmHistory getHistory() {
+    final irisMethodChannel = (nativeBindingRtmClientImpl
+            as rtm_client_impl_override.RtmClientImplOverride)
+        .getIrisMethodChannel();
+
+    final history = (_history ??= rtm_history_impl.RtmHistoryImpl(
+      rtm_history_impl_binding.RtmHistoryImpl(irisMethodChannel),
+      rtmResultHandler,
+    ));
+    return history;
+  }
+
+  @override
   Future<(RtmStatus, StreamChannel?)> createStreamChannel(
     String channelName,
   ) async {
@@ -221,11 +240,13 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
   Future<(RtmStatus, PublishResult?)> publish(
       String channelName, String message,
       {RtmChannelType channelType = RtmChannelType.message,
-      String? customType}) async {
+      String? customType,
+      bool storeInHistory = false}) async {
     final option = PublishOptions(
         channelType: channelType,
         messageType: RtmMessageType.string,
-        customType: customType);
+        customType: customType,
+        storeInHistory: storeInHistory);
     try {
       final requestId = await nativeBindingRtmClientImpl.publish(
           channelName: channelName,
@@ -248,11 +269,13 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
   Future<(RtmStatus, PublishResult?)> publishBinaryMessage(
       String channelName, Uint8List message,
       {RtmChannelType channelType = RtmChannelType.message,
-      String? customType}) async {
+      String? customType,
+      bool storeInHistory = false}) async {
     final option = PublishOptions(
         channelType: channelType,
         messageType: RtmMessageType.binary,
-        customType: customType);
+        customType: customType,
+        storeInHistory: storeInHistory);
     try {
       final requestId = await nativeBindingRtmClientImpl.publishBinaryMessage(
           channelName: channelName,

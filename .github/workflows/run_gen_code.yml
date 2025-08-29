@@ -9,7 +9,7 @@ on:
         required: true
         default: 'main'
       code_gen_public_headers:
-          description: 'The public headers to generate, e.g. rtc_4.5.0, leave empty will use the same as the target branch'
+          description: 'The public headers to generate, e.g. rtm_2.2.5, leave empty will use the same as the target branch'
           type: string
           required: false
           default: ''

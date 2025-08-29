@@ -180,6 +180,20 @@ class StreamChannelImpl implements StreamChannel {
   }
 
   @override
+  Future<RtmStatus> setParameters(String parameters) async {
+    try {
+      await nativeBindingStreamChannelImpl.setParameters(parameters);
+      final status = await nativeBindingStreamChannelImpl.irisMethodChannel
+          .wrapRtmStatus(0, 'setParameters');
+      return status;
+    } on AgoraRtmException catch (e) {
+      final status = await nativeBindingStreamChannelImpl.irisMethodChannel
+          .wrapRtmStatus(e.code, 'setParameters');
+      return status;
+    }
+  }
+
+  @override
   Future<RtmStatus> release() async {
     try {
       await nativeBindingStreamChannelImpl.release();

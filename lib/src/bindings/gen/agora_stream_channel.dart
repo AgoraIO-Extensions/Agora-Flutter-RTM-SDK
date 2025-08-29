@@ -28,6 +28,8 @@ abstract class StreamChannel {
 
   Future<int> getSubscribedUserList(String topic);
 
+  Future<void> setParameters(String parameters);
+
   Future<void> release();
 
   Future<int> publishTextMessage(

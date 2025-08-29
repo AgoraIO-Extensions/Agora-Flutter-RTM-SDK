@@ -37,6 +37,17 @@ void testCases() {
   );
 
   test(
+    'RtmLinkStateChangeReason',
+    () async {
+      for (final e in RtmLinkStateChangeReason.values) {
+        expect(RtmLinkStateChangeReason.fromValue(e.value()),
+            isA<RtmLinkStateChangeReason>());
+        expect(RtmLinkStateChangeReason.fromValue(e.value()) == e, isTrue);
+      }
+    },
+  );
+
+  test(
     'RtmProtocolType',
     () async {
       for (final e in RtmProtocolType.values) {

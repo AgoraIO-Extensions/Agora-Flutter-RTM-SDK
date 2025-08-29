@@ -99,6 +99,19 @@ class RtmClientPublishBinaryMessageJson {
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
+class RtmHistoryGetMessagesJson {
+  const RtmHistoryGetMessagesJson(this.requestId);
+
+  @JsonKey(name: 'requestId')
+  final int requestId;
+
+  factory RtmHistoryGetMessagesJson.fromJson(Map<String, dynamic> json) =>
+      _$RtmHistoryGetMessagesJsonFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmHistoryGetMessagesJsonToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RtmLockSetLockJson {
   const RtmLockSetLockJson(this.requestId);
 
