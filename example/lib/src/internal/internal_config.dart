@@ -6,8 +6,8 @@ String get appId {
 }
 
 String get token {
-  const token = String.fromEnvironment('TEST_TOKEN', defaultValue: '');
-  return token.isNotEmpty ? token : config.token;
+  const token = String.fromEnvironment('TEST_TOKEN', defaultValue: '__UNSET__');
+  return token == '__UNSET__' ? config.token : token;
 }
 
 String get channelId {

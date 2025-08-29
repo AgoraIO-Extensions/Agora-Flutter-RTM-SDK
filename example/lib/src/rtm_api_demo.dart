@@ -218,6 +218,7 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
 
             _textField(_channelNameController, 'Input channel name'),
             _button('RtmClient.login', () async {
+              logSink.log('[LoginResult] app id: ${config.appId} token: ${config.token}');
               final (status, _) = await _rtmClient.login(config.token);
               logSink.log('[LoginResult] errorCode: ${status.errorCode}');
             }),
