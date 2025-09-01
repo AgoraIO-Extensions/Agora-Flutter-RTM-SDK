@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:agora_rtm_example/src/internal/internal_config.dart' as config;
 
 import 'log_sink.dart';
+import 'publish_text_message_demo.dart';
 
 class RtmApiDemo extends StatefulWidget {
   const RtmApiDemo({super.key});
@@ -425,6 +426,27 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                 }),
               ],
             ),
+
+            _card([
+              const Text(
+                'streamChannel-PublishTextMessage',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PublishTextMessageDemo(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.message),
+                label: const Text('push publishTextMessage page'),
+              ),
+            ]),
+            
             _card(
               [
                 const Text('Work with Agora Rtc Engine'),
