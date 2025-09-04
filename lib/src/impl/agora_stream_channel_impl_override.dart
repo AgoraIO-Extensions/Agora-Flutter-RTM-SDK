@@ -1,10 +1,11 @@
 import 'dart:typed_data' show Uint8List;
 
 import 'package:agora_rtm/src/agora_rtm_base.dart'
-    show TopicMessageOptions, RtmMessageType;
+    show RtmErrorCode, RtmErrorCodeExt, RtmMessageType, TopicMessageOptions;
 import 'package:agora_rtm/src/agora_rtm_client_ext.dart' show RtmStatus;
 import 'package:agora_rtm/src/agora_stream_channel.dart'
     show PublishTopicMessageResult;
+import 'package:agora_rtm/src/impl/extensions.dart';
 import 'package:agora_rtm/src/impl/gen/agora_stream_channel_impl.dart'
     as stream_channel_impl;
 
@@ -22,7 +23,11 @@ class StreamChannelImplOverride extends stream_channel_impl.StreamChannelImpl {
         customType: customType);
     final requestId = await nativeBindingStreamChannelImpl.publishTextMessage(
         topic: topic, message: message, length: message.length, option: option);
-    return rtmResultHandler.request(requestId);
+    final (PublishTopicMessageResult result, RtmErrorCode errorCode) =
+        await rtmResultHandler.request(requestId);
+    final status = await nativeBindingStreamChannelImpl.irisMethodChannel
+        .wrapRtmStatus(errorCode.value(), 'publishTextMessage');
+    return (status, result);
   }
 
   @override
@@ -35,6 +40,10 @@ class StreamChannelImplOverride extends stream_channel_impl.StreamChannelImpl {
         customType: customType);
     final requestId = await nativeBindingStreamChannelImpl.publishBinaryMessage(
         topic: topic, message: message, length: message.length, option: option);
-    return rtmResultHandler.request(requestId);
+    final (PublishTopicMessageResult result, RtmErrorCode errorCode) =
+        await rtmResultHandler.request(requestId);
+    final status = await nativeBindingStreamChannelImpl.irisMethodChannel
+        .wrapRtmStatus(errorCode.value(), 'publishBinaryMessage');
+    return (status, result);
   }
 }
