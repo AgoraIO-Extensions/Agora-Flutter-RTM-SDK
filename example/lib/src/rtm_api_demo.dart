@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:agora_rtm_example/src/internal/internal_config.dart' as config;
 
 import 'log_sink.dart';
-import 'publish_text_message_demo.dart';
+import 'stream_channel_demo.dart';
 
 class RtmApiDemo extends StatefulWidget {
   const RtmApiDemo({super.key});
@@ -170,6 +170,25 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            _card([
+              const Text(
+                'streamChannel-demo',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StreamChannelDemo(userId: _userIdController.text.trim(), channelName: _channelNameController.text.trim(),),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.message),
+                  label: const Text('push streamChannel-demo page'),
+              ),
+            ]),
             _textField(_userIdController, 'Input user id'),
             _button('create RTM', () async {
               final (status, client) = _ispPolicyEnabled
@@ -452,26 +471,6 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                 }),
               ],
             ),
-
-            _card([
-              const Text(
-                'streamChannel-PublishTextMessage',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PublishTextMessageDemo(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.message),
-                label: const Text('push publishTextMessage page'),
-              ),
-            ]),
             
             _card(
               [
