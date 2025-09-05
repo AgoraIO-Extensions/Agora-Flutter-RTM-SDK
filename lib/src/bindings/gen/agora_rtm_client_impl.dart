@@ -120,6 +120,21 @@ class RtmClientImpl implements RtmClient {
   }
 
   @override
+  Future<RtmHistory> getHistory() async {
+    final apiType =
+        '${isOverrideClassName ? className : 'RtmClient'}_getHistory';
+    final param = createParams({});
+    final callApiResult = await irisMethodChannel.invokeMethod(
+        IrisMethodCall(apiType, jsonEncode(param), buffers: null));
+    if (callApiResult.irisReturnCode < 0) {
+      throwExceptionHandler(code: callApiResult.irisReturnCode);
+    }
+    final rm = callApiResult.data;
+    final result = rm['result'];
+    return result as RtmHistory;
+  }
+
+  @override
   Future<int> renewToken(String token) async {
     final apiType =
         '${isOverrideClassName ? className : 'RtmClient'}_renewToken_1fa04dd';

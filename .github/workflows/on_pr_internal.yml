@@ -35,7 +35,7 @@ jobs:
       target_branch: ${{ github.event.pull_request.head.ref }}
       issue_number: ${{ github.event.pull_request.number }}
     secrets:
-      APP_ID: ${{ secrets.APP_ID_RTM }}
+      APP_ID_RTM: ${{ secrets.APP_ID_RTM }}
       BUILD_PROVISION_PROFILE_UUID: ${{ secrets.BUILD_PROVISION_PROFILE_UUID }}
       BUILD_PROVISION_PROFILE_NAME: ${{ secrets.BUILD_PROVISION_PROFILE_NAME }}
       BUILD_PROVISION_PROFILE_TEAMID: ${{ secrets.BUILD_PROVISION_PROFILE_TEAMID }}

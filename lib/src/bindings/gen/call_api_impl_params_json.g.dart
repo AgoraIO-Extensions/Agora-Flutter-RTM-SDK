@@ -87,6 +87,18 @@ Map<String, dynamic> _$RtmClientPublishBinaryMessageJsonToJson(
       'requestId': instance.requestId,
     };
 
+RtmHistoryGetMessagesJson _$RtmHistoryGetMessagesJsonFromJson(
+        Map<String, dynamic> json) =>
+    RtmHistoryGetMessagesJson(
+      (json['requestId'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$RtmHistoryGetMessagesJsonToJson(
+        RtmHistoryGetMessagesJson instance) =>
+    <String, dynamic>{
+      'requestId': instance.requestId,
+    };
+
 RtmLockSetLockJson _$RtmLockSetLockJsonFromJson(Map<String, dynamic> json) =>
     RtmLockSetLockJson(
       (json['requestId'] as num).toInt(),

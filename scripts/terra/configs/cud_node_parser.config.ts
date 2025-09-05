@@ -55,6 +55,30 @@ const updateNodes = [
       },
     },
   },
+  // agora::rtm::HistoryMessage::message
+  {
+    node: {
+      __TYPE: CXXTYPE.MemberVariable,
+      name: "message",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::HistoryMessage",
+    },
+    updated: {
+      __TYPE: CXXTYPE.MemberVariable,
+      name: "message",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::HistoryMessage",
+      type: {
+        __TYPE: CXXTYPE.SimpleType,
+        is_builtin_type: false,
+        is_const: true,
+        kind: SimpleTypeKind.pointer_t,
+        name: "uint8_t",
+        source: "const uint8_t*",
+      },
+    },
+  },
+
   // agora::rtm::RtmConfig::areaCode
   {
     node: {
@@ -115,6 +139,20 @@ const updateNodes = [
         is_const: true,
         kind: SimpleTypeKind.array_t,
       },
+    },
+  },
+  {
+    node: {
+      __TYPE: CXXTYPE.MemberFunction,
+      name: "onGetHistoryMessagesResult",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmEventHandler",
+    },
+    updated: {
+      __TYPE: CXXTYPE.MemberFunction,
+      name: "onHistoryGetMessagesResult",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmEventHandler",
     },
   },
 ];

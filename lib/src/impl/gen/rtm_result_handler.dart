@@ -51,6 +51,7 @@ abstract class RtmResultHandler {
       onPresenceSetStateResult: onPresenceSetStateResult,
       onPresenceRemoveStateResult: onPresenceRemoveStateResult,
       onPresenceGetStateResult: onPresenceGetStateResult,
+      onHistoryGetMessagesResult: onHistoryGetMessagesResult,
     );
   }
   late final RtmEventHandler rtmEventHandler;
@@ -427,6 +428,19 @@ abstract class RtmResultHandler {
   void onPresenceGetStateResult(
       int requestId, UserState state, RtmErrorCode errorCode) {
     final result = GetStateResult(state: state);
+    response(requestId, (result, errorCode));
+  }
+
+  @visibleForTesting
+  @protected
+  void onHistoryGetMessagesResult(
+      int requestId,
+      List<HistoryMessage> messageList,
+      int count,
+      int newStart,
+      RtmErrorCode errorCode) {
+    final result = GetMessagesResult(
+        messageList: messageList, count: count, newStart: newStart);
     response(requestId, (result, errorCode));
   }
 }

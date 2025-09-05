@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:agora_rtm_example/src/internal/internal_config.dart' as config;
 
 import 'log_sink.dart';
+import 'stream_channel_demo.dart';
 
 class RtmApiDemo extends StatefulWidget {
   const RtmApiDemo({super.key});
@@ -35,6 +36,7 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
 
   bool _isWhoNowIncludeUserId = true;
   bool _isWhoNowIncludeState = false;
+  bool _ispPolicyEnabled = false;
   late TextEditingController _isWhoNowPageController;
 
   late TextEditingController _rtmClientMessageController;
@@ -46,6 +48,10 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
 
   late RtmClient _rtmClient;
   late RtcEngine _rtcEngine;
+  bool _publishStoreInHistory = true;
+  late TextEditingController _historyCountController;
+  late TextEditingController _historyStartController;
+  late TextEditingController _historyEndController;
 
   @override
   void initState() {
@@ -60,6 +66,11 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
     _isWhoNowPageController = TextEditingController();
     _rtmClientPublishCustomTypeController = TextEditingController();
     _keyValueInputGroupWidgetController = KeyValueInputGroupWidgetController();
+
+    _historyCountController = TextEditingController(text: '100');
+    _historyStartController = TextEditingController(text: '0');
+    _historyEndController = TextEditingController(text: '0');
+
   }
 
   @override
@@ -73,6 +84,9 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
     _isWhoNowPageController.dispose();
     _rtmClientPublishCustomTypeController.dispose();
     _keyValueInputGroupWidgetController.dispose();
+    _historyCountController.dispose();
+    _historyStartController.dispose();
+    _historyEndController.dispose();
     super.dispose();
   }
 
@@ -156,10 +170,33 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            _card([
+              const Text(
+                'streamChannel-demo',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StreamChannelDemo(userId: _userIdController.text.trim(), channelName: _channelNameController.text.trim(),),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.message),
+                  label: const Text('push streamChannel-demo page'),
+              ),
+            ]),
             _textField(_userIdController, 'Input user id'),
             _button('create RTM', () async {
-              final (status, client) =
-                  await RTM(config.appId, _userIdController.text);
+              final (status, client) = _ispPolicyEnabled
+                  ? await RTM(config.appId, _userIdController.text,
+                      config: RtmConfig(
+                        ispPolicyEnabled: _ispPolicyEnabled,
+                      ))
+                  : await RTM(config.appId, _userIdController.text);
               if (status.error) {
                 logSink.log(
                     '[error] errorCode: ${status.errorCode}, operation: ${status.operation}, reason: ${status.reason}');
@@ -193,8 +230,15 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
               );
               await _rtmClient.setParameters('{"rtm.log_filter":2063}');
             }),
+            _switch('ispPolicyEnabled', _ispPolicyEnabled, (v) {
+              setState(() {
+                _ispPolicyEnabled = v;
+              });
+            }),
+
             _textField(_channelNameController, 'Input channel name'),
             _button('RtmClient.login', () async {
+              logSink.log('[LoginResult] app id: ${config.appId} token: ${config.token}');
               final (status, _) = await _rtmClient.login(config.token);
               logSink.log('[LoginResult] errorCode: ${status.errorCode}');
             }),
@@ -406,22 +450,68 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                     _rtmClientPublishCustomTypeController, 'Input customType'),
                 _button('RtmClient.publish', () async {
                   final (status, _) = await _rtmClient.publish(
-                      _channelNameController.text,
-                      _rtmClientMessageController.text,
-                      channelType: _rtmChannelType,
-                      customType: _rtmClientPublishCustomTypeController.text);
-
+                    _channelNameController.text,
+                    _rtmClientMessageController.text,
+                    channelType: _rtmChannelType,
+                    customType: _rtmClientPublishCustomTypeController.text,
+                    storeInHistory: _publishStoreInHistory,
+                  );
                   logSink.log('[PublishResult] errorCode: ${status.errorCode}');
                 }),
                 _button('RtmClient.publishBinaryMessage', () async {
                   final (status, _) = await _rtmClient.publishBinaryMessage(
-                      _channelNameController.text,
-                      Uint8List.fromList(
-                          utf8.encode(_rtmClientMessageController.text)),
-                      channelType: _rtmChannelType,
-                      customType: _rtmClientPublishCustomTypeController.text);
-
+                    _channelNameController.text,
+                    Uint8List.fromList(
+                        utf8.encode(_rtmClientMessageController.text)),
+                    channelType: _rtmChannelType,
+                    customType: _rtmClientPublishCustomTypeController.text,
+                    storeInHistory: _publishStoreInHistory,
+                  );
                   logSink.log('[PublishResult] errorCode: ${status.errorCode}');
+                }),
+              ],
+            ),
+            
+            _card(
+              [
+                Wrap(
+                  children: [
+                    _switch('storeInHistory', _publishStoreInHistory, (v) {
+                      setState(() => _publishStoreInHistory = v);
+                    }),
+                  ],
+                ),
+                _textField(_historyCountController, 'Input messageCount'),
+                _textField(_historyStartController, 'Input start'),
+                _textField(_historyEndController, 'Input end'),
+                _button('RtmHistory.getMessages', () async {
+                  final history = _rtmClient.getHistory();
+
+                  final (s2, result) = await history.getMessages(
+                    _channelNameController.text,
+                    _rtmChannelType,
+                    messageCount:
+                        int.tryParse(_historyCountController.text) ?? 100,
+                    start: int.tryParse(_historyStartController.text) ?? 0,
+                    end: int.tryParse(_historyEndController.text) ?? 0,
+                  );
+                  logSink.log('[getMessages] errorCode: ${s2.errorCode}, '
+                      'count: ${result?.count}, newStart: ${result?.newStart}');
+
+                  for (final event in (result?.messageList ?? [])) {
+                    logSink.log('[history] publisher=${event.publisher}, '
+                        'type=${event.messageType}, customType=${event.customType}, '
+                        'ts=${event.timestamp}, message=${event.message}');
+                    if (event.messageType == RtmMessageType.string) {
+                      final messageText = utf8.decode(event.message!);
+                      logSink.log(
+                          'event : ${event.toJson()} \nmessage: $messageText');
+                    } else if (event.messageType == RtmMessageType.binary) {
+                      final binaryData = event.message;
+                      logSink.log(
+                          'event : ${event.toJson()} \n binaryData length: ${binaryData?.length}');
+                    }
+                  }
                 }),
               ],
             ),

@@ -231,6 +231,14 @@ module.exports = {
       },
       pointerNames: ["message"],
     },
+    {
+      node: {
+        __TYPE: CXXTYPE.Struct,
+        name: "HistoryMessage",
+        namespaces: ["agora", "rtm"],
+      },
+      pointerNames: ["message"],
+    },
 
     {
       node: {

@@ -100,6 +100,12 @@ class RtmClientImpl implements RtmClient {
   }
 
   @override
+  RtmHistory getHistory() {
+    // This function's implementation can't be generated automatically, please implement it manually.
+    throw UnimplementedError();
+  }
+
+  @override
   Future<(RtmStatus, RenewTokenResult?)> renewToken(String token) async {
     try {
       final requestId = await nativeBindingRtmClientImpl.renewToken(token);
@@ -119,9 +125,12 @@ class RtmClientImpl implements RtmClient {
   Future<(RtmStatus, PublishResult?)> publish(
       String channelName, String message,
       {RtmChannelType channelType = RtmChannelType.message,
-      String? customType}) async {
-    final option =
-        PublishOptions(channelType: channelType, customType: customType);
+      String? customType,
+      bool storeInHistory = false}) async {
+    final option = PublishOptions(
+        channelType: channelType,
+        customType: customType,
+        storeInHistory: storeInHistory);
     try {
       final requestId = await nativeBindingRtmClientImpl.publish(
           channelName: channelName,
@@ -211,9 +220,12 @@ class RtmClientImpl implements RtmClient {
   Future<(RtmStatus, PublishResult?)> publishBinaryMessage(
       String channelName, Uint8List message,
       {RtmChannelType channelType = RtmChannelType.message,
-      String? customType}) async {
-    final option =
-        PublishOptions(channelType: channelType, customType: customType);
+      String? customType,
+      bool storeInHistory = false}) async {
+    final option = PublishOptions(
+        channelType: channelType,
+        customType: customType,
+        storeInHistory: storeInHistory);
     try {
       final requestId = await nativeBindingRtmClientImpl.publishBinaryMessage(
           channelName: channelName,

@@ -419,6 +419,27 @@ void testCases() {
   );
 
   test(
+    'StreamChannel.setParameters',
+    () async {
+      final mockStreamChannelNativeBinding = MockStreamChannelImpl();
+      final mockRtmResultHandlerImpl = MockRtmResultHandlerImpl();
+      StreamChannel streamChannel = stream_channel_impl.StreamChannelImpl(
+        mockStreamChannelNativeBinding,
+        mockRtmResultHandlerImpl,
+      );
+
+      {
+        String parameters = "hello";
+      }
+
+      String parameters = "hello";
+      await streamChannel.setParameters(
+        parameters,
+      );
+    },
+  );
+
+  test(
     'StreamChannel.release',
     () async {
       final mockStreamChannelNativeBinding = MockStreamChannelImpl();
