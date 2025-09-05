@@ -213,21 +213,17 @@ class _StreamChannelDemoState extends State<StreamChannelDemo> {
   }
 
   /// Join Channel
-  Future<void> _joinChannel(
-      {bool withMetadata = false,
-      bool withPresence = true,
-      bool withLock = false,
-      bool beQuiet = false}) async {
+  Future<void> _joinChannel() async {
     if (_streamChannel == null || !_isLoggedIn) return;
 
     try {
       // _addLog('Joining channel, using token: ${config.token.substring(0, 20)}...');
       final (status, result) = await _streamChannel!.join(
           token: config.token,
-          withMetadata: withMetadata,
-          withPresence: withMetadata,
-          withLock: withLock,
-          beQuiet: beQuiet);
+          withMetadata: _isSubscribeWithMetadata,
+          withPresence: _isSubscribeWithPresence,
+          withLock: _isSubscribeWithLock,
+          beQuiet: _isSubscribeBeQuiet);
 
       if (status.error) {
         _addLog(
