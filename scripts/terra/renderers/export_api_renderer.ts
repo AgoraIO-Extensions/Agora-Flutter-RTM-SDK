@@ -502,19 +502,11 @@ function _parameterListBlockRenderer(
   return parameterListBlock;
 }
 
-const tokenEventClass = `
-class TokenEvent {
-  const TokenEvent(this.channelName);
-  final String channelName;
-}
-`;
-
 function renderExportRtmClass(parseResult: ParseResult, clazz: Clazz): string {
   let extraClassBody = "";
   let extracClasses = "";
   if (clazz.fullName == "agora::rtm::IRtmClient") {
     extraClassBody = renderAddListenerFunction(parseResult, false);
-    extracClasses = tokenEventClass;
   }
 
   return `
@@ -1067,10 +1059,6 @@ abstract class RtmResultHandler {
   };
 }
 
-const tokenEventListener = `
-void Function(TokenEvent event)? token
-`;
-
 function renderAddListenerFunction(
   parseResult: ParseResult,
   isImpl: boolean
@@ -1107,7 +1095,6 @@ function renderAddListenerFunction(
       functionParameterName
     )}`;
   });
-  addListenerParmetersBlock.push(tokenEventListener);
 
   let addListenerFunctionSignature = `void addListener({${addListenerParmetersBlock}})`;
 

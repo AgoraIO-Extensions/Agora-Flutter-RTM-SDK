@@ -355,11 +355,6 @@ class UnsubscribeResult {
   final String channelName;
 }
 
-class TokenEvent {
-  const TokenEvent(this.channelName);
-  final String channelName;
-}
-
 abstract class RtmClient {
   void addListener(
       {void Function(LinkStateEvent event)? linkState,
@@ -367,8 +362,7 @@ abstract class RtmClient {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage,
-      void Function(TokenEvent event)? token});
+      void Function(StorageEvent event)? storage});
 
   void removeListener(
       {void Function(LinkStateEvent event)? linkState,
@@ -376,8 +370,7 @@ abstract class RtmClient {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage,
-      void Function(TokenEvent event)? token});
+      void Function(StorageEvent event)? storage});
 
   Future<RtmStatus> release();
 

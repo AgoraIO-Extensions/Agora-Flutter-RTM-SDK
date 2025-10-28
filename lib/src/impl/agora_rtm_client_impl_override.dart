@@ -127,15 +127,13 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage,
-      void Function(TokenEvent event)? token}) {
+      void Function(StorageEvent event)? storage}) {
     _setListenerIfNeeded('linkState', linkState);
     _setListenerIfNeeded('message', message);
     _setListenerIfNeeded('presence', presence);
     _setListenerIfNeeded('topic', topic);
     _setListenerIfNeeded('lock', lock);
     _setListenerIfNeeded('storage', storage);
-    _setListenerIfNeeded('token', token);
   }
 
   @override
@@ -145,15 +143,13 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage,
-      void Function(TokenEvent event)? token}) {
+      void Function(StorageEvent event)? storage}) {
     _removeListenerIfNeeded('linkState', linkState);
     _removeListenerIfNeeded('message', message);
     _removeListenerIfNeeded('presence', presence);
     _removeListenerIfNeeded('topic', topic);
     _removeListenerIfNeeded('lock', lock);
     _removeListenerIfNeeded('storage', storage);
-    _removeListenerIfNeeded('token', token);
   }
 
   @override

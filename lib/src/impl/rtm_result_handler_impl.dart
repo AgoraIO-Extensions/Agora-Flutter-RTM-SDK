@@ -82,7 +82,7 @@ class RtmResultHandlerImpl extends rtm_result.RtmResultHandler {
 
   @override
   void onTokenPrivilegeWillExpire(String channelName) {
-    _funcOf('token')?.call(TokenEvent(channelName));
+    // _funcOf('token')?.call(TokenEvent(channelName));
   }
 
   void setListener(String key, Object listener) {
