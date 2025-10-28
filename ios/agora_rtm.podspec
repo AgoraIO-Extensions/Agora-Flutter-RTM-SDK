@@ -25,8 +25,13 @@ Pod::Spec.new do |s|
     puts '[plugin_dev] Found .plugin_dev file, use vendored_frameworks instead.'
     s.vendored_frameworks = 'libs/*.xcframework'
   else
+  # iris dependencies start
   s.dependency 'AgoraIrisRTM_iOS', '2.2.5-build.2'
+  # iris dependencies end
+
+  # native dependencies start
   s.dependency 'AgoraRtm', '2.2.5'
+  # native dependencies end
   end
 
   # Flutter.framework does not contain a i386 slice.
