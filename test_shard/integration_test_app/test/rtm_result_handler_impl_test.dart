@@ -32,25 +32,27 @@ void main() {
         rtmResultHandlerImpl: fakeRtmResultHandlerImpl,
       );
 
-      final tokenCompleter = Completer<String>();
+      final tokenCompleter = Completer<RtmTokenEventType>();
 
       rtmClient.addListener(
         token: (event) {
-          if (!tokenCompleter.isCompleted) {
-            tokenCompleter.complete(event.channelName);
+          if (!tokenCompleter.isCompleted && event.eventType != null) {
+            tokenCompleter.complete(event.eventType);
           }
         },
       );
 
-      fakeRtmResultHandlerImpl.onTokenPrivilegeWillExpire('channelName');
+      fakeRtmResultHandlerImpl.onTokenEvent(
+        const TokenEvent(eventType: RtmTokenEventType.willExpire),
+      );
 
-      final channelName = await tokenCompleter.future;
-      expect(channelName, 'channelName');
+      final eventType = await tokenCompleter.future;
+      expect(eventType, RtmTokenEventType.willExpire);
     },
   );
 
   test(
-    'addListener token',
+    'removeListener token',
     () async {
       final mockRtmClientNativeBinding = MockRtmClientImplOverride();
       final fakeRtmResultHandlerImpl = RtmResultHandlerImpl();
@@ -71,32 +73,34 @@ void main() {
         rtmResultHandlerImpl: fakeRtmResultHandlerImpl,
       );
 
-      final tokenCompleter = Completer<String>();
+      final tokenCompleter = Completer<RtmTokenEventType>();
 
       rtmClient.addListener(
         token: (event) {
-          if (!tokenCompleter.isCompleted) {
-            tokenCompleter.complete(event.channelName);
+          if (!tokenCompleter.isCompleted && event.eventType != null) {
+            tokenCompleter.complete(event.eventType);
           }
         },
       );
 
       rtmClient.removeListener(
         token: (event) {
-          if (!tokenCompleter.isCompleted) {
-            tokenCompleter.complete(event.channelName);
+          if (!tokenCompleter.isCompleted && event.eventType != null) {
+            tokenCompleter.complete(event.eventType);
           }
         },
       );
 
-      fakeRtmResultHandlerImpl.onTokenPrivilegeWillExpire('channelName');
+      fakeRtmResultHandlerImpl.onTokenEvent(
+        const TokenEvent(eventType: RtmTokenEventType.willExpire),
+      );
 
-      String channelName = '';
+      RtmTokenEventType? eventType;
       try {
-        channelName = await tokenCompleter.future
+        eventType = await tokenCompleter.future
             .timeout(const Duration(milliseconds: 10));
       } on TimeoutException {
-        expect(channelName, '');
+        expect(eventType, null);
       }
     },
   );

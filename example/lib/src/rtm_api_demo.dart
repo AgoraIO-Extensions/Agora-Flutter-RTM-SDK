@@ -226,6 +226,9 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                 storage: (event) {
                   logSink.log('[storage] event: ${event.toJson()}');
                 },
+                token: (event) {
+                  logSink.log('[token] event: ${event.toJson()}');
+                },
               );
               await _rtmClient.setParameters('{"rtm.log_filter":2063}');
             }),
