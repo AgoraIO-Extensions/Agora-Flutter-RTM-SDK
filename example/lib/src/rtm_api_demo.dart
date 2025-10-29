@@ -70,7 +70,6 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
     _historyCountController = TextEditingController(text: '100');
     _historyStartController = TextEditingController(text: '0');
     _historyEndController = TextEditingController(text: '0');
-
   }
 
   @override
@@ -181,12 +180,15 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => StreamChannelDemo(userId: _userIdController.text.trim(), channelName: _channelNameController.text.trim(),),
+                      builder: (context) => StreamChannelDemo(
+                        userId: _userIdController.text.trim(),
+                        channelName: _channelNameController.text.trim(),
+                      ),
                     ),
                   );
                 },
                 icon: const Icon(Icons.message),
-                  label: const Text('push streamChannel-demo page'),
+                label: const Text('push streamChannel-demo page'),
               ),
             ]),
             _textField(_userIdController, 'Input user id'),
@@ -235,10 +237,10 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                 _ispPolicyEnabled = v;
               });
             }),
-
             _textField(_channelNameController, 'Input channel name'),
             _button('RtmClient.login', () async {
-              logSink.log('[LoginResult] app id: ${config.appId} token: ${config.token}');
+              logSink.log(
+                  '[LoginResult] app id: ${config.appId} token: ${config.token}');
               final (status, _) = await _rtmClient.login(config.token);
               logSink.log('[LoginResult] errorCode: ${status.errorCode}');
             }),
@@ -471,7 +473,6 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                 }),
               ],
             ),
-            
             _card(
               [
                 Wrap(

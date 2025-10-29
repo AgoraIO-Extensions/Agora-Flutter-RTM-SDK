@@ -18,7 +18,8 @@ class RtmClientImpl implements RtmClient {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage}) {
+      void Function(StorageEvent event)? storage,
+      void Function(TokenEvent event)? token}) {
     throw UnimplementedError('Implement this function in sub-class.');
   }
 
@@ -29,7 +30,8 @@ class RtmClientImpl implements RtmClient {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage}) {
+      void Function(StorageEvent event)? storage,
+      void Function(TokenEvent event)? token}) {
     throw UnimplementedError('Implement this function in sub-class.');
   }
 
