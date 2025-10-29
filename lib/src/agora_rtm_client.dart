@@ -8,6 +8,7 @@ class RtmConfig {
       this.protocolType = RtmProtocolType.tcpUdp,
       this.presenceTimeout = 300,
       this.heartbeatInterval = 5,
+      this.reconnectTimeout = 0,
       this.useStringUserId = true,
       this.ispPolicyEnabled = false,
       this.logConfig,
@@ -27,6 +28,9 @@ class RtmConfig {
 
   @JsonKey(name: 'heartbeatInterval')
   final int? heartbeatInterval;
+
+  @JsonKey(name: 'reconnectTimeout')
+  final int? reconnectTimeout;
 
   @JsonKey(name: 'useStringUserId')
   final bool? useStringUserId;
@@ -323,6 +327,29 @@ class StorageEvent {
   Map<String, dynamic> toJson() => _$StorageEventToJson(this);
 }
 
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class TokenEvent {
+  const TokenEvent(
+      {this.eventType, this.reason, this.affectedResources, this.timestamp});
+
+  @JsonKey(name: 'eventType')
+  final RtmTokenEventType? eventType;
+
+  @JsonKey(name: 'reason')
+  final String? reason;
+
+  @JsonKey(name: 'affectedResources')
+  final AffectedResources? affectedResources;
+
+  @JsonKey(name: 'timestamp')
+  final int? timestamp;
+
+  factory TokenEvent.fromJson(Map<String, dynamic> json) =>
+      _$TokenEventFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TokenEventToJson(this);
+}
+
 class LoginResult {
   LoginResult();
 }
@@ -362,7 +389,8 @@ abstract class RtmClient {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage});
+      void Function(StorageEvent event)? storage,
+      void Function(TokenEvent event)? token});
 
   void removeListener(
       {void Function(LinkStateEvent event)? linkState,
@@ -370,7 +398,8 @@ abstract class RtmClient {
       void Function(PresenceEvent event)? presence,
       void Function(TopicEvent event)? topic,
       void Function(LockEvent event)? lock,
-      void Function(StorageEvent event)? storage});
+      void Function(StorageEvent event)? storage,
+      void Function(TokenEvent event)? token});
 
   Future<RtmStatus> release();
 

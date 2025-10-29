@@ -243,6 +243,30 @@ extension HistoryMessageBufferExt on HistoryMessage {
   }
 }
 
+extension ChannelListBufferExt on ChannelList {
+  ChannelList fillBuffers(List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
+extension AffectedResourcesBufferExt on AffectedResources {
+  AffectedResources fillBuffers(List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
 extension RtmConfigBufferExt on RtmConfig {
   RtmConfig fillBuffers(List<Uint8List> bufferList) {
     if (bufferList.isEmpty) return this;
@@ -357,6 +381,18 @@ extension LockEventBufferExt on LockEvent {
 
 extension StorageEventBufferExt on StorageEvent {
   StorageEvent fillBuffers(List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
+extension TokenEventBufferExt on TokenEvent {
+  TokenEvent fillBuffers(List<Uint8List> bufferList) {
     if (bufferList.isEmpty) return this;
     return this;
   }

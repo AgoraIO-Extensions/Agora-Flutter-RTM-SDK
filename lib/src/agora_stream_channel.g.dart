@@ -15,14 +15,22 @@ JoinChannelOptions _$JoinChannelOptionsFromJson(Map<String, dynamic> json) =>
       beQuiet: json['beQuiet'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$JoinChannelOptionsToJson(JoinChannelOptions instance) =>
-    <String, dynamic>{
-      if (instance.token case final value?) 'token': value,
-      if (instance.withMetadata case final value?) 'withMetadata': value,
-      if (instance.withPresence case final value?) 'withPresence': value,
-      if (instance.withLock case final value?) 'withLock': value,
-      if (instance.beQuiet case final value?) 'beQuiet': value,
-    };
+Map<String, dynamic> _$JoinChannelOptionsToJson(JoinChannelOptions instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('token', instance.token);
+  writeNotNull('withMetadata', instance.withMetadata);
+  writeNotNull('withPresence', instance.withPresence);
+  writeNotNull('withLock', instance.withLock);
+  writeNotNull('beQuiet', instance.beQuiet);
+  return val;
+}
 
 JoinTopicOptions _$JoinTopicOptionsFromJson(Map<String, dynamic> json) =>
     JoinTopicOptions(
@@ -35,14 +43,21 @@ JoinTopicOptions _$JoinTopicOptionsFromJson(Map<String, dynamic> json) =>
       syncWithMedia: json['syncWithMedia'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$JoinTopicOptionsToJson(JoinTopicOptions instance) =>
-    <String, dynamic>{
-      if (_$RtmMessageQosEnumMap[instance.qos] case final value?) 'qos': value,
-      if (_$RtmMessagePriorityEnumMap[instance.priority] case final value?)
-        'priority': value,
-      if (instance.meta case final value?) 'meta': value,
-      if (instance.syncWithMedia case final value?) 'syncWithMedia': value,
-    };
+Map<String, dynamic> _$JoinTopicOptionsToJson(JoinTopicOptions instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('qos', _$RtmMessageQosEnumMap[instance.qos]);
+  writeNotNull('priority', _$RtmMessagePriorityEnumMap[instance.priority]);
+  writeNotNull('meta', instance.meta);
+  writeNotNull('syncWithMedia', instance.syncWithMedia);
+  return val;
+}
 
 const _$RtmMessageQosEnumMap = {
   RtmMessageQos.unordered: 0,
@@ -62,8 +77,16 @@ TopicOptions _$TopicOptionsFromJson(Map<String, dynamic> json) => TopicOptions(
       userCount: (json['userCount'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$TopicOptionsToJson(TopicOptions instance) =>
-    <String, dynamic>{
-      if (instance.users case final value?) 'users': value,
-      if (instance.userCount case final value?) 'userCount': value,
-    };
+Map<String, dynamic> _$TopicOptionsToJson(TopicOptions instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('users', instance.users);
+  writeNotNull('userCount', instance.userCount);
+  return val;
+}

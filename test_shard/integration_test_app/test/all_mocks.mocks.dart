@@ -1584,6 +1584,15 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
+  void onTokenEvent(_i11.TokenEvent? event) => super.noSuchMethod(
+        Invocation.method(
+          #onTokenEvent,
+          [event],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void onJoinResult(
     int? requestId,
     String? channelName,
