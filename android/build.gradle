@@ -69,11 +69,11 @@ dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
   } else {
     // iris dependencies start
-    api 'io.agora.rtm:iris-rtm:2.2.5-build.2'
+    api 'io.agora.rtm:iris-rtm:2.2.6.2-build.1'
     // iris dependencies end
 
     // native dependencies start
-    api 'io.agora:agora-rtm:2.2.5'
+    api 'io.agora:agora-rtm-special:2.2.6.2'
     // native dependencies end
   }
 }

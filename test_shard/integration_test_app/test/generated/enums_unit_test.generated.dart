@@ -7,6 +7,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 void testCases() {
   test(
+    'RtmTokenEventType',
+    () async {
+      for (final e in RtmTokenEventType.values) {
+        expect(
+            RtmTokenEventType.fromValue(e.value()), isA<RtmTokenEventType>());
+        expect(RtmTokenEventType.fromValue(e.value()) == e, isTrue);
+      }
+    },
+  );
+
+  test(
     'RtmLinkState',
     () async {
       for (final e in RtmLinkState.values) {

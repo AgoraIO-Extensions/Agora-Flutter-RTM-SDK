@@ -440,6 +440,67 @@ void testCases(
   );
 
   testWidgets(
+    'RtmEventHandler.onTokenEvent',
+    (WidgetTester tester) async {
+      final onTokenEventCompleter = Completer<bool>();
+      final theRtmEventHandler = RtmEventHandler(
+        onTokenEvent: (TokenEvent event) {
+          onTokenEventCompleter.complete(true);
+        },
+      );
+
+      final rtmClient = await _createBindingRtmClient(theRtmEventHandler);
+
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      {
+        RtmTokenEventType eventEventType = RtmTokenEventType.willExpire;
+        List<String> messageChannelsChannels = List.filled(5, "hello");
+        ChannelList affectedResourcesMessageChannels = ChannelList(
+          channels: messageChannelsChannels,
+        );
+        AffectedResources eventAffectedResources = AffectedResources(
+          messageChannels: affectedResourcesMessageChannels,
+        );
+        String eventReason = "hello";
+        int eventTimestamp = 5;
+        TokenEvent event = TokenEvent(
+          eventType: eventEventType,
+          reason: eventReason,
+          affectedResources: eventAffectedResources,
+          timestamp: eventTimestamp,
+        );
+
+        final eventJson = {};
+
+        final eventIds = eventIdsMapping['RtmEventHandler_onTokenEvent'] ?? [];
+        for (final event in eventIds) {
+          final ret = irisTester().fireEvent(event, params: eventJson);
+          // Delay 200 milliseconds to ensure the callback is called.
+          await Future.delayed(const Duration(milliseconds: 200));
+          // TODO(littlegnal): Most of callbacks on web are not implemented, we're temporarily skip these callbacks at this time.
+          if (kIsWeb && ret) {
+            if (!onTokenEventCompleter.isCompleted) {
+              onTokenEventCompleter.complete(true);
+            }
+          }
+        }
+      }
+
+      final eventCalled = await onTokenEventCompleter.future;
+      expect(eventCalled, isTrue);
+
+      {}
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      await rtmClient.release();
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
+
+  testWidgets(
     'RtmEventHandler.onJoinResult',
     (WidgetTester tester) async {
       final onJoinResultCompleter = Completer<bool>();

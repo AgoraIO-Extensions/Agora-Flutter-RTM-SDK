@@ -171,6 +171,33 @@ extension RtmEventHandlerOnStorageEventJsonBufferExt
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
+class RtmEventHandlerOnTokenEventJson {
+  const RtmEventHandlerOnTokenEventJson({this.event});
+
+  @JsonKey(name: 'event')
+  final TokenEvent? event;
+
+  factory RtmEventHandlerOnTokenEventJson.fromJson(Map<String, dynamic> json) =>
+      _$RtmEventHandlerOnTokenEventJsonFromJson(json);
+
+  Map<String, dynamic> toJson() =>
+      _$RtmEventHandlerOnTokenEventJsonToJson(this);
+}
+
+extension RtmEventHandlerOnTokenEventJsonBufferExt
+    on RtmEventHandlerOnTokenEventJson {
+  RtmEventHandlerOnTokenEventJson fillBuffers(List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RtmEventHandlerOnJoinResultJson {
   const RtmEventHandlerOnJoinResultJson(
       {this.requestId, this.channelName, this.userId, this.errorCode});

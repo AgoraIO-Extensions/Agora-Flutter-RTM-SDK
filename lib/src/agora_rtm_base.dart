@@ -5,6 +5,34 @@ part 'agora_rtm_base.g.dart';
 const defaultLogSizeInKb = 1024;
 
 @JsonEnum(alwaysCreate: true)
+enum RtmTokenEventType {
+  @JsonValue(1)
+  willExpire,
+
+  @JsonValue(2)
+  readPermissionRevoked,
+  ;
+
+  /// @nodoc
+  static RtmTokenEventType fromValue(int value) {
+    return $enumDecode(_$RtmTokenEventTypeEnumMap, value);
+  }
+}
+
+extension RtmTokenEventTypeExt on RtmTokenEventType {
+  /// @nodoc
+  @Deprecated('Use RtmTokenEventType.fromValue instead')
+  static RtmTokenEventType fromValue(int value) {
+    return $enumDecode(_$RtmTokenEventTypeEnumMap, value);
+  }
+
+  /// @nodoc
+  int value() {
+    return _$RtmTokenEventTypeEnumMap[this]!;
+  }
+}
+
+@JsonEnum(alwaysCreate: true)
 enum RtmLinkState {
   @JsonValue(0)
   idle,
@@ -596,6 +624,12 @@ enum RtmErrorCode {
   @JsonValue(-11037)
   channelMessageDeliveredButStoreFailed,
 
+  @JsonValue(-11038)
+  channelSubscribePermissionDenied,
+
+  @JsonValue(-11039)
+  channelPublishPermissionDenied,
+
   @JsonValue(-12001)
   storageOperationFailed,
 
@@ -652,6 +686,9 @@ enum RtmErrorCode {
 
   @JsonValue(-12019)
   storageNotAvailable,
+
+  @JsonValue(-12020)
+  storagePermissionDenied,
 
   @JsonValue(-13001)
   presenceNotConnected,
@@ -719,6 +756,9 @@ enum RtmErrorCode {
   @JsonValue(-14009)
   lockNotAvailable,
 
+  @JsonValue(-14010)
+  lockPermissionDenied,
+
   @JsonValue(-15001)
   historyOperationFailed,
 
@@ -733,6 +773,9 @@ enum RtmErrorCode {
 
   @JsonValue(-15005)
   historyNotAvailable,
+
+  @JsonValue(-15006)
+  historyPermissionDenied,
   ;
 
   /// @nodoc
@@ -1555,4 +1598,30 @@ class HistoryMessage {
       _$HistoryMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$HistoryMessageToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class ChannelList {
+  const ChannelList({this.channels});
+
+  @JsonKey(name: 'channels')
+  final List<String>? channels;
+
+  factory ChannelList.fromJson(Map<String, dynamic> json) =>
+      _$ChannelListFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChannelListToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class AffectedResources {
+  const AffectedResources({this.messageChannels});
+
+  @JsonKey(name: 'messageChannels')
+  final ChannelList? messageChannels;
+
+  factory AffectedResources.fromJson(Map<String, dynamic> json) =>
+      _$AffectedResourcesFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AffectedResourcesToJson(this);
 }

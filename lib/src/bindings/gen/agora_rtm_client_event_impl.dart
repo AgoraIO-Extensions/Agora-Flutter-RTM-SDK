@@ -123,6 +123,22 @@ class RtmEventHandlerWrapper implements EventLoopEventHandler {
         rtmEventHandler.onStorageEvent!(event);
         return true;
 
+      case 'onTokenEvent_ec6a1f1':
+        if (rtmEventHandler.onTokenEvent == null) {
+          return true;
+        }
+        final jsonMap = jsonDecode(eventData);
+        RtmEventHandlerOnTokenEventJson paramJson =
+            RtmEventHandlerOnTokenEventJson.fromJson(jsonMap);
+        paramJson = paramJson.fillBuffers(buffers);
+        TokenEvent? event = paramJson.event;
+        if (event == null) {
+          return true;
+        }
+        event = event.fillBuffers(buffers);
+        rtmEventHandler.onTokenEvent!(event);
+        return true;
+
       case 'onJoinResult_ce14e01':
         if (rtmEventHandler.onJoinResult == null) {
           return true;

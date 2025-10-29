@@ -9,6 +9,7 @@ class RtmEventHandler {
     this.onTopicEvent,
     this.onLockEvent,
     this.onStorageEvent,
+    this.onTokenEvent,
     this.onJoinResult,
     this.onLeaveResult,
     this.onPublishTopicMessageResult,
@@ -62,6 +63,8 @@ class RtmEventHandler {
   final void Function(LockEvent event)? onLockEvent;
 
   final void Function(StorageEvent event)? onStorageEvent;
+
+  final void Function(TokenEvent event)? onTokenEvent;
 
   final void Function(int requestId, String channelName, String userId,
       RtmErrorCode errorCode)? onJoinResult;

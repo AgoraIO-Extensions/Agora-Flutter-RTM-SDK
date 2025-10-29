@@ -12,6 +12,7 @@ abstract class RtmResultHandler {
       onTopicEvent: onTopicEvent,
       onLockEvent: onLockEvent,
       onStorageEvent: onStorageEvent,
+      onTokenEvent: onTokenEvent,
       onJoinResult: onJoinResult,
       onLeaveResult: onLeaveResult,
       onPublishTopicMessageResult: onPublishTopicMessageResult,
@@ -83,6 +84,10 @@ abstract class RtmResultHandler {
   @visibleForTesting
   @protected
   void onStorageEvent(StorageEvent event) {}
+
+  @visibleForTesting
+  @protected
+  void onTokenEvent(TokenEvent event) {}
 
   @visibleForTesting
   @protected
