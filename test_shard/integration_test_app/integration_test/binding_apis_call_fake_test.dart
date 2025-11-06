@@ -15,8 +15,8 @@ import 'generated/bindings/rtmstorage_binding_fake_test.generated.dart'
     as rtmstorage_binding_fake_test;
 import 'generated/bindings/streamchannel_binding_fake_test.generated.dart'
     as streamchannel_binding_fake_test;
-// import 'generated/bindings/rtmclient_rtmeventhandler_testcases.generated.dart'
-//     as rtmclient_rtmeventhandler_testcases;
+import 'generated/bindings/rtmclient_rtmeventhandler_testcases.generated.dart'
+    as rtmclient_rtmeventhandler_testcases;
 
 import 'package:agora_rtm/src/impl/agora_rtm_client_impl_override.dart'
     as rtm_client_impl_override;
@@ -76,6 +76,6 @@ void main() {
       .testCases(() => irisMethodChannelInitilizationArgs);
   streamchannel_binding_fake_test
       .testCases(() => irisMethodChannelInitilizationArgs);
-  // rtmclient_rtmeventhandler_testcases.testCases(
-  //     () => irisTester!, () => irisMethodChannelInitilizationArgs);
+  rtmclient_rtmeventhandler_testcases.testCases(
+      () => irisTester!, () => irisMethodChannelInitilizationArgs);
 }

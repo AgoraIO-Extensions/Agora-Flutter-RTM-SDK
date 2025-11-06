@@ -215,7 +215,7 @@ class RtmEventHandler {
   final void Function(int requestId, List<ChannelInfo> channels, int count,
       RtmErrorCode errorCode)? onWhereNowResult;
 
-  final void Function(int requestId, ChannelInfo channels, int count,
+  final void Function(int requestId, List<ChannelInfo> channels, int count,
       RtmErrorCode errorCode)? onGetUserChannelsResult;
 
   final void Function(int requestId, RtmErrorCode errorCode)?

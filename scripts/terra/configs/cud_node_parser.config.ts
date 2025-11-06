@@ -143,6 +143,26 @@ const updateNodes = [
   },
   {
     node: {
+      __TYPE: CXXTYPE.Variable,
+      name: "channels",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmEventHandler::onGetUserChannelsResult",
+    },
+    updated: {
+      __TYPE: CXXTYPE.Variable,
+      name: "channels",
+      namespaces: ["agora", "rtm"],
+      parent_full_scope_name: "agora::rtm::IRtmEventHandler::onGetUserChannelsResult",
+      type: {
+        __TYPE: CXXTYPE.SimpleType,
+        is_builtin_type: false,
+        is_const: true,
+        kind: SimpleTypeKind.array_t,
+      },
+    },
+  },
+  {
+    node: {
       __TYPE: CXXTYPE.MemberFunction,
       name: "onGetHistoryMessagesResult",
       namespaces: ["agora", "rtm"],

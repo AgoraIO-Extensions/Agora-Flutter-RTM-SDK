@@ -51,7 +51,7 @@ class GetOnlineUsersResult {
 class GetUserChannelsResult {
   GetUserChannelsResult({required this.channels, required this.count});
 
-  final ChannelInfo channels;
+  final List<ChannelInfo> channels;
 
   final int count;
 }

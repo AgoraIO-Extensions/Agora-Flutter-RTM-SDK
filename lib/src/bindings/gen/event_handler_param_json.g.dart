@@ -1333,9 +1333,9 @@ RtmEventHandlerOnGetUserChannelsResultJson
             Map<String, dynamic> json) =>
         RtmEventHandlerOnGetUserChannelsResultJson(
           requestId: (json['requestId'] as num?)?.toInt(),
-          channels: json['channels'] == null
-              ? null
-              : ChannelInfo.fromJson(json['channels'] as Map<String, dynamic>),
+          channels: (json['channels'] as List<dynamic>?)
+              ?.map((e) => ChannelInfo.fromJson(e as Map<String, dynamic>))
+              .toList(),
           count: (json['count'] as num?)?.toInt(),
           errorCode:
               $enumDecodeNullable(_$RtmErrorCodeEnumMap, json['errorCode']),
@@ -1352,7 +1352,7 @@ Map<String, dynamic> _$RtmEventHandlerOnGetUserChannelsResultJsonToJson(
   }
 
   writeNotNull('requestId', instance.requestId);
-  writeNotNull('channels', instance.channels?.toJson());
+  writeNotNull('channels', instance.channels?.map((e) => e.toJson()).toList());
   writeNotNull('count', instance.count);
   writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
   return val;

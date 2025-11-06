@@ -408,8 +408,8 @@ abstract class RtmResultHandler {
 
   @visibleForTesting
   @protected
-  void onGetUserChannelsResult(
-      int requestId, ChannelInfo channels, int count, RtmErrorCode errorCode) {
+  void onGetUserChannelsResult(int requestId, List<ChannelInfo> channels,
+      int count, RtmErrorCode errorCode) {
     final result = GetUserChannelsResult(channels: channels, count: count);
     response(requestId, (result, errorCode));
   }

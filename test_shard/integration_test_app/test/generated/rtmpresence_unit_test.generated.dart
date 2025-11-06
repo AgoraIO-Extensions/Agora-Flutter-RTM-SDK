@@ -279,12 +279,7 @@ void testCases() {
       );
 
       const rtmStatus = RtmStatus.success(operation: 'getUserChannels');
-      RtmChannelType channelsChannelType = RtmChannelType.none;
-      String channelsChannelName = "hello";
-      ChannelInfo theGetUserChannelsResultChannels = ChannelInfo(
-        channelName: channelsChannelName,
-        channelType: channelsChannelType,
-      );
+      List<ChannelInfo> theGetUserChannelsResultChannels = [];
       int theGetUserChannelsResultCount = 5;
       GetUserChannelsResult theGetUserChannelsResult = GetUserChannelsResult(
         channels: theGetUserChannelsResultChannels,

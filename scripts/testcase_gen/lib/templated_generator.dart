@@ -323,31 +323,31 @@ class TemplatedGenerator extends DefaultGenerator {
           parseResult, pb, field.type.parameters, []);
 
       jsonBuffer.writeln('final eventJson = {');
-      // for (final parameter in field.type.parameters) {
-      //   if (parameter.isPrimitiveType) {
-      //     final parameterType = getParamType(parameter);
+      for (final parameter in field.type.parameters) {
+        if (parameter.isPrimitiveType) {
+          final parameterType = getParamType(parameter);
 
-      //     if (parameterType == 'Uint8List') {
-      //       jsonBuffer
-      //           .writeln('\'${parameter.name}\': ${parameter.name}.toList(),');
-      //     } else {
-      //       jsonBuffer.writeln('\'${parameter.name}\': ${parameter.name},');
-      //     }
-      //   } else {
-      //     final bool isEnum = parseResult.hasEnum(parameter.type.type);
-      //     if (isEnum) {
-      //       jsonBuffer
-      //           .writeln('\'${parameter.name}\': ${parameter.name}.value(),');
-      //     } else {
-      //       final parameterClass = parseResult.getClazz(parameter.type.type)[0];
-      //       if (parameterClass.constructors.isEmpty) {
-      //         continue;
-      //       }
-      //       jsonBuffer
-      //           .writeln('\'${parameter.name}\': ${parameter.name}.toJson(),');
-      //     }
-      //   }
-      // }
+          if (parameterType == 'Uint8List') {
+            jsonBuffer
+                .writeln('\'${parameter.name}\': ${parameter.name}.toList(),');
+          } else {
+            jsonBuffer.writeln('\'${parameter.name}\': ${parameter.name},');
+          }
+        } else {
+          final bool isEnum = parseResult.hasEnum(parameter.type.type);
+          if (isEnum) {
+            jsonBuffer
+                .writeln('\'${parameter.name}\': ${parameter.name}.value(),');
+          } else {
+            final parameterClass = parseResult.getClazz(parameter.type.type)[0];
+            if (parameterClass.constructors.isEmpty) {
+              continue;
+            }
+            jsonBuffer
+                .writeln('\'${parameter.name}\': ${parameter.name}.toJson(),');
+          }
+        }
+      }
       jsonBuffer.writeln('};');
 
       final eventCompleterName = '${field.name}Completer';

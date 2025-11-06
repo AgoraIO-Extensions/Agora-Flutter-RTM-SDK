@@ -1619,7 +1619,7 @@ class RtmEventHandlerOnGetUserChannelsResultJson {
   final int? requestId;
 
   @JsonKey(name: 'channels')
-  final ChannelInfo? channels;
+  final List<ChannelInfo>? channels;
 
   @JsonKey(name: 'count')
   final int? count;

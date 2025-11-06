@@ -952,7 +952,7 @@ class RtmEventHandlerWrapper implements EventLoopEventHandler {
             RtmEventHandlerOnGetUserChannelsResultJson.fromJson(jsonMap);
         paramJson = paramJson.fillBuffers(buffers);
         int? requestId = paramJson.requestId;
-        ChannelInfo? channels = paramJson.channels;
+        List<ChannelInfo>? channels = paramJson.channels;
         int? count = paramJson.count;
         RtmErrorCode? errorCode = paramJson.errorCode;
         if (requestId == null ||
@@ -961,7 +961,12 @@ class RtmEventHandlerWrapper implements EventLoopEventHandler {
             errorCode == null) {
           return true;
         }
-        channels = channels.fillBuffers(buffers);
+        channels = channels
+            .asMap()
+            .entries
+            .map((entry) => entry.value.fillBuffers(
+                [if (entry.key < buffers.length) buffers[entry.key]]))
+            .toList();
         rtmEventHandler.onGetUserChannelsResult!(
             requestId, channels, count, errorCode);
         return true;
