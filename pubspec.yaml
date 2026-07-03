@@ -29,3 +29,5 @@ flutter:
         pluginClass: AgoraRtmPlugin
       ios:
         pluginClass: AgoraRtmPlugin
+      macos:
+        pluginClass: AgoraRtmPlugin
