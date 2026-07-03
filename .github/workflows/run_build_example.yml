@@ -144,9 +144,9 @@ jobs:
             platform: macos
           - os: ubuntu-latest
             platform: windows
-          - os: macos-latest
+          - os: macos-14
             platform: windows
-          - os: macos-latest
+          - os: macos-14
             platform: web
           - os: windows-latest
             platform: android

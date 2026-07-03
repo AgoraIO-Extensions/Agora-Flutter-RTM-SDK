@@ -132,6 +132,73 @@ jobs:
           name: logs-ios-${{ matrix.version }}
           path: logs-ios/*
 
+  integration_test_macos:
+    name: Run Flutter macOS Fake Integration Tests
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.41.9"]
+    runs-on: macos-14
+    timeout-minutes: 120
+    env:
+      TEST_APP_ID: ${{ secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Update pod repo
+        run: pod repo update
+      - name: Check macOS Iris debugger artifact
+        id: macos_iris_debugger
+        shell: bash
+        run: |
+          source scripts/artifacts_version.sh
+          if [[ -z "${IRIS_CDN_URL_MACOS:-}" ]]; then
+            echo "::notice::IRIS_CDN_URL_MACOS is empty; skipping macOS fake integration tests until ci/run_update_deps.sh updates desktop dependencies."
+            echo "run_tests=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "run_tests=true" >> "${GITHUB_OUTPUT}"
+          fi
+      - name: Run flutter macOS fake integration tests
+        if: ${{ steps.macos_iris_debugger.outputs.run_tests == 'true' }}
+        run: bash scripts/run_flutter_integration_test.sh "macos"
+
+  integration_test_windows:
+    name: Run Flutter Windows Fake Integration Tests
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.41.9"]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    env:
+      TEST_APP_ID: ${{ secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Check Windows Iris debugger artifact
+        id: windows_iris_debugger
+        shell: bash
+        run: |
+          source scripts/artifacts_version.sh
+          if [[ -z "${IRIS_CDN_URL_WINDOWS:-}" ]]; then
+            echo "::notice::IRIS_CDN_URL_WINDOWS is empty; skipping Windows fake integration tests until ci/run_update_deps.sh updates desktop dependencies."
+            echo "run_tests=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "run_tests=true" >> "${GITHUB_OUTPUT}"
+          fi
+      - name: Run flutter Windows fake integration tests
+        if: ${{ steps.windows_iris_debugger.outputs.run_tests == 'true' }}
+        shell: bash
+        run: bash scripts/run_flutter_integration_test.sh "windows"
+
   build_android_ubuntu:
     name: Build Android on Ubuntu
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
@@ -198,6 +265,61 @@ jobs:
       - run: flutter pub get
       - name: Run flutter build ios --no-codesign
         run: flutter build ios --no-codesign
+        working-directory: example
+
+  build_macos:
+    name: Build macOS
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.41.9"]
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Update pod repo
+        run: pod repo update
+      - run: flutter pub get
+      - name: Run flutter build macos
+        run: flutter build macos
+        working-directory: example
+
+  build_windows:
+    name: Build Windows
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.41.9"]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Check Windows SDK artifacts
+        id: windows_sdk
+        shell: bash
+        run: |
+          if grep -q 'set(IRIS_SDK_DOWNLOAD_URL "")' windows/cmake/DownloadSDK.cmake || \
+             grep -q 'set(NATIVE_SDK_DOWNLOAD_URL "")' windows/cmake/DownloadSDK.cmake; then
+            echo "::notice::Windows SDK URLs are empty; skipping Windows build until ci/run_update_deps.sh updates desktop dependencies."
+            echo "run_build=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "run_build=true" >> "${GITHUB_OUTPUT}"
+          fi
+      - run: flutter pub get
+        if: ${{ steps.windows_sdk.outputs.run_build == 'true' }}
+      - name: Run flutter build windows
+        if: ${{ steps.windows_sdk.outputs.run_build == 'true' }}
+        run: flutter build windows
         working-directory: example
 
   # This job aim to cover https://github.com/flutter/flutter/issues/135739

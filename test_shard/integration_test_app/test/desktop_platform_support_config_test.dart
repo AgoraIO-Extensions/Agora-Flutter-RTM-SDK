@@ -73,5 +73,24 @@ void main() {
       expect(integrationScript, contains('PLATFORM} == "macos"'));
       expect(integrationScript, contains('PLATFORM} == "windows"'));
     });
+
+    test('desktop platforms are covered by CI workflows', () {
+      final runTestWorkflow = readRepoFile('.github/workflows/run_test.yml');
+      final buildExampleWorkflow =
+          readRepoFile('.github/workflows/run_build_example.yml');
+
+      expect(runTestWorkflow, contains('integration_test_macos:'));
+      expect(runTestWorkflow, contains('integration_test_windows:'));
+      expect(runTestWorkflow, contains('build_macos:'));
+      expect(runTestWorkflow, contains('build_windows:'));
+      expect(runTestWorkflow,
+          contains('scripts/run_flutter_integration_test.sh "macos"'));
+      expect(runTestWorkflow,
+          contains('scripts/run_flutter_integration_test.sh "windows"'));
+      expect(buildExampleWorkflow,
+          contains('os: [ubuntu-latest, macos-14, windows-latest]'));
+      expect(buildExampleWorkflow, contains('os: macos-14'));
+      expect(buildExampleWorkflow, isNot(contains('os: macos-latest')));
+    });
   });
 }
