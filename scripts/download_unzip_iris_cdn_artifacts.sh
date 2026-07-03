@@ -43,8 +43,16 @@ if [[ ${PLATFORM} == "Android" ]];then
     
 fi
 
-if [[ ${PLATFORM} == "MAC" ]];then
-    cp -RP "${UNZIP_PATH}/Debugger/MAC/IrisDebugger.framework" "${IRIS_TESTER_PATH}/macos/"
+if [[ ${PLATFORM} == "MAC" || ${PLATFORM} == "macOS" ]];then
+    iris_debugger_framework=$(find "${UNZIP_PATH}" -name "IrisDebugger.framework" -type d | head -n 1)
+
+    if [[ -z "${iris_debugger_framework}" ]]; then
+        echo "IrisDebugger.framework not found under ${UNZIP_PATH}"
+        find "${UNZIP_PATH}" -maxdepth 5 -type d -name "IrisDebugger.framework" -print
+        exit 1
+    fi
+
+    cp -RP "${iris_debugger_framework}" "${IRIS_TESTER_PATH}/macos/"
 fi
 
 if [[ ${PLATFORM} == "iOS" ]];then
@@ -52,8 +60,17 @@ if [[ ${PLATFORM} == "iOS" ]];then
 fi
 
 if [[ ${PLATFORM} == "Windows" ]];then
-    cp -RP "${UNZIP_PATH}/Debugger/x64/IrisDebugger.dll" "${IRIS_TESTER_PATH}/windows/IrisDebugger.dll"
-    cp -RP "${UNZIP_PATH}/Debugger/x64/IrisDebugger.lib" "${IRIS_TESTER_PATH}/windows/IrisDebugger.lib"
+    iris_debugger_dll=$(find "${UNZIP_PATH}" -name "IrisDebugger.dll" | head -n 1)
+    iris_debugger_lib=$(find "${UNZIP_PATH}" -name "IrisDebugger.lib" | head -n 1)
+
+    if [[ -z "${iris_debugger_dll}" || -z "${iris_debugger_lib}" ]]; then
+        echo "IrisDebugger Windows binaries not found under ${UNZIP_PATH}"
+        find "${UNZIP_PATH}" -maxdepth 5 -type f \( -name "*.dll" -o -name "*.lib" \) -print
+        exit 1
+    fi
+
+    cp -RP "${iris_debugger_dll}" "${IRIS_TESTER_PATH}/windows/IrisDebugger.dll"
+    cp -RP "${iris_debugger_lib}" "${IRIS_TESTER_PATH}/windows/IrisDebugger.lib"
 fi
 
 # pushd ${UNZIP_PATH}
