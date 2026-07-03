@@ -5,7 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 Directory get repoRoot => Directory.current.parent.parent;
 
 String readRepoFile(String relativePath) {
-  return File('${repoRoot.path}/$relativePath').readAsStringSync();
+  return File('${repoRoot.path}/$relativePath')
+      .readAsStringSync()
+      .replaceAll('\r\n', '\n');
 }
 
 bool repoFileExists(String relativePath) {
