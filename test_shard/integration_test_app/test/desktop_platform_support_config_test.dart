@@ -92,5 +92,18 @@ void main() {
       expect(buildExampleWorkflow, contains('os: macos-14'));
       expect(buildExampleWorkflow, isNot(contains('os: macos-latest')));
     });
+
+    test('macos runners avoid duplicate aosl framework when RTC is present',
+        () {
+      final examplePodfile = readRepoFile('example/macos/Podfile');
+      final integrationPodfile =
+          readRepoFile('test_shard/integration_test_app/macos/Podfile');
+
+      for (final podfile in [examplePodfile, integrationPodfile]) {
+        expect(podfile, contains('AgoraRtm_OC_Special'));
+        expect(podfile, contains('aosl.xcframework'));
+        expect(podfile, contains('FileUtils.rm_rf'));
+      }
+    });
   });
 }

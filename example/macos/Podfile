@@ -40,3 +40,18 @@ post_install do |installer|
     flutter_additional_macos_build_settings(target)
   end
 end
+
+pre_install do |installer|
+  aosl_xcframework_path = File.join(
+    installer.sandbox.root,
+    'AgoraRtm_OC_Special',
+    'aosl.xcframework'
+  )
+
+  if File.exist?(aosl_xcframework_path)
+    puts "Deleting aosl.xcframework from #{aosl_xcframework_path}"
+    FileUtils.rm_rf(aosl_xcframework_path)
+  else
+    puts "aosl.xcframework not found at #{aosl_xcframework_path}, skipping."
+  end
+end
