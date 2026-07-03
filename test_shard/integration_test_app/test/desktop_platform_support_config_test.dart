@@ -66,8 +66,8 @@ void main() {
       expect(updateDeps, contains('dep_file_macos=macos/agora_rtm.podspec'));
       expect(updateDeps,
           contains('dep_file_windows=windows/cmake/DownloadSDK.cmake'));
-      expect(updateDeps, contains('platform" == "macOS"'));
-      expect(updateDeps, contains('platform" == "Windows"'));
+      expect(updateDeps, contains(r'"${platform}" == "macOS"'));
+      expect(updateDeps, contains(r'"${platform}" == "Windows"'));
       expect(artifactsVersion, contains('IRIS_CDN_URL_MACOS'));
       expect(artifactsVersion, contains('IRIS_CDN_URL_WINDOWS'));
       expect(integrationScript, contains('PLATFORM} == "macos"'));
