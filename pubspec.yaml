@@ -31,3 +31,5 @@ flutter:
         pluginClass: AgoraRtmPlugin
       macos:
         pluginClass: AgoraRtmPlugin
+      windows:
+        pluginClass: AgoraRtmPluginCApi
