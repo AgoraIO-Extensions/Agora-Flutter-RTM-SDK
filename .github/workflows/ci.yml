@@ -55,6 +55,7 @@ jobs:
           flutter-version: ${{ matrix.version }}
           cache: true
       - run: flutter pub get
+        working-directory: example
       - name: Run flutter build apk
         run: flutter build apk
         working-directory: example
@@ -73,6 +74,7 @@ jobs:
           flutter-version: ${{ matrix.version }}
           cache: true
       - run: flutter pub get
+        working-directory: example
       - name: Run flutter build ios --no-codesign
         run: flutter build ios --no-codesign
         working-directory: example
