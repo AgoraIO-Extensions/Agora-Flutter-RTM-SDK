@@ -51,7 +51,12 @@ android {
 }
 
 dependencies {
+    // iris dependencies start
+    // iris dependencies end
+
+    // native dependencies start
     api 'io.agora.rtm:rtm-special-sdk:1.5.3.216'
+    // native dependencies end
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
