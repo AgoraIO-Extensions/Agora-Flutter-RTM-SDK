@@ -76,7 +76,7 @@ class AgoraRtmChannel {
           onMemberLeft?.call(member);
           break;
       }
-    }, onError: onError);
+    }, onError: (error) => onError?.call(error));
   }
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {

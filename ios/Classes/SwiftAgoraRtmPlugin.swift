@@ -138,7 +138,13 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
     }
 
     func handleClientMethod(_ methodName: String?, _ params: [String: Any?]?, _ result: @escaping FlutterResult) {
-        if let clientIndex = params?["clientIndex"] as? Int, let agoraClient = clients[clientIndex], let client = agoraClient.client {
+        guard let clientIndex = params?["clientIndex"] as? Int,
+              let agoraClient = clients[clientIndex],
+              let client = agoraClient.client else {
+            result(["errorCode": -1])
+            return
+        }
+        do {
             let args = params?["args"] as? [String: Any?]
             switch methodName {
             case "release":
@@ -237,7 +243,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                     result(["errorCode": $0.rawValue])
                 }
             case "deleteLocalUserAttributesByKeys":
-                let keys = args?["keys"] as? [String]
+                let keys = args?["attributeKeys"] as? [String]
                 if keys == nil {
                     result(["errorCode": -1])
                     return
@@ -260,7 +266,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 }
             case "getUserAttributesByKeys":
                 let userId = args?["userId"] as? String
-                let keys = args?["keys"] as? [String]
+                let keys = args?["attributeKeys"] as? [String]
                 if userId == nil || keys == nil {
                     result(["errorCode": -1])
                     return
@@ -271,7 +277,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
             case "setChannelAttributes":
                 let channelId = args?["channelId"] as? String
                 let attributes = args?["attributes"] as? [[String: Any?]] ?? []
-                let options = args?["options"] as? [String: Any?] ?? [:]
+                let options = args?["option"] as? [String: Any?] ?? [:]
                 if channelId == nil {
                     result(["errorCode": -1])
                     return
@@ -282,7 +288,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
             case "addOrUpdateChannelAttributes":
                 let channelId = args?["channelId"] as? String
                 let attributes = args?["attributes"] as? [[String: Any?]] ?? []
-                let options = args?["options"] as? [String: Any?] ?? [:]
+                let options = args?["option"] as? [String: Any?] ?? [:]
                 if channelId == nil {
                     result(["errorCode": -1])
                     return
@@ -292,8 +298,8 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 }
             case "deleteChannelAttributesByKeys":
                 let channelId = args?["channelId"] as? String
-                let keys = args?["keys"] as? [String]
-                let options = args?["options"] as? [String: Any?] ?? [:]
+                let keys = args?["attributeKeys"] as? [String]
+                let options = args?["option"] as? [String: Any?] ?? [:]
                 if channelId == nil || keys == nil {
                     result(["errorCode": -1])
                     return
@@ -303,7 +309,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 }
             case "clearChannelAttributes":
                 let channelId = args?["channelId"] as? String
-                let options = args?["options"] as? [String: Any?] ?? [:]
+                let options = args?["option"] as? [String: Any?] ?? [:]
                 if channelId == nil {
                     result(["errorCode": -1])
                     return
@@ -322,7 +328,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                 }
             case "getChannelAttributesByKeys":
                 let channelId = args?["channelId"] as? String
-                let keys = args?["keys"] as? [String]
+                let keys = args?["attributeKeys"] as? [String]
                 if channelId == nil || keys == nil {
                     result(["errorCode": -1])
                     return
@@ -378,9 +384,15 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
     }
 
     func handleChannelMethod(_ methodName: String?, _ params: [String: Any?]?, _ result: @escaping FlutterResult) {
-        if let clientIndex = params?["clientIndex"] as? Int, let channelId = params?["channelId"] as? String, let agoraClient = clients[clientIndex], let channel = agoraClient.channels[channelId] {
-            let args = params?["args"] as? [String: Any?]
-            switch methodName {
+        guard let clientIndex = params?["clientIndex"] as? Int,
+              let channelId = params?["channelId"] as? String,
+              let agoraClient = clients[clientIndex],
+              let channel = agoraClient.channels[channelId] else {
+            result(["errorCode": -1])
+            return
+        }
+        let args = params?["args"] as? [String: Any?]
+        switch methodName {
             case "join":
                 channel.join {
                     result(["errorCode": $0.rawValue])
@@ -400,15 +412,13 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
                     result(["errorCode": $1.rawValue, "result": $0?.toJson()])
                 }
             case "release":
-                if let errorCode = agoraClient.client?.destroyChannel(withId: channelId) {
+                let released = agoraClient.client?.destroyChannel(withId: channelId) ?? false
+                if released {
                     agoraClient.channels.removeValue(forKey: channelId)
-                    if errorCode {
-                        result(["errorCode": 0])
-                    }
                 }
+                result(["errorCode": released ? 0 : -1])
             default:
                 result(FlutterMethodNotImplemented)
-            }
         }
     }
 }

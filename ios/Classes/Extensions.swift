@@ -168,11 +168,14 @@ extension Dictionary where Key == String {
 
     func toRtmServiceContext() -> AgoraRtmServiceContext {
         let context = AgoraRtmServiceContext()
-        if let areaCode = self["areaCode"] as? UInt {
-            context.areaCode = AgoraRtmAreaCode(rawValue: areaCode)
+        if let areaCodes = self["areaCode"] as? [Int] {
+            let rawValue = areaCodes.contains(where: { $0 < 0 })
+                ? UInt(UInt32.max)
+                : UInt(areaCodes.reduce(0) { mask, areaCode in mask | areaCode })
+            context.areaCode = AgoraRtmAreaCode(rawValue: rawValue)
         }
-        if let proxyType = self["proxyType"] as? UInt {
-            context.proxyType = AgoraRtmCloudProxyType(rawValue: proxyType)
+        if let proxyType = self["proxyType"] as? Int, proxyType >= 0 {
+            context.proxyType = AgoraRtmCloudProxyType(rawValue: UInt(proxyType))
         }
         return context
     }
