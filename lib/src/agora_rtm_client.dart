@@ -14,6 +14,9 @@ class AgoraRtmClientException implements Exception {
   final int code;
 
   AgoraRtmClientException(this.reason, this.code) : super();
+
+  @override
+  String toString() => 'AgoraRtmClientException($code, $reason)';
 }
 
 class AgoraRtmClient {

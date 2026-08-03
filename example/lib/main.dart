@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:agora_rtm/agora_rtm.dart';
@@ -54,15 +55,23 @@ class MyAppState extends State<MyApp> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildLogin(),
-                _buildQueryOnlineStatus(),
-                _buildSubscribeOnlineStatus(),
-                _buildSendPeerMessage(),
-                _buildLocalInvitation(),
-                _buildRemoteInvitation(),
-                _buildJoinChannel(),
-                _buildGetMembers(),
-                _buildSendChannelMessage(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildLogin(),
+                        _buildQueryOnlineStatus(),
+                        _buildSubscribeOnlineStatus(),
+                        _buildSendPeerMessage(),
+                        _buildLocalInvitation(),
+                        _buildRemoteInvitation(),
+                        _buildJoinChannel(),
+                        _buildGetMembers(),
+                        _buildSendChannelMessage(),
+                      ],
+                    ),
+                  ),
+                ),
                 _buildInfoList(),
               ],
             ),
@@ -71,12 +80,23 @@ class MyAppState extends State<MyApp> {
   }
 
   void _createClient() async {
-    _client = await AgoraRtmClient.createInstance('YOUR_APP_ID');
-    _log(await AgoraRtmClient.getSdkVersion());
-    await _client?.setParameters('{"rtm.log_filter": 15}');
-    await _client?.setLogFile('');
-    await _client?.setLogFilter(RtmLogFilter.info);
-    await _client?.setLogFileSize(10240);
+    try {
+      const appId = String.fromEnvironment(
+        'TEST_APP_ID',
+        defaultValue: 'YOUR_APP_ID',
+      );
+      _client = await AgoraRtmClient.createInstance(appId);
+      _log(await AgoraRtmClient.getSdkVersion());
+      await _client?.setParameters('{"rtm.log_filter": 15}');
+      // Native SDK rejects an empty path; use a writable temp file.
+      final logPath = '${Directory.systemTemp.path}/agora_rtm.log';
+      await _client?.setLogFile(logPath);
+      await _client?.setLogFilter(RtmLogFilter.info);
+      await _client?.setLogFileSize(10240);
+    } catch (error) {
+      _log('Create client error: $error');
+      return;
+    }
     _client?.onError = (error) {
       _log("Client error: $error");
     };
@@ -256,7 +276,7 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
+    return Wrap(spacing: 8, runSpacing: 4, children: <Widget>[
       OutlinedButton(
         onPressed: _subscribePeersOnlineStatus,
         child: Text('Subscribe Online', style: textStyle),
@@ -308,7 +328,7 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin || _remoteInvitation == null) {
       return Container();
     }
-    return Row(children: <Widget>[
+    return Wrap(spacing: 8, runSpacing: 4, children: <Widget>[
       OutlinedButton(
         onPressed: _acceptRemoteInvitation,
         child: Text('accept remote invitation', style: textStyle),
@@ -363,7 +383,7 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin || !_isInChannel) {
       return Container();
     }
-    return Row(children: <Widget>[
+    return Wrap(spacing: 8, runSpacing: 4, children: <Widget>[
       OutlinedButton(
         onPressed: _getMembers,
         child: Text('Get Members in Channel', style: textStyle),
@@ -377,16 +397,16 @@ class MyAppState extends State<MyApp> {
 
   Widget _buildInfoList() {
     return Expanded(
-        child: ListView.builder(
-      itemExtent: 24,
-      itemBuilder: (context, i) {
-        return ListTile(
-          contentPadding: const EdgeInsets.all(0.0),
-          title: Text(_infoStrings[i]),
-        );
-      },
-      itemCount: _infoStrings.length,
-    ));
+      child: ListView.builder(
+        itemBuilder: (context, i) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(_infoStrings[i]),
+          );
+        },
+        itemCount: _infoStrings.length,
+      ),
+    );
   }
 
   void _toggleLogin() async {

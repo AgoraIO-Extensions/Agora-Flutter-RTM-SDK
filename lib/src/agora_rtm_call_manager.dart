@@ -10,6 +10,9 @@ class AgoraRtmCallManagerException implements Exception {
   final int code;
 
   AgoraRtmCallManagerException(this.reason, this.code) : super();
+
+  @override
+  String toString() => 'AgoraRtmCallManagerException($code, $reason)';
 }
 
 class AgoraRtmCallManager {

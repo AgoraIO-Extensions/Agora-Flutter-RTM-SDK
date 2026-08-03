@@ -11,6 +11,9 @@ class AgoraRtmChannelException implements Exception {
   final int code;
 
   AgoraRtmChannelException(this.reason, this.code) : super();
+
+  @override
+  String toString() => 'AgoraRtmChannelException($code, $reason)';
 }
 
 class AgoraRtmChannel {
