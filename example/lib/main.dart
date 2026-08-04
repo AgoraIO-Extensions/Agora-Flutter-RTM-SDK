@@ -157,7 +157,9 @@ class MyAppState extends State<MyApp> {
     };
     client.onPeersOnlineStatusChanged =
         (Map<String, RtmPeerOnlineState> peersStatus) {
-      _log("Peers online status changed ${peersStatus.toString()}");
+      _log(
+        "Peers online status changed: ${_formatPeerOnlineStatuses(peersStatus)}",
+      );
     };
 
     final callManager = client.getRtmCallManager();
@@ -256,7 +258,7 @@ class MyAppState extends State<MyApp> {
         _log("Member count updated: $memberCount");
       };
       channel.onAttributesUpdated = (List<RtmChannelAttribute> attributes) {
-        _log("Channel attributes updated: ${attributes.toString()}");
+        _log("Channel attributes updated: ${_formatLogValue(attributes)}");
       };
       channel.onMessageReceived =
           (RtmMessage message, RtmChannelMember member) {
@@ -655,15 +657,15 @@ class MyAppState extends State<MyApp> {
       try {
         List<String>? result = await _client?.queryPeersBySubscriptionOption(
             RtmPeerSubscriptionOption.onlineStatus);
-        _log('Query result: $result');
+        _log('Query result: ${_formatLogValue(result)}');
       } catch (errorCode) {
         _log('Query error: $errorCode');
       }
     } else {
       try {
-        Map<dynamic, dynamic>? result =
+        Map<String, RtmPeerOnlineState>? result =
             await _client?.queryPeersOnlineStatus([peerUid]);
-        _log('Query result: $result');
+        _log('Query result: ${_formatPeerOnlineStatuses(result)}');
       } catch (errorCode) {
         _log('Query error: $errorCode');
       }
@@ -790,7 +792,9 @@ class MyAppState extends State<MyApp> {
     }
     try {
       final result = await operation(client);
-      _log(result == null ? '$name success' : '$name: $result');
+      _log(result == null
+          ? '$name success'
+          : '$name: ${_formatLogValue(result)}');
     } catch (errorCode) {
       _log('$name error: $errorCode');
     }
@@ -1099,7 +1103,7 @@ class MyAppState extends State<MyApp> {
   void _getMembers() async {
     try {
       List<RtmChannelMember>? members = await _channel?.getMembers();
-      _log('Members: ${members?.map((m) => m.toJson()).toList()}');
+      _log('Members: ${_formatLogValue(members)}');
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
     }
@@ -1115,7 +1119,7 @@ class MyAppState extends State<MyApp> {
     try {
       List<RtmChannelMemberCount>? members =
           await _client?.getChannelMemberCount([channelId]);
-      _log('Member count: ${members?.map((m) => m.toJson()).toList()}');
+      _log('Member count: ${_formatLogValue(members)}');
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
     }
@@ -1153,6 +1157,31 @@ class MyAppState extends State<MyApp> {
       return;
     }
     setState(update);
+  }
+
+  String _formatPeerOnlineStatuses(
+    Map<String, RtmPeerOnlineState>? statuses,
+  ) {
+    if (statuses == null) {
+      return 'null';
+    }
+    const statusNames = <RtmPeerOnlineState, String>{
+      RtmPeerOnlineState.online: 'online',
+      RtmPeerOnlineState.unreachable: 'unreachable',
+      RtmPeerOnlineState.offline: 'offline',
+    };
+    final values = statuses.map(
+      (peerId, state) => MapEntry(peerId, statusNames[state] ?? 'unknown'),
+    );
+    return _formatLogValue(values);
+  }
+
+  String _formatLogValue(Object? value) {
+    try {
+      return jsonEncode(value);
+    } on JsonUnsupportedObjectError {
+      return '<unsupported ${value.runtimeType}>';
+    }
   }
 
   void _log(String info) {
