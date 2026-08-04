@@ -131,7 +131,7 @@ public class SwiftAgoraRtmPlugin: NSObject, FlutterPlugin {
             result(["errorCode": 0, "result": AgoraRtmKit.getSDKVersion()])
         case "setRtmServiceContext":
             let context = params?["context"] as? [String: Any?] ?? [:]
-            result(["errorCode": AgoraRtmKit.setRtmServiceContext(context.toRtmServiceContext())])
+            result(["errorCode": AgoraRtmKit.setRtmServiceContext(context.toRtmServiceContext()).rawValue])
         default:
             result(FlutterMethodNotImplemented)
         }
