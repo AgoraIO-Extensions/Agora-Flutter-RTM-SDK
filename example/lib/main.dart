@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:agora_rtm/agora_rtm.dart';
@@ -14,6 +16,9 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  static const _token = String.fromEnvironment('TEST_TOKEN');
+
+  bool _isClientReady = false;
   bool _isLogin = false;
   bool _isInChannel = false;
   LocalInvitation? _localInvitation;
@@ -25,6 +30,8 @@ class MyAppState extends State<MyApp> {
   final _invitationController = TextEditingController();
   final _channelNameController = TextEditingController();
   final _channelMessageController = TextEditingController();
+  final _attributeKeyController = TextEditingController();
+  final _attributeValueController = TextEditingController();
 
   final _infoStrings = <String>[];
 
@@ -39,7 +46,18 @@ class MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _client?.release();
+    final client = _client;
+    _client = null;
+    _channel = null;
+    _userNameController.dispose();
+    _peerUserIdController.dispose();
+    _peerMessageController.dispose();
+    _invitationController.dispose();
+    _channelNameController.dispose();
+    _channelMessageController.dispose();
+    _attributeKeyController.dispose();
+    _attributeValueController.dispose();
+    client?.release();
     super.dispose();
   }
 
@@ -54,15 +72,25 @@ class MyAppState extends State<MyApp> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildLogin(),
-                _buildQueryOnlineStatus(),
-                _buildSubscribeOnlineStatus(),
-                _buildSendPeerMessage(),
-                _buildLocalInvitation(),
-                _buildRemoteInvitation(),
-                _buildJoinChannel(),
-                _buildGetMembers(),
-                _buildSendChannelMessage(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildLogin(),
+                        _buildQueryOnlineStatus(),
+                        _buildSubscribeOnlineStatus(),
+                        _buildSendPeerMessage(),
+                        _buildUserAttributes(),
+                        _buildLocalInvitation(),
+                        _buildRemoteInvitation(),
+                        _buildJoinChannel(),
+                        _buildGetMembers(),
+                        _buildSendChannelMessage(),
+                        _buildChannelAttributes(),
+                      ],
+                    ),
+                  ),
+                ),
                 _buildInfoList(),
               ],
             ),
@@ -70,121 +98,154 @@ class MyAppState extends State<MyApp> {
     );
   }
 
-  void _createClient() async {
-    _client = await AgoraRtmClient.createInstance('YOUR_APP_ID');
-    _log(await AgoraRtmClient.getSdkVersion());
-    await _client?.setParameters('{"rtm.log_filter": 15}');
-    await _client?.setLogFile('');
-    await _client?.setLogFilter(RtmLogFilter.info);
-    await _client?.setLogFileSize(10240);
-    _client?.onError = (error) {
+  Future<void> _createClient() async {
+    AgoraRtmClient? client;
+    try {
+      const appId = String.fromEnvironment(
+        'TEST_APP_ID',
+        defaultValue: 'dd8dfbf0f9484a8c960546ffe4ba4dce',
+      );
+      await AgoraRtmClient.setRtmServiceContext(RtmServiceContext());
+      client = await AgoraRtmClient.createInstance(appId);
+      if (!mounted) {
+        await client.release();
+        return;
+      }
+      _client = client;
+      _log(await AgoraRtmClient.getSdkVersion());
+      await client.setParameters('{"rtm.log_filter": 15}');
+      // Native SDK rejects an empty path; use a writable temp file.
+      final logPath = '${Directory.systemTemp.path}/agora_rtm.log';
+      await client.setLogFile(logPath);
+      await client.setLogFilter(RtmLogFilter.info);
+      await client.setLogFileSize(10240);
+    } catch (error) {
+      _log('Create client error: $error');
+      if (identical(_client, client)) {
+        _client = null;
+        try {
+          await client?.release();
+        } catch (releaseError) {
+          _log('Release client error: $releaseError');
+        }
+      }
+      return;
+    }
+
+    if (!mounted || !identical(_client, client)) {
+      return;
+    }
+
+    client.onError = (error) {
       _log("Client error: $error");
     };
-    _client?.onConnectionStateChanged2 =
+    client.onConnectionStateChanged2 =
         (RtmConnectionState state, RtmConnectionChangeReason reason) {
       _log('Connection state changed: $state, reason: $reason');
       if (state == RtmConnectionState.aborted) {
-        _client?.logout();
-        _log('Logout');
-        setState(() {
-          _isLogin = false;
-        });
+        _handleConnectionAborted();
       }
     };
-    _client?.onMessageReceived = (RtmMessage message, String peerId) {
+    client.onMessageReceived = (RtmMessage message, String peerId) {
       _log("Peer msg: $peerId, msg: ${message.messageType} ${message.text}");
     };
-    _client?.onTokenExpired = () {
+    client.onTokenExpired = () {
       _log("Token expired");
     };
-    _client?.onTokenPrivilegeWillExpire = () {
+    client.onTokenPrivilegeWillExpire = () {
       _log("Token privilege will expire");
     };
-    _client?.onPeersOnlineStatusChanged =
+    client.onPeersOnlineStatusChanged =
         (Map<String, RtmPeerOnlineState> peersStatus) {
-      _log("Peers online status changed ${peersStatus.toString()}");
+      _log(
+        "Peers online status changed: ${_formatPeerOnlineStatuses(peersStatus)}",
+      );
     };
 
-    var callManager = _client?.getRtmCallManager();
-    callManager?.onError = (error) {
+    final callManager = client.getRtmCallManager();
+    callManager.onError = (error) {
       _log('Call manager error: $error');
     };
-    callManager?.onLocalInvitationReceivedByPeer =
+    callManager.onLocalInvitationReceivedByPeer =
         (LocalInvitation localInvitation) {
       _log(
           'Local invitation received by peer: ${localInvitation.calleeId}, content: ${localInvitation.content}');
     };
-    callManager?.onLocalInvitationAccepted =
+    callManager.onLocalInvitationAccepted =
         (LocalInvitation localInvitation, String response) {
       _log(
           'Local invitation accepted by peer: ${localInvitation.calleeId}, response: $response');
-      setState(() {
+      _updateState(() {
         _localInvitation = null;
       });
     };
-    callManager?.onLocalInvitationRefused =
+    callManager.onLocalInvitationRefused =
         (LocalInvitation localInvitation, String response) {
       _log(
           'Local invitation refused by peer: ${localInvitation.calleeId}, response: $response');
-      setState(() {
+      _updateState(() {
         _localInvitation = null;
       });
     };
-    callManager?.onLocalInvitationCanceled = (LocalInvitation localInvitation) {
+    callManager.onLocalInvitationCanceled = (LocalInvitation localInvitation) {
       _log(
           'Local invitation canceled: ${localInvitation.calleeId}, content: ${localInvitation.content}');
-      setState(() {
+      _updateState(() {
         _localInvitation = null;
       });
     };
-    callManager?.onLocalInvitationFailure =
+    callManager.onLocalInvitationFailure =
         (LocalInvitation localInvitation, int errorCode) {
       _log(
           'Local invitation failure: ${localInvitation.calleeId}, errorCode: $errorCode');
-      setState(() {
+      _updateState(() {
         _localInvitation = null;
       });
     };
-    callManager?.onRemoteInvitationReceived =
+    callManager.onRemoteInvitationReceived =
         (RemoteInvitation remoteInvitation) {
       _log(
           'Remote invitation received by peer: ${remoteInvitation.callerId}, content: ${remoteInvitation.content}');
-      setState(() {
+      _updateState(() {
         _remoteInvitation = remoteInvitation;
       });
     };
-    callManager?.onRemoteInvitationAccepted =
+    callManager.onRemoteInvitationAccepted =
         (RemoteInvitation remoteInvitation) {
       _log(
           'Remote invitation accepted by peer: ${remoteInvitation.callerId}, content: ${remoteInvitation.content}');
-      setState(() {
+      _updateState(() {
         _remoteInvitation = null;
       });
     };
-    callManager?.onRemoteInvitationRefused =
+    callManager.onRemoteInvitationRefused =
         (RemoteInvitation remoteInvitation) {
       _log(
           'Remote invitation refused by peer: ${remoteInvitation.callerId}, content: ${remoteInvitation.content}');
-      setState(() {
+      _updateState(() {
         _remoteInvitation = null;
       });
     };
-    callManager?.onRemoteInvitationCanceled =
+    callManager.onRemoteInvitationCanceled =
         (RemoteInvitation remoteInvitation) {
       _log(
           'Remote invitation canceled: ${remoteInvitation.callerId}, content: ${remoteInvitation.content}');
-      setState(() {
+      _updateState(() {
         _remoteInvitation = null;
       });
     };
-    callManager?.onRemoteInvitationFailure =
+    callManager.onRemoteInvitationFailure =
         (RemoteInvitation remoteInvitation, int errorCode) {
       _log(
           'Remote invitation failure: ${remoteInvitation.callerId}, errorCode: $errorCode');
-      setState(() {
+      _updateState(() {
         _remoteInvitation = null;
       });
     };
+
+    _updateState(() {
+      _isClientReady = true;
+    });
   }
 
   Future<AgoraRtmChannel?> _createChannel(String name) async {
@@ -197,7 +258,7 @@ class MyAppState extends State<MyApp> {
         _log("Member count updated: $memberCount");
       };
       channel.onAttributesUpdated = (List<RtmChannelAttribute> attributes) {
-        _log("Channel attributes updated: ${attributes.toString()}");
+        _log("Channel attributes updated: ${_formatLogValue(attributes)}");
       };
       channel.onMessageReceived =
           (RtmMessage message, RtmChannelMember member) {
@@ -217,46 +278,90 @@ class MyAppState extends State<MyApp> {
   static TextStyle textStyle =
       const TextStyle(fontSize: 18, color: Colors.blue);
 
+  Widget _buildTextFieldAction({
+    required TextEditingController controller,
+    required String hintText,
+    required String actionText,
+    required VoidCallback? onPressed,
+  }) {
+    final textField = TextField(
+      controller: controller,
+      decoration: InputDecoration(hintText: hintText),
+    );
+    final button = OutlinedButton(
+      onPressed: onPressed,
+      child: Text(actionText, style: textStyle),
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 420) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              textField,
+              Align(alignment: Alignment.centerRight, child: button),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: textField),
+            button,
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildLogin() {
-    return Row(children: <Widget>[
-      _isLogin
-          ? Expanded(
-              child: Text('User Id: ${_userNameController.text}',
-                  style: textStyle))
-          : Expanded(
-              child: TextField(
-                  controller: _userNameController,
-                  decoration:
-                      const InputDecoration(hintText: 'Input your user id'))),
-      OutlinedButton(
-        onPressed: _toggleLogin,
-        child: Text(_isLogin ? 'Logout' : 'Login', style: textStyle),
-      )
-    ]);
+    return Column(
+      children: [
+        if (_isLogin)
+          Row(children: <Widget>[
+            Expanded(
+                child: Text('User Id: ${_userNameController.text}',
+                    style: textStyle)),
+            OutlinedButton(
+              onPressed: _toggleLogin,
+              child: Text('Logout', style: textStyle),
+            )
+          ])
+        else
+          _buildTextFieldAction(
+            controller: _userNameController,
+            hintText: 'Input your user id',
+            actionText: _isClientReady ? 'Login' : 'Initializing',
+            onPressed: _isClientReady ? _toggleLogin : null,
+          ),
+        if (_isLogin && _token.isNotEmpty)
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton(
+              onPressed: _renewToken,
+              child: Text('Renew Token', style: textStyle),
+            ),
+          ),
+      ],
+    );
   }
 
   Widget _buildQueryOnlineStatus() {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
-      Expanded(
-          child: TextField(
-              controller: _peerUserIdController,
-              decoration:
-                  const InputDecoration(hintText: 'Input peer user id'))),
-      OutlinedButton(
-        onPressed: _toggleQueryPeersOnlineStatus,
-        child: Text('Query Online', style: textStyle),
-      )
-    ]);
+    return _buildTextFieldAction(
+      controller: _peerUserIdController,
+      hintText: 'Input peer user id',
+      actionText: 'Query Online',
+      onPressed: _toggleQueryPeersOnlineStatus,
+    );
   }
 
   Widget _buildSubscribeOnlineStatus() {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
+    return Wrap(spacing: 8, runSpacing: 4, children: <Widget>[
       OutlinedButton(
         onPressed: _subscribePeersOnlineStatus,
         child: Text('Subscribe Online', style: textStyle),
@@ -272,43 +377,89 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
-      Expanded(
-          child: TextField(
-              controller: _peerMessageController,
-              decoration:
-                  const InputDecoration(hintText: 'Input peer message'))),
-      OutlinedButton(
-        onPressed: _sendPeerMessage,
-        child: Text('Send to Peer', style: textStyle),
-      )
-    ]);
+    return _buildTextFieldAction(
+      controller: _peerMessageController,
+      hintText: 'Input peer message',
+      actionText: 'Send to Peer',
+      onPressed: _sendPeerMessage,
+    );
+  }
+
+  Widget _buildUserAttributes() {
+    if (!_isLogin) {
+      return Container();
+    }
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _attributeKeyController,
+                decoration: const InputDecoration(hintText: 'Attribute key'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: TextField(
+                controller: _attributeValueController,
+                decoration: const InputDecoration(hintText: 'Attribute value'),
+              ),
+            ),
+          ],
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: [
+            OutlinedButton(
+              onPressed: _setUserAttributes,
+              child: Text('Set User Attr', style: textStyle),
+            ),
+            OutlinedButton(
+              onPressed: _addOrUpdateUserAttributes,
+              child: Text('Update User Attr', style: textStyle),
+            ),
+            OutlinedButton(
+              onPressed: _deleteUserAttributes,
+              child: Text('Delete User Attr', style: textStyle),
+            ),
+            OutlinedButton(
+              onPressed: _clearUserAttributes,
+              child: Text('Clear User Attr', style: textStyle),
+            ),
+            OutlinedButton(
+              onPressed: _getUserAttributes,
+              child: Text('Get User Attrs', style: textStyle),
+            ),
+            OutlinedButton(
+              onPressed: _getUserAttributesByKeys,
+              child: Text('Get User Attr', style: textStyle),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Widget _buildLocalInvitation() {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
-      Expanded(
-          child: TextField(
-              controller: _invitationController,
-              decoration:
-                  const InputDecoration(hintText: 'Input invitation content'))),
-      OutlinedButton(
-        onPressed: _toggleLocalInvitation,
-        child: Text(
-            '${_localInvitation == null ? 'Send' : 'Cancel'} local invitation',
-            style: textStyle),
-      )
-    ]);
+    return _buildTextFieldAction(
+      controller: _invitationController,
+      hintText: 'Input invitation content',
+      actionText:
+          '${_localInvitation == null ? 'Send' : 'Cancel'} local invitation',
+      onPressed: _toggleLocalInvitation,
+    );
   }
 
   Widget _buildRemoteInvitation() {
     if (!_isLogin || _remoteInvitation == null) {
       return Container();
     }
-    return Row(children: <Widget>[
+    return Wrap(spacing: 8, runSpacing: 4, children: <Widget>[
       OutlinedButton(
         onPressed: _acceptRemoteInvitation,
         child: Text('accept remote invitation', style: textStyle),
@@ -324,46 +475,78 @@ class MyAppState extends State<MyApp> {
     if (!_isLogin) {
       return Container();
     }
-    return Row(children: <Widget>[
-      _isInChannel
-          ? Expanded(
-              child: Text('Channel: ${_channelNameController.text}',
-                  style: textStyle))
-          : Expanded(
-              child: TextField(
-                  controller: _channelNameController,
-                  decoration:
-                      const InputDecoration(hintText: 'Input channel id'))),
-      OutlinedButton(
-        onPressed: _toggleJoinChannel,
-        child: Text(_isInChannel ? 'Leave Channel' : 'Join Channel',
-            style: textStyle),
-      )
-    ]);
+    if (_isInChannel) {
+      return Row(children: <Widget>[
+        Expanded(
+            child: Text('Channel: ${_channelNameController.text}',
+                style: textStyle)),
+        OutlinedButton(
+          onPressed: _toggleJoinChannel,
+          child: Text('Leave Channel', style: textStyle),
+        )
+      ]);
+    }
+    return _buildTextFieldAction(
+      controller: _channelNameController,
+      hintText: 'Input channel id',
+      actionText: 'Join Channel',
+      onPressed: _toggleJoinChannel,
+    );
+  }
+
+  Widget _buildChannelAttributes() {
+    if (!_isLogin) {
+      return Container();
+    }
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: [
+        OutlinedButton(
+          onPressed: _setChannelAttributes,
+          child: Text('Set Channel Attr', style: textStyle),
+        ),
+        OutlinedButton(
+          onPressed: _addOrUpdateChannelAttributes,
+          child: Text('Update Channel Attr', style: textStyle),
+        ),
+        OutlinedButton(
+          onPressed: _deleteChannelAttributes,
+          child: Text('Delete Channel Attr', style: textStyle),
+        ),
+        OutlinedButton(
+          onPressed: _clearChannelAttributes,
+          child: Text('Clear Channel Attr', style: textStyle),
+        ),
+        OutlinedButton(
+          onPressed: _getChannelAttributes,
+          child: Text('Get Channel Attrs', style: textStyle),
+        ),
+        OutlinedButton(
+          onPressed: _getChannelAttributesByKeys,
+          child: Text('Get Channel Attr', style: textStyle),
+        ),
+      ],
+    );
   }
 
   Widget _buildSendChannelMessage() {
     if (!_isLogin || !_isInChannel) {
       return Container();
     }
-    return Row(children: <Widget>[
-      Expanded(
-          child: TextField(
-              controller: _channelMessageController,
-              decoration:
-                  const InputDecoration(hintText: 'Input channel message'))),
-      OutlinedButton(
-        onPressed: _sendChannelMessage,
-        child: Text('Send to Channel', style: textStyle),
-      )
-    ]);
+    return _buildTextFieldAction(
+      controller: _channelMessageController,
+      hintText: 'Input channel message',
+      actionText: 'Send to Channel',
+      onPressed: _sendChannelMessage,
+    );
   }
 
   Widget _buildGetMembers() {
     if (!_isLogin || !_isInChannel) {
       return Container();
     }
-    return Row(children: <Widget>[
+    return Wrap(spacing: 8, runSpacing: 4, children: <Widget>[
       OutlinedButton(
         onPressed: _getMembers,
         child: Text('Get Members in Channel', style: textStyle),
@@ -377,27 +560,73 @@ class MyAppState extends State<MyApp> {
 
   Widget _buildInfoList() {
     return Expanded(
-        child: ListView.builder(
-      itemExtent: 24,
-      itemBuilder: (context, i) {
-        return ListTile(
-          contentPadding: const EdgeInsets.all(0.0),
-          title: Text(_infoStrings[i]),
-        );
-      },
-      itemCount: _infoStrings.length,
-    ));
+      child: ListView.builder(
+        itemBuilder: (context, i) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(_infoStrings[i]),
+          );
+        },
+        itemCount: _infoStrings.length,
+      ),
+    );
   }
 
-  void _toggleLogin() async {
+  Future<void> _handleConnectionAborted() async {
+    try {
+      await _leaveAndReleaseChannel();
+    } catch (errorCode) {
+      _log('Leave channel error: $errorCode');
+    }
+    try {
+      await _client?.logout();
+    } catch (errorCode) {
+      _log('Logout error: $errorCode');
+    } finally {
+      _updateState(() {
+        _isLogin = false;
+      });
+    }
+  }
+
+  Future<void> _renewToken() async {
+    final client = _client;
+    if (client == null || !_isClientReady) {
+      _log('Client is not ready');
+      return;
+    }
+    if (_token.isEmpty) {
+      _log('TEST_TOKEN is empty');
+      return;
+    }
+    try {
+      const token = _token;
+      await client.renewToken(token);
+      _log('Renew token success');
+    } catch (errorCode) {
+      _log('Renew token error: $errorCode');
+    }
+  }
+
+  Future<void> _toggleLogin() async {
+    final client = _client;
+    if (client == null || !_isClientReady) {
+      _log('Client is not ready');
+      return;
+    }
+
     if (_isLogin) {
       try {
-        await _client?.logout();
+        await _leaveAndReleaseChannel();
+      } catch (errorCode) {
+        _log('Leave channel error: $errorCode');
+      }
+      try {
+        await client.logout();
         _log('Logout success');
 
-        setState(() {
+        _updateState(() {
           _isLogin = false;
-          _isInChannel = false;
         });
       } catch (errorCode) {
         _log('Logout error: $errorCode');
@@ -410,9 +639,10 @@ class MyAppState extends State<MyApp> {
       }
 
       try {
-        await _client?.login(null, userId);
+        final String? token = _token.isEmpty ? null : _token;
+        await client.login(token, userId);
         _log('Login success: $userId');
-        setState(() {
+        _updateState(() {
           _isLogin = true;
         });
       } catch (errorCode) {
@@ -427,15 +657,15 @@ class MyAppState extends State<MyApp> {
       try {
         List<String>? result = await _client?.queryPeersBySubscriptionOption(
             RtmPeerSubscriptionOption.onlineStatus);
-        _log('Query result: $result');
+        _log('Query result: ${_formatLogValue(result)}');
       } catch (errorCode) {
         _log('Query error: $errorCode');
       }
     } else {
       try {
-        Map<dynamic, dynamic>? result =
+        Map<String, RtmPeerOnlineState>? result =
             await _client?.queryPeersOnlineStatus([peerUid]);
-        _log('Query result: $result');
+        _log('Query result: ${_formatPeerOnlineStatuses(result)}');
       } catch (errorCode) {
         _log('Query error: $errorCode');
       }
@@ -489,12 +719,237 @@ class MyAppState extends State<MyApp> {
       RtmMessage? message = _client?.createTextMessage(text);
       if (message != null) {
         _log(message.text);
-        await _client?.sendMessageToPeer2(peerUid, message);
+        await _client?.sendMessageToPeer2(
+          peerUid,
+          message,
+          SendMessageOptions(),
+        );
         _log('Send peer message success');
       }
     } catch (errorCode) {
       _log('Send peer message error: $errorCode');
     }
+  }
+
+  RtmAttribute? _userAttribute() {
+    final key = _attributeKeyController.text.trim();
+    final value = _attributeValueController.text;
+    if (key.isEmpty) {
+      _log('Please input an attribute key');
+      return null;
+    }
+    if (value.isEmpty) {
+      _log('Please input an attribute value');
+      return null;
+    }
+    return RtmAttribute(key, value);
+  }
+
+  RtmChannelAttribute? _channelAttribute() {
+    final attribute = _userAttribute();
+    if (attribute == null) {
+      return null;
+    }
+    return RtmChannelAttribute(attribute.key, attribute.value);
+  }
+
+  String? _attributeKey() {
+    final key = _attributeKeyController.text.trim();
+    if (key.isEmpty) {
+      _log('Please input an attribute key');
+      return null;
+    }
+    return key;
+  }
+
+  String? _attributeUserId() {
+    final peerId = _peerUserIdController.text.trim();
+    final userId = peerId.isEmpty ? _userNameController.text.trim() : peerId;
+    if (userId.isEmpty) {
+      _log('Please input a user id');
+      return null;
+    }
+    return userId;
+  }
+
+  String? _attributeChannelId() {
+    final channelId = _channelNameController.text.trim();
+    if (channelId.isEmpty) {
+      _log('Please input a channel id');
+      return null;
+    }
+    return channelId;
+  }
+
+  Future<void> _runClientOperation(
+    String name,
+    Future<dynamic> Function(AgoraRtmClient client) operation,
+  ) async {
+    final client = _client;
+    if (client == null || !_isClientReady) {
+      _log('Client is not ready');
+      return;
+    }
+    try {
+      final result = await operation(client);
+      _log(result == null
+          ? '$name success'
+          : '$name: ${_formatLogValue(result)}');
+    } catch (errorCode) {
+      _log('$name error: $errorCode');
+    }
+  }
+
+  void _setUserAttributes() {
+    final attribute = _userAttribute();
+    if (attribute == null) {
+      return;
+    }
+    _runClientOperation(
+      'Set user attributes',
+      (client) => client.setLocalUserAttributes2([attribute]),
+    );
+  }
+
+  void _addOrUpdateUserAttributes() {
+    final attribute = _userAttribute();
+    if (attribute == null) {
+      return;
+    }
+    _runClientOperation(
+      'Update user attributes',
+      (client) => client.addOrUpdateLocalUserAttributes2([attribute]),
+    );
+  }
+
+  void _deleteUserAttributes() {
+    final key = _attributeKey();
+    if (key == null) {
+      return;
+    }
+    _runClientOperation(
+      'Delete user attributes',
+      (client) => client.deleteLocalUserAttributesByKeys([key]),
+    );
+  }
+
+  void _clearUserAttributes() {
+    _runClientOperation(
+      'Clear user attributes',
+      (client) => client.clearLocalUserAttributes(),
+    );
+  }
+
+  void _getUserAttributes() {
+    final userId = _attributeUserId();
+    if (userId == null) {
+      return;
+    }
+    _runClientOperation(
+      'Get user attributes',
+      (client) => client.getUserAttributes2(userId),
+    );
+  }
+
+  void _getUserAttributesByKeys() {
+    final userId = _attributeUserId();
+    final key = _attributeKey();
+    if (userId == null || key == null) {
+      return;
+    }
+    _runClientOperation(
+      'Get user attributes by key',
+      (client) => client.getUserAttributesByKeys2(userId, [key]),
+    );
+  }
+
+  ChannelAttributeOptions _channelAttributeOptions() {
+    return ChannelAttributeOptions(true);
+  }
+
+  void _setChannelAttributes() {
+    final channelId = _attributeChannelId();
+    final attribute = _channelAttribute();
+    if (channelId == null || attribute == null) {
+      return;
+    }
+    _runClientOperation(
+      'Set channel attributes',
+      (client) => client.setChannelAttributes2(
+        channelId,
+        [attribute],
+        _channelAttributeOptions(),
+      ),
+    );
+  }
+
+  void _addOrUpdateChannelAttributes() {
+    final channelId = _attributeChannelId();
+    final attribute = _channelAttribute();
+    if (channelId == null || attribute == null) {
+      return;
+    }
+    _runClientOperation(
+      'Update channel attributes',
+      (client) => client.addOrUpdateChannelAttributes2(
+        channelId,
+        [attribute],
+        _channelAttributeOptions(),
+      ),
+    );
+  }
+
+  void _deleteChannelAttributes() {
+    final channelId = _attributeChannelId();
+    final key = _attributeKey();
+    if (channelId == null || key == null) {
+      return;
+    }
+    _runClientOperation(
+      'Delete channel attributes',
+      (client) => client.deleteChannelAttributesByKeys2(
+        channelId,
+        [key],
+        _channelAttributeOptions(),
+      ),
+    );
+  }
+
+  void _clearChannelAttributes() {
+    final channelId = _attributeChannelId();
+    if (channelId == null) {
+      return;
+    }
+    _runClientOperation(
+      'Clear channel attributes',
+      (client) => client.clearChannelAttributes2(
+        channelId,
+        _channelAttributeOptions(),
+      ),
+    );
+  }
+
+  void _getChannelAttributes() {
+    final channelId = _attributeChannelId();
+    if (channelId == null) {
+      return;
+    }
+    _runClientOperation(
+      'Get channel attributes',
+      (client) => client.getChannelAttributes(channelId),
+    );
+  }
+
+  void _getChannelAttributesByKeys() {
+    final channelId = _attributeChannelId();
+    final key = _attributeKey();
+    if (channelId == null || key == null) {
+      return;
+    }
+    _runClientOperation(
+      'Get channel attributes by key',
+      (client) => client.getChannelAttributesByKeys(channelId, [key]),
+    );
   }
 
   void _toggleLocalInvitation() async {
@@ -518,7 +973,7 @@ class MyAppState extends State<MyApp> {
           invitation.content = text;
           _log(invitation.content ?? '');
           await _client?.getRtmCallManager().sendLocalInvitation(invitation);
-          setState(() {
+          _updateState(() {
             _localInvitation = invitation;
           });
           _log('Send local invitation success');
@@ -570,17 +1025,39 @@ class MyAppState extends State<MyApp> {
     }
   }
 
-  void _toggleJoinChannel() async {
-    if (_isInChannel) {
-      try {
-        await _channel?.leave();
-        _log('Leave channel success');
-        await _channel?.release();
-        _channelMessageController.clear();
+  Future<void> _leaveAndReleaseChannel() async {
+    final channel = _channel;
+    _channel = null;
+    if (channel == null) {
+      _updateState(() {
+        _isInChannel = false;
+      });
+      return;
+    }
 
-        setState(() {
+    try {
+      if (_isInChannel) {
+        await channel.leave();
+      }
+    } finally {
+      try {
+        await channel.release();
+      } finally {
+        if (mounted) {
+          _channelMessageController.clear();
+        }
+        _updateState(() {
           _isInChannel = false;
         });
+      }
+    }
+  }
+
+  Future<void> _toggleJoinChannel() async {
+    if (_isInChannel) {
+      try {
+        await _leaveAndReleaseChannel();
+        _log('Leave channel success');
       } catch (errorCode) {
         _log('Leave channel error: $errorCode');
       }
@@ -591,15 +1068,33 @@ class MyAppState extends State<MyApp> {
         return;
       }
 
+      AgoraRtmChannel? channel;
       try {
-        _channel = await _createChannel(channelId);
-        await _channel?.join();
-        _log('Join channel success');
+        channel = await _createChannel(channelId);
+        if (channel == null) {
+          throw StateError('Client is not ready');
+        }
+        await channel.join();
+        _channel = channel;
+        _log(
+          'Join channel success: ${channel.getId()}, channelId: ${channel.channelId}',
+        );
 
-        setState(() {
+        _updateState(() {
           _isInChannel = true;
         });
       } catch (errorCode) {
+        if (channel != null) {
+          try {
+            await channel.release();
+          } catch (releaseError) {
+            _log('Release channel error: $releaseError');
+          }
+        }
+        _channel = null;
+        _updateState(() {
+          _isInChannel = false;
+        });
         _log('Join channel error: $errorCode');
       }
     }
@@ -608,7 +1103,7 @@ class MyAppState extends State<MyApp> {
   void _getMembers() async {
     try {
       List<RtmChannelMember>? members = await _channel?.getMembers();
-      _log('Members: ${members.toString()}');
+      _log('Members: ${_formatLogValue(members)}');
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
     }
@@ -624,7 +1119,7 @@ class MyAppState extends State<MyApp> {
     try {
       List<RtmChannelMemberCount>? members =
           await _client?.getChannelMemberCount([channelId]);
-      _log('Members: ${members.toString()}');
+      _log('Member count: ${_formatLogValue(members)}');
     } catch (errorCode) {
       _log('GetMembers failed: $errorCode');
     }
@@ -637,22 +1132,61 @@ class MyAppState extends State<MyApp> {
       return;
     }
 
+    final client = _client;
+    final channel = _channel;
+    if (client == null || channel == null) {
+      _log('Client or channel is not ready');
+      return;
+    }
+
     try {
-      RtmMessage? message =
-          _client?.createRawMessage(Uint8List.fromList([]), text);
-      if (message != null) {
-        _log(message.text);
-        await _channel?.sendMessage2(message);
-        _log('Send channel message success');
-      }
+      final message = client.createRawMessage(
+        Uint8List.fromList(utf8.encode(text)),
+        text,
+      );
+      _log(message.text);
+      await channel.sendMessage2(message, SendMessageOptions());
+      _log('Send channel message success');
     } catch (errorCode) {
       _log('Send channel message error: $errorCode');
     }
   }
 
+  void _updateState(VoidCallback update) {
+    if (!mounted) {
+      return;
+    }
+    setState(update);
+  }
+
+  String _formatPeerOnlineStatuses(
+    Map<String, RtmPeerOnlineState>? statuses,
+  ) {
+    if (statuses == null) {
+      return 'null';
+    }
+    const statusNames = <RtmPeerOnlineState, String>{
+      RtmPeerOnlineState.online: 'online',
+      RtmPeerOnlineState.unreachable: 'unreachable',
+      RtmPeerOnlineState.offline: 'offline',
+    };
+    final values = statuses.map(
+      (peerId, state) => MapEntry(peerId, statusNames[state] ?? 'unknown'),
+    );
+    return _formatLogValue(values);
+  }
+
+  String _formatLogValue(Object? value) {
+    try {
+      return jsonEncode(value);
+    } on JsonUnsupportedObjectError {
+      return '<unsupported ${value.runtimeType}>';
+    }
+  }
+
   void _log(String info) {
     debugPrint(info);
-    setState(() {
+    _updateState(() {
       _infoStrings.insert(0, info);
     });
   }

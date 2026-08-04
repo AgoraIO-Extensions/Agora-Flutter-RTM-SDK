@@ -14,6 +14,9 @@ class AgoraRtmClientException implements Exception {
   final int code;
 
   AgoraRtmClientException(this.reason, this.code) : super();
+
+  @override
+  String toString() => 'AgoraRtmClientException($code, $reason)';
 }
 
 class AgoraRtmClient {
@@ -46,6 +49,7 @@ class AgoraRtmClient {
   final AgoraRtmCallManager _callManager;
 
   StreamSubscription<dynamic>? _eventSubscription;
+  Future<void>? _releaseFuture;
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {
     return AgoraRtmPlugin.callMethodForClient(
@@ -83,7 +87,7 @@ class AgoraRtmClient {
           onPeersOnlineStatusChanged?.call(peersStatus);
           break;
       }
-    }, onError: onError);
+    }, onError: (error) => onError?.call(error));
   }
 
   /// Initializes an [AgoraRtmClient] instance
@@ -98,14 +102,27 @@ class AgoraRtmClient {
   }
 
   /// Destroy and stop event to the client with related channels.
-  Future<void> release() async {
+  Future<void> release() {
+    return _releaseFuture ??= _release();
+  }
+
+  Future<void> _release() async {
     await _eventSubscription
         ?.cancel()
         .then((value) => _eventSubscription = null);
-    await Future.forEach<AgoraRtmChannel>(
-        _channels.values, (element) => element.release());
-    await _callNative("release", null);
-    _clients.removeWhere((int key, _) => key == _clientIndex);
+    await _callManager.release();
+    for (final channel in _channels.values.toList()) {
+      try {
+        await channel.release();
+      } catch (_) {
+        // Releasing the native client below also owns any remaining channels.
+      }
+    }
+    try {
+      await _callNative("release", null);
+    } finally {
+      _clients.removeWhere((int key, _) => key == _clientIndex);
+    }
   }
 
   @Deprecated('Use `release` instead of.')

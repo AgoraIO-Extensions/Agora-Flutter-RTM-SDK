@@ -184,7 +184,7 @@ Map<String, dynamic> _$RtmServiceContextToJson(RtmServiceContext instance) =>
     };
 
 const _$RtmAreaCodeEnumMap = {
-  RtmAreaCode.CN: 0,
+  RtmAreaCode.CN: 1,
   RtmAreaCode.NA: 2,
   RtmAreaCode.EU: 4,
   RtmAreaCode.AS: 8,

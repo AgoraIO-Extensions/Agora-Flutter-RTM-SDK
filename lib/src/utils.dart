@@ -177,7 +177,7 @@ extension RtmRemoteInvitationStateExtension on RtmRemoteInvitationState {
 
 @JsonEnum(alwaysCreate: true)
 enum RtmAreaCode {
-  @JsonValue(0)
+  @JsonValue(1)
   CN,
   @JsonValue(2)
   NA,

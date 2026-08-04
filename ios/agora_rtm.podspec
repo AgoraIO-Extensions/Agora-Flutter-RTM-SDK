@@ -16,7 +16,13 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
+
+  # iris dependencies start
+  # iris dependencies end
+
+  # native dependencies start
   s.dependency 'AgoraRtm_iOS', '1.5.1'
+  # native dependencies end
   s.platform = :ios, '9.0'
 
   # Flutter.framework does not contain a i386 slice.

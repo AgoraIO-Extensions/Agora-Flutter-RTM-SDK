@@ -158,8 +158,11 @@ fun ErrorInfo.toJson(): Map<String, Any?> {
 
 fun Map<*, *>.toRtmServiceContext(): RtmServiceContext {
     return RtmServiceContext().apply {
-        areaCode = this@toRtmServiceContext["areaCode"] as Int
-        proxyType = this@toRtmServiceContext["proxyType"] as Int
+        areaCode = (this@toRtmServiceContext["areaCode"] as? List<*>)
+            ?.filterIsInstance<Int>()
+            ?.fold(0) { mask, areaCode -> mask or areaCode }
+            ?: -1
+        proxyType = this@toRtmServiceContext["proxyType"] as? Int ?: 0
     }
 }
 

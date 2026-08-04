@@ -11,6 +11,9 @@ class AgoraRtmChannelException implements Exception {
   final int code;
 
   AgoraRtmChannelException(this.reason, this.code) : super();
+
+  @override
+  String toString() => 'AgoraRtmChannelException($code, $reason)';
 }
 
 class AgoraRtmChannel {
@@ -73,7 +76,7 @@ class AgoraRtmChannel {
           onMemberLeft?.call(member);
           break;
       }
-    }, onError: onError);
+    }, onError: (error) => onError?.call(error));
   }
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {

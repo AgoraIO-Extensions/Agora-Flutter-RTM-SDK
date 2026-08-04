@@ -10,6 +10,9 @@ class AgoraRtmCallManagerException implements Exception {
   final int code;
 
   AgoraRtmCallManagerException(this.reason, this.code) : super();
+
+  @override
+  String toString() => 'AgoraRtmCallManagerException($code, $reason)';
 }
 
 class AgoraRtmCallManager {
@@ -109,7 +112,7 @@ class AgoraRtmCallManager {
               map['errorCode']);
           break;
       }
-    }, onError: onError);
+    }, onError: (error) => onError?.call(error));
   }
 
   Future<dynamic> _callNative(String methodName, dynamic arguments) {
