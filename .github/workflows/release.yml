@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: true
+      finalize-only:
+        description: 'Skip release preparation and pub.dev publishing; only finalize an existing release'
+        required: false
+        type: boolean
+        default: false
       force-publish-to-pub:
         description: 'Force publish to pub.dev regardless of version format'
         required: false
@@ -31,6 +36,11 @@ on:
         required: false
         type: boolean
         default: true
+      finalize-only:
+        description: 'Skip release preparation and pub.dev publishing; only finalize an existing release'
+        required: false
+        type: boolean
+        default: false
       force-publish-to-pub:
         description: 'Force publish to pub.dev regardless of version format'
         required: false
@@ -109,17 +119,28 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             DRY_RUN="${{ github.event.inputs.dry-run }}"
             FORCE_PUBLISH="${{ github.event.inputs.force-publish-to-pub }}"
+            FINALIZE_ONLY="${{ github.event.inputs.finalize-only }}"
           elif [ "${{ github.event_name }}" = "workflow_call" ]; then
             DRY_RUN="${{ inputs.dry-run }}"
             FORCE_PUBLISH="${{ inputs.force-publish-to-pub }}"
+            FINALIZE_ONLY="${{ inputs.finalize-only }}"
           else
             DRY_RUN="false" # PR triggers are always production mode
             FORCE_PUBLISH="false"
+            FINALIZE_ONLY="false"
           fi
 
           echo "Dry-run mode: $DRY_RUN"
           echo "Force publish mode: $FORCE_PUBLISH"
+          echo "Finalize-only mode: $FINALIZE_ONLY"
+
+          if [ "$FINALIZE_ONLY" = "true" ] && [ "$DRY_RUN" != "false" ]; then
+            echo "Finalize-only mode requires dry-run=false." >&2
+            exit 1
+          fi
+
           echo "dry-run=$DRY_RUN" >> $GITHUB_OUTPUT
+          echo "finalize-only=$FINALIZE_ONLY" >> $GITHUB_OUTPUT
 
           # Get version from inputs (for workflow_dispatch and workflow_call) or pubspec.yaml (for PR)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -167,6 +188,11 @@ jobs:
             fi
           fi
 
+          if [ "$FINALIZE_ONLY" = "true" ] && [ "$RELEASE_TYPE" != "standard" ]; then
+            echo "Finalize-only mode only supports standard releases." >&2
+            exit 1
+          fi
+
           echo "Release version: $RELEASE_VERSION"
           echo "Release type: $RELEASE_TYPE"
           echo "Is prerelease: $IS_PRERELEASE"
@@ -176,6 +202,7 @@ jobs:
           echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
 
       - name: Install release tools
+        if: ${{ steps.version_check.outputs.finalize-only != 'true' }}
         run: |
           npm install -g release-it
           npm install -g release-it/bumper
@@ -187,7 +214,8 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Prepare release files (triggered by manual/callable)
-        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' }}
+        if: ${{ steps.version_check.outputs.finalize-only != 'true' &&
+                (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call') }}
         run: |
           set -eo pipefail
 
@@ -203,7 +231,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive changelog for pub.dev
-        if: ${{ steps.version_check.outputs.release_type == 'standard' }}
+        if: ${{ steps.version_check.outputs.release_type == 'standard' &&
+                steps.version_check.outputs.finalize-only != 'true' }}
         run: |
           bash scripts/archive_changelog.sh
 
@@ -223,6 +252,7 @@ jobs:
           fi
 
       - name: Commit prepared release files locally
+        if: ${{ steps.version_check.outputs.finalize-only != 'true' }}
         run: |
           set -eo pipefail
 
@@ -239,21 +269,26 @@ jobs:
           fi
 
       - name: Setup Flutter for pub publish
-        if: ${{ steps.version_check.outputs.release_type == 'standard' }}
+        if: ${{ steps.version_check.outputs.release_type == 'standard' &&
+                steps.version_check.outputs.finalize-only != 'true' }}
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
       - name: Publish to pub.dev (dry-run check)
-        if: ${{ steps.version_check.outputs.release_type == 'standard' && steps.version_check.outputs.dry-run == 'true' }}
+        if: ${{ steps.version_check.outputs.release_type == 'standard' &&
+                steps.version_check.outputs.dry-run == 'true' &&
+                steps.version_check.outputs.finalize-only != 'true' }}
         run: |
           echo "[DRY-RUN MODE] Running pub publish dry-run"
           flutter pub get
           flutter pub publish --dry-run
 
       - name: Publish to pub.dev (real)
-        if: ${{ steps.version_check.outputs.release_type == 'standard' && steps.version_check.outputs.dry-run == 'false' }}
+        if: ${{ steps.version_check.outputs.release_type == 'standard' &&
+                steps.version_check.outputs.dry-run == 'false' &&
+                steps.version_check.outputs.finalize-only != 'true' }}
         id: pub_publish
         uses: k-paxian/dart-package-publisher@master
         with:
@@ -263,7 +298,9 @@ jobs:
           skipTests: true
 
       - name: Fail if pub publish did not report success
-        if: ${{ steps.version_check.outputs.release_type == 'standard' && steps.version_check.outputs.dry-run == 'false' }}
+        if: ${{ steps.version_check.outputs.release_type == 'standard' &&
+                steps.version_check.outputs.dry-run == 'false' &&
+                steps.version_check.outputs.finalize-only != 'true' }}
         run: |
           set -eo pipefail
 
@@ -273,6 +310,23 @@ jobs:
             exit 1
           fi
 
+      - name: Verify existing pub.dev release (finalize-only)
+        if: ${{ steps.version_check.outputs.finalize-only == 'true' }}
+        run: |
+          set -eo pipefail
+
+          PACKAGE_NAME="$(awk '/^name:/ { print $2; exit }' pubspec.yaml)"
+          RELEASE_VERSION="${{ steps.version_check.outputs.version }}"
+
+          if ! curl --fail --silent --show-error "https://pub.dev/api/packages/${PACKAGE_NAME}" \
+            | jq -e --arg version "$RELEASE_VERSION" \
+                'any(.versions[]; .version == $version)' >/dev/null; then
+            echo "pub.dev does not contain ${PACKAGE_NAME} version ${RELEASE_VERSION}." >&2
+            exit 1
+          fi
+
+          echo "Verified ${PACKAGE_NAME} ${RELEASE_VERSION} already exists on pub.dev."
+
       - name: Finalize release artifacts
         if: ${{ steps.version_check.outputs.dry-run == 'false' }}
         run: |
@@ -281,20 +335,54 @@ jobs:
           RELEASE_TYPE="${{ steps.version_check.outputs.release_type }}"
           RELEASE_VERSION="${{ steps.version_check.outputs.version }}"
           TARGET_BRANCH="${{ steps.target_branch.outputs.branch }}"
+          FINALIZE_ONLY="${{ steps.version_check.outputs.finalize-only }}"
           RELEASE_NOTES_FILE="$(mktemp)"
 
-          git push origin "HEAD:${TARGET_BRANCH}"
-          git tag -a "$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
-          git push origin "refs/tags/$RELEASE_VERSION"
+          if [ "$FINALIZE_ONLY" = "true" ]; then
+            echo "Skipping target branch push in finalize-only mode"
+          else
+            git push origin "HEAD:${TARGET_BRANCH}"
+          fi
+
+          EXPECTED_COMMIT="$(git rev-parse HEAD)"
+          set +e
+          TAG_LOOKUP_OUTPUT="$(git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_VERSION" 2>&1)"
+          TAG_LOOKUP_STATUS=$?
+          set -e
+
+          case "$TAG_LOOKUP_STATUS" in
+            0)
+              git fetch --force origin "refs/tags/$RELEASE_VERSION:refs/tags/$RELEASE_VERSION"
+              TAG_COMMIT="$(git rev-list -n 1 "$RELEASE_VERSION")"
+              if [ "$TAG_COMMIT" != "$EXPECTED_COMMIT" ]; then
+                echo "Existing tag $RELEASE_VERSION points to $TAG_COMMIT; expected $EXPECTED_COMMIT." >&2
+                exit 1
+              fi
+              echo "Tag $RELEASE_VERSION already exists at the expected commit"
+              ;;
+            2)
+              git tag -a "$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
+              git push origin "refs/tags/$RELEASE_VERSION"
+              ;;
+            *)
+              echo "$TAG_LOOKUP_OUTPUT" >&2
+              echo "Unable to query remote tag $RELEASE_VERSION." >&2
+              exit "$TAG_LOOKUP_STATUS"
+              ;;
+          esac
 
           if [ "$RELEASE_TYPE" = "standard" ]; then
-            python3 -c 'import re, sys; from pathlib import Path; version = sys.argv[1]; output = Path(sys.argv[2]); text = Path("CHANGELOG.md").read_text(); pattern = re.compile(rf"(^## .*{re.escape(version)}.*?(?=^## |\\Z))", re.MULTILINE | re.DOTALL); match = pattern.search(text); (_ for _ in ()).throw(SystemExit(f"Unable to find release notes for {version} in CHANGELOG.md")) if not match else output.write_text(match.group(1).strip() + "\n")' \
-              "$RELEASE_VERSION" "$RELEASE_NOTES_FILE"
+            if gh release view "$RELEASE_VERSION" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+              echo "GitHub release $RELEASE_VERSION already exists"
+            else
+              python3 -c 'import re, sys; from pathlib import Path; version = sys.argv[1]; output = Path(sys.argv[2]); text = Path("CHANGELOG.md").read_text(); pattern = re.compile(rf"(^## .*{re.escape(version)}.*?(?=^## |\\Z))", re.MULTILINE | re.DOTALL); match = pattern.search(text); (_ for _ in ()).throw(SystemExit(f"Unable to find release notes for {version} in CHANGELOG.md")) if not match else output.write_text(match.group(1).strip() + "\n")' \
+                "$RELEASE_VERSION" "$RELEASE_NOTES_FILE"
 
-            gh release create "$RELEASE_VERSION" \
-              --repo "${{ github.repository }}" \
-              --title "Release $RELEASE_VERSION" \
-              --notes-file "$RELEASE_NOTES_FILE"
+              gh release create "$RELEASE_VERSION" \
+                --repo "${{ github.repository }}" \
+                --title "Release $RELEASE_VERSION" \
+                --notes-file "$RELEASE_NOTES_FILE"
+            fi
           else
             echo "Skipping GitHub release for special release"
           fi
