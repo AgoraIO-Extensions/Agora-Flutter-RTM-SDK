@@ -7,7 +7,7 @@ on:
         description: 'Target platforms, e.g. android, ios, macos, windows, web, etc; separated by comma, default is all platforms'
         type: string
         required: true
-        default: 'android, ios'
+        default: 'android, ios, macos, windows'
       target_branch:
         description: 'Target branch, leave empty will use the same as the workflow trigger branch'
         type: string
@@ -31,19 +31,16 @@ on:
         required: false
         default: 'stable'
       flutter_version:
-        description: 'Target Flutter version, e.g. 3.24.5, 3.24.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
+        description: 'Target Flutter version, e.g. 3.44.8, 3.44.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
         type: string
         required: false
-        # we should use the latest stable version for building example later, however, the android build will fail with the latest stable version, so we fixed use the 3.24.5 version here for now
-        # Here is the error log:
-        # Caused by: org.gradle.api.GradleException: You are applying Flutter's app_plugin_loader Gradle plugin imperatively using the apply script method, which is not possible anymore. Migrate to applying Gradle plugins with the declarative plugins block: https://flutter.dev/to/flutter-gradle-plugin-apply
-        default: '3.24.5'
+        default: '3.44.8'
   workflow_call:
     inputs:
       target_platforms:
         description: 'Target platforms, e.g. android, ios, macos, windows, web, etc; separated by comma, default is all platforms'
         type: string
-        default: 'android, ios'
+        default: 'android, ios, macos, windows'
       target_branch:
         description: 'Target branch, leave empty will use the same as the workflow trigger branch'
         type: string
@@ -67,13 +64,10 @@ on:
         required: false
         default: 'stable'
       flutter_version:
-        description: 'Target Flutter version, e.g. 3.24.5, 3.24.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
+        description: 'Target Flutter version, e.g. 3.44.8, 3.44.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
         type: string
         required: false
-        # we should use the latest stable version for building example later, however, the android build will fail with the latest stable version, so we fixed use the 3.24.5 version here for now
-        # Here is the error log:
-        # Caused by: org.gradle.api.GradleException: You are applying Flutter's app_plugin_loader Gradle plugin imperatively using the apply script method, which is not possible anymore. Migrate to applying Gradle plugins with the declarative plugins block: https://flutter.dev/to/flutter-gradle-plugin-apply
-        default: '3.24.5'
+        default: '3.44.8'
     secrets:
       APP_ID_RTM:
         required: true
@@ -301,8 +295,10 @@ jobs:
             # copy files in build/app/outputs/flutter-apk directory to ../output directory
             cp build/app/outputs/flutter-apk/* ../output
 
-            # copy whole symbol directory to ../output directory
-            cp -r build/app/outputs/native-debug-symbols ../output
+            # copy whole symbol directory to ../output directory if it exists
+            if [ -d "build/app/outputs/native-debug-symbols" ]; then
+              cp -r build/app/outputs/native-debug-symbols ../output
+            fi
           elif [ "$platform" == "ios" ]; then
             # copy build/ios/ipa/agora_rtm_example.ipa to ../output directory
             cp build/ios/ipa/agora_rtm_example.ipa ../output

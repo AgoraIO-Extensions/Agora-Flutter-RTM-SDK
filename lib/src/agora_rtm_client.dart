@@ -131,7 +131,7 @@ class MessageEvent {
   @JsonKey(name: 'channelTopic')
   final String? channelTopic;
 
-  @JsonKey(name: 'message', ignore: true)
+  @JsonKey(name: 'message', includeFromJson: false, includeToJson: false)
   final Uint8List? message;
 
   @JsonKey(name: 'messageLength')

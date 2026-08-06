@@ -11,6 +11,36 @@ on:
         required: true
 
 jobs:
+  dependency_update_test:
+    name: Dependency updater regression test
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run dependency updater regression tests
+        run: bash ci/test_run_update_deps_desktop.sh
+
+  flutter_compatibility:
+    name: Flutter ${{ matrix.version }} compatibility
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.10.0", "3.44.8"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze lib
+      - run: flutter pub get
+        working-directory: test_shard/integration_test_app
+      - run: flutter test
+        working-directory: test_shard/integration_test_app
+
   flutter_codestyle_check:
     name: Flutter codestyle/analyze check
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
@@ -20,6 +50,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.44.8'
           cache: true
       - name: Check Dart Format
         run: bash scripts/dart_pub_publish_check.sh
@@ -47,6 +78,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.44.8'
           cache: true
       - name: Run flutter test
         run: flutter test
@@ -58,7 +90,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"]
+        version: ["3.44.8"]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
@@ -96,7 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"]
+        version: ["3.10.0", "3.44.8"]
     runs-on: macos-latest
     timeout-minutes: 120
     env:
@@ -107,9 +139,20 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
-      - uses: futureware-tech/simulator-action@v3
-        with:
-          model: 'iPhone 15'
+      - name: Select and boot an available iPhone simulator
+        shell: bash
+        run: |
+          SIMULATOR_JSON="$(xcrun simctl list devices available --json)"
+          FLUTTER_TEST_DEVICE="$(
+            jq -r '[.devices[][] | select((.isAvailable // false) and (.name | startswith("iPhone")))] | first | .udid // empty' <<< "${SIMULATOR_JSON}"
+          )"
+          if [[ -z "${FLUTTER_TEST_DEVICE}" ]]; then
+            echo "::error::No available iPhone simulator found."
+            exit 1
+          fi
+
+          xcrun simctl bootstatus "${FLUTTER_TEST_DEVICE}" -b
+          echo "FLUTTER_TEST_DEVICE=${FLUTTER_TEST_DEVICE}" >> "${GITHUB_ENV}"
       - run: bash scripts/run_flutter_integration_test.sh "ios"
       - name: Get ios crash logs
         if: always()
@@ -132,80 +175,13 @@ jobs:
           name: logs-ios-${{ matrix.version }}
           path: logs-ios/*
 
-  integration_test_macos:
-    name: Run Flutter macOS Fake Integration Tests
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
-    strategy:
-      fail-fast: false
-      matrix:
-        version: ["3.41.9"]
-    runs-on: macos-14
-    timeout-minutes: 120
-    env:
-      TEST_APP_ID: ${{ secrets.APP_ID }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ matrix.version }}
-          cache: true
-      - name: Update pod repo
-        run: pod repo update
-      - name: Check macOS Iris debugger artifact
-        id: macos_iris_debugger
-        shell: bash
-        run: |
-          source scripts/artifacts_version.sh
-          if [[ -z "${IRIS_CDN_URL_MACOS:-}" ]]; then
-            echo "::notice::IRIS_CDN_URL_MACOS is empty; skipping macOS fake integration tests until ci/run_update_deps.sh updates desktop dependencies."
-            echo "run_tests=false" >> "${GITHUB_OUTPUT}"
-          else
-            echo "run_tests=true" >> "${GITHUB_OUTPUT}"
-          fi
-      - name: Run flutter macOS fake integration tests
-        if: ${{ steps.macos_iris_debugger.outputs.run_tests == 'true' }}
-        run: bash scripts/run_flutter_integration_test.sh "macos"
-
-  integration_test_windows:
-    name: Run Flutter Windows Fake Integration Tests
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
-    strategy:
-      fail-fast: false
-      matrix:
-        version: ["3.41.9"]
-    runs-on: windows-2022
-    timeout-minutes: 120
-    env:
-      TEST_APP_ID: ${{ secrets.APP_ID }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ matrix.version }}
-          cache: true
-      - name: Check Windows Iris debugger artifact
-        id: windows_iris_debugger
-        shell: bash
-        run: |
-          source scripts/artifacts_version.sh
-          if [[ -z "${IRIS_CDN_URL_WINDOWS:-}" ]]; then
-            echo "::notice::IRIS_CDN_URL_WINDOWS is empty; skipping Windows fake integration tests until ci/run_update_deps.sh updates desktop dependencies."
-            echo "run_tests=false" >> "${GITHUB_OUTPUT}"
-          else
-            echo "run_tests=true" >> "${GITHUB_OUTPUT}"
-          fi
-      - name: Run flutter Windows fake integration tests
-        if: ${{ steps.windows_iris_debugger.outputs.run_tests == 'true' }}
-        shell: bash
-        run: bash scripts/run_flutter_integration_test.sh "windows"
-
   build_android_ubuntu:
     name: Build Android on Ubuntu
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
+        version: ["3.44.8"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -223,14 +199,43 @@ jobs:
         run: flutter build apk
         working-directory: example
 
+  build_android_minimum:
+    name: Build Android with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Build plugin in a Flutter 3.10 Android host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum"
+          flutter create --platforms=android --org io.agora.validation "${SMOKE_DIR}"
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/' "${SMOKE_DIR}/android/app/build.gradle"
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/' "${SMOKE_DIR}/android/app/build.gradle"
+
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build apk --release
+
   build_android_windows:
     name: Build Android on Windows
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
-    runs-on: windows-2019
+        version: ["3.44.8"]
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v3
       - name: Install JDK
@@ -253,7 +258,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0"]
+        version: ["3.10.0", "3.44.8"]
     runs-on: macos-latest
     timeout-minutes: 120
     steps:
@@ -273,7 +278,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.41.9"]
+        version: ["3.10.0", "3.41.9", "3.44.8"]
     runs-on: macos-14
     timeout-minutes: 120
     steps:
@@ -295,7 +300,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.41.9"]
+        version: ["3.10.0", "3.41.9", "3.44.8"]
     runs-on: windows-2022
     timeout-minutes: 120
     steps:
@@ -305,20 +310,20 @@ jobs:
           flutter-version: ${{ matrix.version }}
           cache: true
       - name: Check Windows SDK artifacts
-        id: windows_sdk
         shell: bash
         run: |
-          if grep -q 'set(IRIS_SDK_DOWNLOAD_URL "")' windows/cmake/DownloadSDK.cmake || \
-             grep -q 'set(NATIVE_SDK_DOWNLOAD_URL "")' windows/cmake/DownloadSDK.cmake; then
-            echo "::notice::Windows SDK URLs are empty; skipping Windows build until ci/run_update_deps.sh updates desktop dependencies."
-            echo "run_build=false" >> "${GITHUB_OUTPUT}"
-          else
-            echo "run_build=true" >> "${GITHUB_OUTPUT}"
+          IRIS_SDK_DOWNLOAD_URL="$(sed -n 's/^[[:space:]]*set(IRIS_SDK_DOWNLOAD_URL[[:space:]]*"\([^"]*\)".*/\1/p' windows/cmake/DownloadSDK.cmake | head -n 1)"
+          NATIVE_SDK_DOWNLOAD_URL="$(sed -n 's/^[[:space:]]*set(NATIVE_SDK_DOWNLOAD_URL[[:space:]]*"\([^"]*\)".*/\1/p' windows/cmake/DownloadSDK.cmake | head -n 1)"
+          if [[ -z "${IRIS_SDK_DOWNLOAD_URL}" ]]; then
+            echo "::error::IRIS_SDK_DOWNLOAD_URL is missing from windows/cmake/DownloadSDK.cmake."
+            exit 1
+          fi
+          if [[ -z "${NATIVE_SDK_DOWNLOAD_URL}" ]]; then
+            echo "::error::NATIVE_SDK_DOWNLOAD_URL is missing from windows/cmake/DownloadSDK.cmake."
+            exit 1
           fi
       - run: flutter pub get
-        if: ${{ steps.windows_sdk.outputs.run_build == 'true' }}
       - name: Run flutter build windows
-        if: ${{ steps.windows_sdk.outputs.run_build == 'true' }}
         run: flutter build windows
         working-directory: example
 
@@ -328,8 +333,8 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       matrix:
-        version: ["3.24.5"]
-    runs-on: macos-13
+        version: ["3.41.9"]
+    runs-on: macos-14
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3

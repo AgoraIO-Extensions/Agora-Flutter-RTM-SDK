@@ -61,19 +61,17 @@ void main() {
 
     test('desktop dependencies are wired into update scripts', () {
       final updateDeps = readRepoFile('ci/run_update_deps.sh');
-      final artifactsVersion = readRepoFile('scripts/artifacts_version.sh');
       final integrationScript =
           readRepoFile('scripts/run_flutter_integration_test.sh');
 
       expect(updateDeps, contains('dep_file_macos=macos/agora_rtm.podspec'));
       expect(updateDeps,
           contains('dep_file_windows=windows/cmake/DownloadSDK.cmake'));
+      expect(updateDeps, isNot(contains('scripts/artifacts_version.sh')));
       expect(updateDeps, contains(r'"${platform}" == "macOS"'));
       expect(updateDeps, contains(r'"${platform}" == "Windows"'));
-      expect(artifactsVersion, contains('IRIS_CDN_URL_MACOS'));
-      expect(artifactsVersion, contains('IRIS_CDN_URL_WINDOWS'));
-      expect(integrationScript, contains('PLATFORM} == "macos"'));
-      expect(integrationScript, contains('PLATFORM} == "windows"'));
+      expect(integrationScript, isNot(contains('PLATFORM} == "macos"')));
+      expect(integrationScript, isNot(contains('PLATFORM} == "windows"')));
     });
 
     test('desktop platforms are covered by CI workflows', () {
@@ -81,18 +79,34 @@ void main() {
       final buildExampleWorkflow =
           readRepoFile('.github/workflows/run_build_example.yml');
 
-      expect(runTestWorkflow, contains('integration_test_macos:'));
-      expect(runTestWorkflow, contains('integration_test_windows:'));
+      expect(runTestWorkflow, isNot(contains('integration_test_macos:')));
+      expect(runTestWorkflow, isNot(contains('integration_test_windows:')));
       expect(runTestWorkflow, contains('build_macos:'));
       expect(runTestWorkflow, contains('build_windows:'));
-      expect(runTestWorkflow,
-          contains('scripts/run_flutter_integration_test.sh "macos"'));
-      expect(runTestWorkflow,
-          contains('scripts/run_flutter_integration_test.sh "windows"'));
       expect(buildExampleWorkflow,
           contains('os: [ubuntu-latest, macos-14, windows-latest]'));
       expect(buildExampleWorkflow, contains('os: macos-14'));
       expect(buildExampleWorkflow, isNot(contains('os: macos-latest')));
+    });
+
+    test('desktop runtime configuration uses RTM artifacts and networking', () {
+      final windowsCmake = readRepoFile('windows/CMakeLists.txt');
+
+      expect(windowsCmake, contains('"AgoraRtmWrapper.lib"'));
+      expect(windowsCmake, contains('"AgoraRtmWrapper.dll"'));
+      expect(windowsCmake, contains('"agora_rtm_sdk.dll"'));
+      expect(windowsCmake, isNot(contains('"AgoraRtcWrapper.lib"')));
+
+      for (final path in <String>[
+        'example/macos/Runner/DebugProfile.entitlements',
+        'example/macos/Runner/Release.entitlements',
+      ]) {
+        expect(
+          readRepoFile(path),
+          contains('<key>com.apple.security.network.client</key>'),
+          reason: '$path must allow outbound RTM connections',
+        );
+      }
     });
 
     test('macos runners avoid duplicate aosl framework when RTC is present',

@@ -39,7 +39,7 @@ if [[ ${PLATFORM} == "web" ]];then
 
     popd
 
-elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" || ${PLATFORM} == "macos" || ${PLATFORM} == "windows" ]];then
+elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
     DOWNLOAD_IRIS_DEBUGGER=${2:-1}
 
     if [[ ${DOWNLOAD_IRIS_DEBUGGER} == 1 ]];then
@@ -49,18 +49,6 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" || ${PLATFORM} == "maco
             bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_ANDROID} "Android"
         elif [[ ${PLATFORM} == "ios" ]];then
             bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_IOS} "iOS"
-        elif [[ ${PLATFORM} == "macos" ]];then
-            if [[ -z "${IRIS_CDN_URL_MACOS:-}" ]]; then
-                echo "IRIS_CDN_URL_MACOS is empty. Run ci/run_update_deps.sh with macOS dependencies first."
-                exit 1
-            fi
-            bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_MACOS} "macOS"
-        elif [[ ${PLATFORM} == "windows" ]];then
-            if [[ -z "${IRIS_CDN_URL_WINDOWS:-}" ]]; then
-                echo "IRIS_CDN_URL_WINDOWS is empty. Run ci/run_update_deps.sh with Windows dependencies first."
-                exit 1
-            fi
-            bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_WINDOWS} "Windows"
         fi
     fi
 
@@ -70,9 +58,14 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" || ${PLATFORM} == "maco
 
     flutter test --verbose
 
-    flutter test integration_test/binding_apis_call_fake_test.dart --dart-define=TEST_APP_ID="${TEST_APP_ID:-}" --verbose
+    device_args=()
+    if [[ -n "${FLUTTER_TEST_DEVICE:-}" ]]; then
+        device_args=(-d "${FLUTTER_TEST_DEVICE}")
+    fi
 
-    flutter test integration_test/integration_test.dart --verbose
+    flutter test integration_test/binding_apis_call_fake_test.dart "${device_args[@]}" --dart-define=TEST_APP_ID="${TEST_APP_ID:-}" --verbose
+
+    flutter test integration_test/integration_test.dart "${device_args[@]}" --verbose
 
     popd
 else

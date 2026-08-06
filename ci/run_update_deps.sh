@@ -15,7 +15,6 @@ dep_file_ios=ios/agora_rtm.podspec
 dep_file_macos=macos/agora_rtm.podspec
 dep_file_android=android/build.gradle
 dep_file_windows=windows/cmake/DownloadSDK.cmake
-dep_file_artifacts=scripts/artifacts_version.sh
 
 # get parsed dependencies content from argument 1, the format is as follows:
 # [
@@ -136,42 +135,6 @@ function update_cmake_file() {
     fi
 }
 
-function update_artifacts_version_file() {
-    local dep_file=$1
-    local dep_item=$2
-    local platform=$3
-
-    iris_cdn=$(echo "${dep_item}" | jq -r '.iris_cdn[0]')
-    if [ "${iris_cdn}" == "null" ] || [ "${iris_cdn}" == "" ]; then
-        return
-    fi
-
-    case "${platform}" in
-        Android)
-            var_name="IRIS_CDN_URL_ANDROID"
-            ;;
-        iOS)
-            var_name="IRIS_CDN_URL_IOS"
-            ;;
-        macOS)
-            var_name="IRIS_CDN_URL_MACOS"
-            ;;
-        Windows)
-            var_name="IRIS_CDN_URL_WINDOWS"
-            ;;
-        *)
-            return
-            ;;
-    esac
-
-    if grep -q "export ${var_name}=" "${dep_file}"; then
-        perl -0pi -e "s|export ${var_name}=.*|export ${var_name}=\"${iris_cdn}\"|" "${dep_file}"
-    else
-        printf '\nexport %s="%s"\n' "${var_name}" "${iris_cdn}" >> "${dep_file}"
-    fi
-}
-
-
 echo "${dependencies_content}" | jq -c '.[]' | while read -r dep_item; do
     # get platform from dep_item
     platform=$(echo "${dep_item}" | jq -r '.platform')
@@ -179,15 +142,11 @@ echo "${dependencies_content}" | jq -c '.[]' | while read -r dep_item; do
     # update dependencies file by platform
     if [ "${platform}" == "iOS" ]; then
         update_podspec_file "${dep_file_ios}" "${dep_item}"
-        update_artifacts_version_file "${dep_file_artifacts}" "${dep_item}" "${platform}"
     elif [ "${platform}" == "macOS" ]; then
         update_podspec_file "${dep_file_macos}" "${dep_item}"
-        update_artifacts_version_file "${dep_file_artifacts}" "${dep_item}" "${platform}"
     elif [ "${platform}" == "Android" ]; then
         update_gradle_file "${dep_file_android}" "${dep_item}"
-        update_artifacts_version_file "${dep_file_artifacts}" "${dep_item}" "${platform}"
     elif [ "${platform}" == "Windows" ]; then
         update_cmake_file "${dep_file_windows}" "${dep_item}"
-        update_artifacts_version_file "${dep_file_artifacts}" "${dep_item}" "${platform}"
     fi
 done
