@@ -83,10 +83,20 @@ void main() {
       expect(runTestWorkflow, isNot(contains('integration_test_windows:')));
       expect(runTestWorkflow, contains('build_macos:'));
       expect(runTestWorkflow, contains('build_windows:'));
+      expect(runTestWorkflow, contains('build_ios_minimum:'));
+      expect(runTestWorkflow, contains('build_macos_minimum:'));
+      expect(runTestWorkflow, contains('build_windows_minimum:'));
+      expect(
+          runTestWorkflow, contains('Build plugin in a Flutter 3.10 iOS host'));
+      expect(runTestWorkflow,
+          contains('Build plugin in a Flutter 3.10 macOS host'));
+      expect(runTestWorkflow,
+          contains('Build plugin in a Flutter 3.10 Windows host'));
       expect(buildExampleWorkflow,
-          contains('os: [ubuntu-latest, macos-14, windows-latest]'));
+          contains('os: [ubuntu-latest, macos-14, windows-2022]'));
       expect(buildExampleWorkflow, contains('os: macos-14'));
       expect(buildExampleWorkflow, isNot(contains('os: macos-latest')));
+      expect(buildExampleWorkflow, isNot(contains('os: windows-latest')));
     });
 
     test('desktop runtime configuration uses RTM artifacts and networking', () {

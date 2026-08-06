@@ -258,7 +258,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.44.8"]
+        version: ["3.44.8"]
     runs-on: macos-latest
     timeout-minutes: 120
     steps:
@@ -272,13 +272,35 @@ jobs:
         run: flutter build ios --no-codesign
         working-directory: example
 
+  build_ios_minimum:
+    name: Build iOS with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: macos-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Build plugin in a Flutter 3.10 iOS host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_ios"
+          flutter create --platforms=ios --org io.agora.validation "${SMOKE_DIR}"
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build ios --no-codesign
+
   build_macos:
     name: Build macOS
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.41.9", "3.44.8"]
+        version: ["3.41.9", "3.44.8"]
     runs-on: macos-14
     timeout-minutes: 120
     steps:
@@ -294,13 +316,37 @@ jobs:
         run: flutter build macos
         working-directory: example
 
+  build_macos_minimum:
+    name: Build macOS with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Update pod repo
+        run: pod repo update
+      - name: Build plugin in a Flutter 3.10 macOS host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_macos"
+          flutter create --platforms=macos --org io.agora.validation "${SMOKE_DIR}"
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build macos
+
   build_windows:
     name: Build Windows
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.41.9", "3.44.8"]
+        version: ["3.41.9", "3.44.8"]
     runs-on: windows-2022
     timeout-minutes: 120
     steps:
@@ -326,6 +372,28 @@ jobs:
       - name: Run flutter build windows
         run: flutter build windows
         working-directory: example
+
+  build_windows_minimum:
+    name: Build Windows with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: windows-2022
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Build plugin in a Flutter 3.10 Windows host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_windows"
+          flutter create --platforms=windows --org io.agora.validation "${SMOKE_DIR}"
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build windows
 
   # This job aim to cover https://github.com/flutter/flutter/issues/135739
   build_ios_xcode_15:
