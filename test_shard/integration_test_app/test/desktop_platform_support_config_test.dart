@@ -92,11 +92,17 @@ void main() {
           contains('Build plugin in a Flutter 3.10 macOS host'));
       expect(runTestWorkflow,
           contains('Build plugin in a Flutter 3.10 Windows host'));
-      expect(buildExampleWorkflow,
-          contains('os: [ubuntu-latest, macos-14, windows-2022]'));
-      expect(buildExampleWorkflow, contains('os: macos-14'));
-      expect(buildExampleWorkflow, isNot(contains('os: macos-latest')));
-      expect(buildExampleWorkflow, isNot(contains('os: windows-latest')));
+      // The build matrix is generated at runtime (platform x Flutter version),
+      // pairing each platform with the cheapest runner able to build it, so assert
+      // on that mapping rather than on a hard coded `os:` matrix line.
+      expect(buildExampleWorkflow, contains('macos:   "macos-14"'));
+      expect(buildExampleWorkflow, contains('ios:     "macos-14"'));
+      expect(buildExampleWorkflow, contains('windows: "windows-2022"'));
+      // Android and web must not burn a macOS runner.
+      expect(buildExampleWorkflow, contains('android: "ubuntu-latest"'));
+      expect(buildExampleWorkflow, contains('web:     "ubuntu-latest"'));
+      expect(buildExampleWorkflow, isNot(contains('macos-latest')));
+      expect(buildExampleWorkflow, isNot(contains('windows-latest')));
     });
 
     test('desktop runtime configuration uses RTM artifacts and networking', () {
