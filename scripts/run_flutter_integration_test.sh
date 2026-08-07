@@ -39,7 +39,7 @@ if [[ ${PLATFORM} == "web" ]];then
 
     popd
 
-elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
+elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" || ${PLATFORM} == "macos" || ${PLATFORM} == "windows" ]];then
     # NOTE: the `*_fake_test.dart` suites are intentionally not run here.
     # They drive the plugin against a fake native proc table exported by the
     # prebuilt libIrisDebugger.so / IrisDebugger.xcframework. That artifact is
@@ -59,9 +59,23 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
 
     flutter test --verbose
 
+    # Pick the device to run the on-device suite against. The mobile jobs export
+    # FLUTTER_TEST_DEVICE (simulator udid / emulator serial). Desktop has exactly
+    # one target, whose device id is the platform name itself, so default to that
+    # instead of leaving `flutter test` to guess.
     device_args=()
     if [[ -n "${FLUTTER_TEST_DEVICE:-}" ]]; then
         device_args=(-d "${FLUTTER_TEST_DEVICE}")
+    elif [[ ${PLATFORM} == "macos" || ${PLATFORM} == "windows" ]]; then
+        device_args=(-d "${PLATFORM}")
+    elif [[ ${PLATFORM} == "android" ]]; then
+        # Without an explicit device the run ends in "No tests were found." and
+        # exits 79 even though the test body passes, so resolve the emulator
+        # serial from adb.
+        android_device="$(adb devices | awk '/\tdevice$/ {print $1; exit}')"
+        if [[ -n "${android_device}" ]]; then
+            device_args=(-d "${android_device}")
+        fi
     fi
 
     flutter test integration_test/integration_test.dart "${device_args[@]}" --verbose

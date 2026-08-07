@@ -70,8 +70,8 @@ void main() {
       expect(updateDeps, isNot(contains('scripts/artifacts_version.sh')));
       expect(updateDeps, contains(r'"${platform}" == "macOS"'));
       expect(updateDeps, contains(r'"${platform}" == "Windows"'));
-      expect(integrationScript, isNot(contains('PLATFORM} == "macos"')));
-      expect(integrationScript, isNot(contains('PLATFORM} == "windows"')));
+      expect(integrationScript, contains('PLATFORM} == "macos"'));
+      expect(integrationScript, contains('PLATFORM} == "windows"'));
     });
 
     test('desktop platforms are covered by CI workflows', () {
@@ -79,8 +79,8 @@ void main() {
       final buildExampleWorkflow =
           readRepoFile('.github/workflows/run_build_example.yml');
 
-      expect(runTestWorkflow, isNot(contains('integration_test_macos:')));
-      expect(runTestWorkflow, isNot(contains('integration_test_windows:')));
+      expect(runTestWorkflow, contains('integration_test_macos:'));
+      expect(runTestWorkflow, contains('integration_test_windows:'));
       expect(runTestWorkflow, contains('build_macos:'));
       expect(runTestWorkflow, contains('build_windows:'));
       expect(runTestWorkflow, contains('build_ios_minimum:'));

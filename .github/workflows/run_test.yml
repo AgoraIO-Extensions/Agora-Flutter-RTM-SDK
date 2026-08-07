@@ -184,6 +184,65 @@ jobs:
           name: logs-ios-${{ matrix.version }}
           path: logs-ios/*
 
+  integration_test_macos:
+    name: Run Flutter macOS Integration Tests
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.44.8"]
+    runs-on: macos-14
+    timeout-minutes: 120
+    env:
+      TEST_APP_ID: ${{ secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      # agora_rtm ships only a podspec (no Package.swift), so force CocoaPods.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
+      - name: Update pod repo
+        run: pod repo update
+      - run: bash scripts/run_flutter_integration_test.sh "macos"
+      - name: Get macos crash logs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p ./logs-macos/crash
+          cp -RP "${HOME}/Library/Logs/DiagnosticReports/"* ./logs-macos/crash || true
+      - name: Upload macos logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-macos-${{ matrix.version }}
+          path: logs-macos/*
+          if-no-files-found: ignore
+
+  integration_test_windows:
+    name: Run Flutter Windows Integration Tests
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.44.8"]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    env:
+      TEST_APP_ID: ${{ secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Run integration tests
+        shell: bash
+        run: bash scripts/run_flutter_integration_test.sh "windows"
+
   build_android_ubuntu:
     name: Build Android on Ubuntu
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
