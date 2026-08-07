@@ -1,9 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_rtm/agora_rtm.dart';
 
 void main() {
+  // Required for `flutter test integration_test/...` to receive results from the
+  // device. Without it the run reports "No tests were found." and exits 79 even
+  // though the test body passes.
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   testWidgets('Integration.call_rtc_and_rtm_without_crash',
       (WidgetTester tester) async {
     try {
