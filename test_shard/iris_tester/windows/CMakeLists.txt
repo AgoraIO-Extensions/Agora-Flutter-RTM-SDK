@@ -59,9 +59,4 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/IrisDebugger.dll")
     "${CMAKE_CURRENT_SOURCE_DIR}/IrisDebugger.dll"
     PARENT_SCOPE
   )
-else()
-  set(iris_tester_bundled_libraries
-    ""
-    PARENT_SCOPE
-  )
 endif()

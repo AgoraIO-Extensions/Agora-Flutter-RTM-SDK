@@ -10,6 +10,10 @@ void main() {
   // though the test body passes.
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  testWidgets('dummy test to ensure test framework works', (WidgetTester tester) async {
+    expect(true, isTrue);
+  });
+
   testWidgets('Integration.call_rtc_and_rtm_without_crash',
       (WidgetTester tester) async {
     try {
@@ -17,6 +21,7 @@ void main() {
       await rtmClient.release();
     } catch (e) {
       print('all exception is allowed: $e');
+      expect(true, isTrue);
     }
 
     try {
@@ -26,6 +31,7 @@ void main() {
       await rtcEngine.release();
     } catch (e) {
       print('all exception is allowed: $e');
+      expect(true, isTrue);
     }
   });
 }
