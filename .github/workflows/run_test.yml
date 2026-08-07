@@ -23,10 +23,13 @@ jobs:
   flutter_compatibility:
     name: Flutter ${{ matrix.version }} compatibility
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    # NOTE: `flutter pub get` at the repo root also resolves ./example, so the lowest
+    # version testable here is the *example app* floor (Flutter 3.16.0 / Dart 3.2.0),
+    # which is what agora_rtc_engine 6.5.4 requires.
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.44.8"]
+        version: ["3.16.0", "3.44.8"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -128,7 +131,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.44.8"]
+        version: ["3.44.8"]
     runs-on: macos-latest
     timeout-minutes: 120
     env:
@@ -139,6 +142,12 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
+      # agora_rtm ships only a podspec (no Package.swift). SwiftPM is the default
+      # from Flutter 3.44 on, which breaks the build, so force CocoaPods.
+      # `|| true` because the flag does not exist on older Flutter versions.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
       - name: Select and boot an available iPhone simulator
         shell: bash
         run: |
@@ -267,6 +276,10 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
+      # agora_rtm ships only a podspec (no Package.swift), so force CocoaPods.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
       - run: flutter pub get
       - name: Run flutter build ios --no-codesign
         run: flutter build ios --no-codesign
@@ -309,6 +322,10 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
+      # agora_rtm ships only a podspec (no Package.swift), so force CocoaPods.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
       - name: Update pod repo
         run: pod repo update
       - run: flutter pub get
@@ -392,7 +409,9 @@ jobs:
           SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_windows"
           flutter create --platforms=windows --org io.agora.validation "${SMOKE_DIR}"
           cd "${SMOKE_DIR}"
-          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          # Backslashes in GITHUB_WORKSPACE are invalid JSON escapes; pub accepts
+          # forward slashes on Windows.
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE//\\//}\"}"
           flutter build windows
 
   # This job aim to cover https://github.com/flutter/flutter/issues/135739
@@ -416,6 +435,13 @@ jobs:
           # Print used xCode version
           xcode-select -print-path
           xcodebuild -version
+      # agora_rtm ships only a podspec (no Package.swift). SwiftPM is the default
+      # from Flutter 3.44 on, so force CocoaPods to keep this job working if the
+      # pinned version is ever bumped.
+      # `|| true` because the flag does not exist on older Flutter versions.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
       - run: flutter pub get
       - name: Run flutter build ios --no-codesign
         run: flutter build ios --no-codesign

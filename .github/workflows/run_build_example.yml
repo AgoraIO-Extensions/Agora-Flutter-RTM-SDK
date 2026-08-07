@@ -31,10 +31,10 @@ on:
         required: false
         default: 'stable'
       flutter_version:
-        description: 'Target Flutter version, e.g. 3.44.8, 3.44.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
+        description: 'Target Flutter version(s), separated by comma, e.g. "3.24.5, 3.41.9". Keep every version below 3.44 until agora_rtm ships Swift Package Manager support, because SwiftPM is the default from 3.44 on.'
         type: string
         required: false
-        default: '3.44.8'
+        default: '3.24.5, 3.41.9'
   workflow_call:
     inputs:
       target_platforms:
@@ -64,10 +64,10 @@ on:
         required: false
         default: 'stable'
       flutter_version:
-        description: 'Target Flutter version, e.g. 3.44.8, 3.44.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
+        description: 'Target Flutter version(s), separated by comma, e.g. "3.24.5, 3.41.9". Keep every version below 3.44 until agora_rtm ships Swift Package Manager support, because SwiftPM is the default from 3.44 on.'
         type: string
         required: false
-        default: '3.44.8'
+        default: '3.24.5, 3.41.9'
     secrets:
       APP_ID_RTM:
         required: true
@@ -121,35 +121,61 @@ jobs:
           echo "final jsonlized platforms: $platforms"
           echo "platforms=$platforms" >> $GITHUB_OUTPUT
 
+  # Build a single `include` list pairing each requested platform with the cheapest
+  # runner that can build it and with every requested Flutter version. Android and
+  # web build fine on ubuntu, which is both faster to schedule and cheaper than
+  # macos; only ios/macos actually need a macos runner.
+  build-matrix:
+    runs-on: ubuntu-latest
+    needs: split-platforms
+    outputs:
+      include: ${{ steps.build-matrix.outputs.include }}
+    steps:
+      - id: build-matrix
+        env:
+          platforms: ${{ needs.split-platforms.outputs.platforms }}
+          flutter_versions: ${{ inputs.flutter_version }}
+        run: |
+          set -euo pipefail
+
+          versions=$(echo "$flutter_versions" | sed 's/ //g' | tr ',' '\n' | sed '/^$/d' | jq -R -s -c 'split("\n")[:-1]')
+          echo "requested versions: $versions"
+
+          include=$(jq -c -n \
+            --argjson platforms "$platforms" \
+            --argjson versions "$versions" \
+            '
+              # Cheapest runner able to build each platform.
+              {
+                android: "ubuntu-latest",
+                web:     "ubuntu-latest",
+                windows: "windows-2022",
+                ios:     "macos-14",
+                macos:   "macos-14"
+              } as $runners
+              | [ $platforms[] as $p
+                  | $versions[] as $v
+                  | { platform: $p,
+                      version: $v,
+                      os: $runners[$p],
+                      # Each platform is now built once per Flutter version, but the
+                      # job outputs used by the PR comment are keyed by platform only.
+                      # Mark the first requested version as primary so exactly one job
+                      # per platform writes that output and the comment is stable.
+                      primary: ($v == $versions[0]) }
+                  | select(.os != null) ]
+            ')
+
+          echo "final include: $include"
+          echo "include=$include" >> $GITHUB_OUTPUT
+
   build:
     runs-on: ${{ matrix.os }}
-    needs: split-platforms
+    needs: build-matrix
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-14, windows-2022]
-        platform: ${{ fromJson(needs.split-platforms.outputs.platforms) }}
-        exclude:
-          - os: ubuntu-latest
-            platform: android
-          - os: ubuntu-latest
-            platform: ios
-          - os: ubuntu-latest
-            platform: macos
-          - os: ubuntu-latest
-            platform: windows
-          - os: macos-14
-            platform: windows
-          - os: macos-14
-            platform: web
-          - os: windows-2022
-            platform: android
-          - os: windows-2022
-            platform: ios
-          - os: windows-2022
-            platform: macos
-          - os: windows-2022
-            platform: web
+        include: ${{ fromJson(needs.build-matrix.outputs.include) }}
     env:
         platform: ${{ matrix.platform }}
         extra_build_options: ${{ inputs.extra_build_options }}
@@ -227,8 +253,16 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: ${{ inputs.flutter_channel }}
-          flutter-version: ${{ inputs.flutter_version }}
+          flutter-version: ${{ matrix.version }}
           cache: true
+
+      # agora_rtm ships only a podspec (no Package.swift). SwiftPM is the default
+      # from Flutter 3.44 on, which breaks the iOS/macOS build, so force CocoaPods.
+      # `|| true` because the flag does not exist on older Flutter versions.
+      - name: Force CocoaPods instead of Swift Package Manager
+        if: ${{ matrix.platform == 'ios' || matrix.platform == 'macos' }}
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
 
       - name: Build
         env:
@@ -318,21 +352,31 @@ jobs:
             cp -RP build/macos/Build/Products/**/*.dSYM ../output/dSYMs
           elif [ "$platform" == "windows" ]; then
             # since flutter have no plain to support to build to run on 32-bit windows, we only need concern about the 64-bit windows
-            
+
+            # copy pdb symbols for a given build config, if any exist.
+            # NOTE: bash does not expand `**` recursively unless globstar is set, and
+            # plugin pdb files are not always emitted, so use find and treat a missing
+            # pdb as non-fatal instead of letting `cp` fail the whole job.
+            copy_plugin_pdbs() {
+              local config="$1"
+              local dest="$2"
+              if [ ! -d "build/windows/x64/plugins" ]; then
+                return 0
+              fi
+              find "build/windows/x64/plugins" -type f -path "*/${config}/*.pdb" \
+                -exec cp {} "$dest" \; || true
+            }
+
             # copy whole build/windows/x64/runner/Release directory to ../output if the directory exists
             if [ -d "build/windows/x64/runner/Release" ]; then
               cp -r build/windows/x64/runner/Release ../output
-
-              # copy all pdb files in build/windows/x64/plugins/**/Release/ to ../output/Release
-              cp -r build/windows/x64/plugins/**/Release/*.pdb ../output/Release
+              copy_plugin_pdbs "Release" "../output/Release"
             fi
 
             # copy whole build/windows/x64/runner/Debug directory to ../output if the directory exists
             if [ -d "build/windows/x64/runner/Debug" ]; then
               cp -r build/windows/x64/runner/Debug ../output
-
-              # copy all pdb files in build/windows/x64/plugins/**/Debug/ to ../output/Debug
-              cp -r build/windows/x64/plugins/**/Debug/*.pdb ../output/Debug
+              copy_plugin_pdbs "Debug" "../output/Debug"
             fi
           elif [ "$platform" == "web" ]; then
             # copy all files and files in subdirectories to ../output directory
@@ -349,8 +393,12 @@ jobs:
           # get build_timestamp
           build_timestamp=$(date +%Y%m%d%H%M%S)
 
-          # generate artifact_name
-          artifact_name="agora_rtm_example_${{ matrix.platform }}_${pub_version}_${build_timestamp}_${{ github.run_id }}"
+          # generate artifact_name. The Flutter version is part of the name because
+          # the same platform is now built against several Flutter versions, and
+          # artifact names must be unique within a run.
+          # printf, not echo: `tr` would turn echo's trailing newline into a dash.
+          flutter_version_slug="$(printf '%s' "${{ matrix.version }}" | tr -c '[:alnum:].' '-')"
+          artifact_name="agora_rtm_example_${{ matrix.platform }}_flutter${flutter_version_slug}_${pub_version}_${build_timestamp}_${{ github.run_id }}"
           echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
 
       - name: Upload build artifacts
@@ -362,6 +410,9 @@ jobs:
 
       - name: Setup download url
         id: setup_output
+        # Only the primary Flutter version publishes the per-platform link, so the
+        # PR comment does not depend on which matrix job finishes last.
+        if: ${{ matrix.primary }}
         shell: bash
         run: |
           # see https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs
