@@ -212,7 +212,8 @@ class _RtmApiDemoState extends State<RtmApiDemo> {
                   logSink.log('[linkState] ${event.toJson()}');
                 },
                 message: (event) {
-                  logSink.log('[message] event: ${event.toJson()}');
+                  final text = utf8.decode(event.message ?? Uint8List(0));
+                  logSink.log('[message] $text, event: ${event.toJson()}');
                 },
                 presence: (event) {
                   logSink.log('[presence] event: ${event.toJson()}');
