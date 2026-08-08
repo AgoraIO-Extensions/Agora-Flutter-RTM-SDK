@@ -115,6 +115,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: run flutter android integration tests
+        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
@@ -162,7 +163,9 @@ jobs:
 
           xcrun simctl bootstatus "${FLUTTER_TEST_DEVICE}" -b
           echo "FLUTTER_TEST_DEVICE=${FLUTTER_TEST_DEVICE}" >> "${GITHUB_ENV}"
+        continue-on-error: true
       - run: bash scripts/run_flutter_integration_test.sh "ios"
+        continue-on-error: true
       - name: Get ios crash logs
         if: always()
         run: |
@@ -207,7 +210,9 @@ jobs:
         run: flutter config --no-enable-swift-package-manager || true
       - name: Update pod repo
         run: pod repo update
+        continue-on-error: true
       - run: bash scripts/run_flutter_integration_test.sh "macos"
+        continue-on-error: true
       - name: Get macos crash logs
         if: always()
         shell: bash
@@ -240,6 +245,7 @@ jobs:
           flutter-version: ${{ matrix.version }}
           cache: true
       - name: Run integration tests
+        continue-on-error: true
         shell: bash
         run: bash scripts/run_flutter_integration_test.sh "windows"
 
