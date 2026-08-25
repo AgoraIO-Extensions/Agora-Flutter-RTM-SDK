@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
     # iris dependencies end
 
   # native dependencies start
-    s.dependency 'AgoraRtm_OC_Special', '0.0.4.test'
+    s.dependency 'AgoraRtm_OC_Special', '2.2.6.4'
     # native dependencies end
   end
 
