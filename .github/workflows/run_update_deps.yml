@@ -124,7 +124,9 @@ jobs:
             rtm_version="${{ inputs.code_gen_public_headers }}"
             echo "Using explicitly provided version: ${rtm_version}"
           else
-            dependencies_json='${{ steps.parse_dependencies_content.outputs.matches }}'
+            # The output is a stringified JSON, we need to parse it first.
+            dependencies_raw='${{ steps.parse_dependencies_content.outputs.matches }}'
+            dependencies_json=$(echo "$dependencies_raw" | sed 's/^"//;s/"$//' | sed 's/\\"/"/g')
             
             if [ -n "$dependencies_json" ] && [ "$dependencies_json" != "null" ]; then
               # Extract version from platform objects (priority: Windows > iOS > macOS > Android)
@@ -202,8 +204,8 @@ jobs:
           
           
           
-          
-          
-          
-          
 
+          
+          
+          
+          
