@@ -112,11 +112,11 @@ function update_cmake_file() {
     local dep_item=$2
     
     # Handle iris dependencies
-    iris_cdn_standalone=$(echo "${dep_item}" | jq -r '.iris_cdn[] | select(. | contains("Standalone"))')
+    iris_cdn_standalone=$(echo "${dep_item}" | jq -r '(.iris_cdn // [])[] | select(. | contains("Standalone"))')
     if [ "${iris_cdn_standalone}" == "" ]; then
-        iris_cdn_standalone=$(echo "${dep_item}" | jq -r '.iris_cdn[0]')
+        iris_cdn_standalone=$(echo "${dep_item}" | jq -r '(.iris_cdn // [])[0]')
     fi
-    if [ "${iris_cdn_standalone}" != "" ]; then
+    if [ "${iris_cdn_standalone}" != "" ] && [ "${iris_cdn_standalone}" != "null" ]; then
         escaped_iris_cdn=$(printf '%s\n' "$iris_cdn_standalone" | sed 's/[\/&]/\\&/g')
         iris_content="set(IRIS_SDK_DOWNLOAD_URL \"${escaped_iris_cdn}\")"
         

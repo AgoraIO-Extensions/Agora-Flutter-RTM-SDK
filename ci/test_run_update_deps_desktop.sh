@@ -39,5 +39,10 @@ grep -q "s.dependency 'AgoraIrisRTM_macOS', '9.9.9-test'" macos/agora_rtm.podspe
 grep -q "s.dependency 'AgoraRtm_OC_Special', '9.9.9-test'" macos/agora_rtm.podspec
 grep -q 'set(IRIS_SDK_DOWNLOAD_URL "https://example.com/iris_rtm_windows_standalone.zip")' windows/cmake/DownloadSDK.cmake
 grep -q 'set(NATIVE_SDK_DOWNLOAD_URL "https://example.com/native_rtm_windows.zip")' windows/cmake/DownloadSDK.cmake
+
+# A dependency update without a Windows Iris URL must retain the last valid URL.
+bash ci/run_update_deps.sh '[{"platform":"Windows","cdn":["https://example.com/native_rtm_windows_2.zip"]}]'
+grep -q 'set(IRIS_SDK_DOWNLOAD_URL "https://example.com/iris_rtm_windows_standalone.zip")' windows/cmake/DownloadSDK.cmake
+grep -q 'set(NATIVE_SDK_DOWNLOAD_URL "https://example.com/native_rtm_windows_2.zip")' windows/cmake/DownloadSDK.cmake
 cmp -s "${TMP_DIR}/artifacts_version.before" scripts/artifacts_version.sh
 popd >/dev/null
