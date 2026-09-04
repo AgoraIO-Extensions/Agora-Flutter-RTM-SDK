@@ -57,6 +57,10 @@ add_subdirectory("runner")
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# Temporary QA workaround: keep RTC's AOSL, which covers both SDKs.
+list(FILTER PLUGIN_BUNDLED_LIBRARIES EXCLUDE REGEX
+  ".*/agora_rtm/.*/libaosl[.]dll$")
+
 
 # === Installation ===
 # Support files are copied into place next to the executable, so that it can
