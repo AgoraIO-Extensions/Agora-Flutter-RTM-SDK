@@ -1,0 +1,38 @@
+#
+# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
+# Run `pod lib lint agora_rtm.podspec` to validate before publishing.
+#
+require "yaml"
+require "ostruct"
+project = OpenStruct.new YAML.load_file("../pubspec.yaml")
+Pod::Spec.new do |s|
+  s.name             = project.name
+  s.version          = project.version
+  s.summary          = 'A Flutter plugin for Agora RTM.'
+  s.description      = project.description
+  s.homepage         = project.homepage
+  s.license          = { :file => '../LICENSE' }
+  s.author           = { 'Agora' => 'developer@agora.io' }
+  s.source           = { :path => '.' }
+  s.source_files = 'Classes/**/*'
+  s.public_header_files = 'Classes/**/*.h'
+  s.dependency 'FlutterMacOS'
+  s.platform = :osx, '10.14'
+  s.libraries = 'stdc++'
+
+  plugin_dev_path = File.join(File.dirname(File.realpath(__FILE__)), '..', '.plugin_dev')
+  if File.exist?(plugin_dev_path)
+    puts '[plugin_dev] Found .plugin_dev file, use vendored_frameworks instead.'
+    s.vendored_frameworks = 'libs/*.framework', 'libs/*.xcframework'
+  else
+  # iris dependencies start
+    s.dependency 'AgoraIrisRTM_macOS', '2.2.6.2-build.1'
+    # iris dependencies end
+
+  # native dependencies start
+    s.dependency 'AgoraRtm_OC_Special', '2.2.6.4'
+    # native dependencies end
+  end
+
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+end

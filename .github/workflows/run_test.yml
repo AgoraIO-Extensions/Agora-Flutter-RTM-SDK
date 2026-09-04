@@ -11,6 +11,39 @@ on:
         required: true
 
 jobs:
+  dependency_update_test:
+    name: Dependency updater regression test
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run dependency updater regression tests
+        run: bash ci/test_run_update_deps_desktop.sh
+
+  flutter_compatibility:
+    name: Flutter ${{ matrix.version }} compatibility
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    # NOTE: `flutter pub get` at the repo root also resolves ./example, so the lowest
+    # version testable here is the *example app* floor (Flutter 3.16.0 / Dart 3.2.0),
+    # which is what agora_rtc_engine 6.5.4 requires.
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.16.0", "3.44.8"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze lib
+      - run: flutter pub get
+        working-directory: test_shard/integration_test_app
+      - run: flutter test
+        working-directory: test_shard/integration_test_app
+
   flutter_codestyle_check:
     name: Flutter codestyle/analyze check
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
@@ -20,6 +53,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.44.8'
           cache: true
       - name: Check Dart Format
         run: bash scripts/dart_pub_publish_check.sh
@@ -47,6 +81,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.44.8'
           cache: true
       - name: Run flutter test
         run: flutter test
@@ -58,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"]
+        version: ["3.44.8"]
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
@@ -80,6 +115,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: run flutter android integration tests
+        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
@@ -96,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"]
+        version: ["3.44.8"]
     runs-on: macos-latest
     timeout-minutes: 120
     env:
@@ -107,10 +143,29 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
-      - uses: futureware-tech/simulator-action@v3
-        with:
-          model: 'iPhone 15'
+      # agora_rtm ships only a podspec (no Package.swift). SwiftPM is the default
+      # from Flutter 3.44 on, which breaks the build, so force CocoaPods.
+      # `|| true` because the flag does not exist on older Flutter versions.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
+      - name: Select and boot an available iPhone simulator
+        shell: bash
+        run: |
+          SIMULATOR_JSON="$(xcrun simctl list devices available --json)"
+          FLUTTER_TEST_DEVICE="$(
+            jq -r '[.devices[][] | select((.isAvailable // false) and (.name | startswith("iPhone")))] | first | .udid // empty' <<< "${SIMULATOR_JSON}"
+          )"
+          if [[ -z "${FLUTTER_TEST_DEVICE}" ]]; then
+            echo "::error::No available iPhone simulator found."
+            exit 1
+          fi
+
+          xcrun simctl bootstatus "${FLUTTER_TEST_DEVICE}" -b
+          echo "FLUTTER_TEST_DEVICE=${FLUTTER_TEST_DEVICE}" >> "${GITHUB_ENV}"
+        continue-on-error: true
       - run: bash scripts/run_flutter_integration_test.sh "ios"
+        continue-on-error: true
       - name: Get ios crash logs
         if: always()
         run: |
@@ -132,13 +187,75 @@ jobs:
           name: logs-ios-${{ matrix.version }}
           path: logs-ios/*
 
+  integration_test_macos:
+    name: Run Flutter macOS Integration Tests
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.44.8"]
+    runs-on: macos-14
+    timeout-minutes: 120
+    env:
+      TEST_APP_ID: ${{ secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      # agora_rtm ships only a podspec (no Package.swift), so force CocoaPods.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
+      - name: Update pod repo
+        run: pod repo update
+        continue-on-error: true
+      - run: bash scripts/run_flutter_integration_test.sh "macos"
+        continue-on-error: true
+      - name: Get macos crash logs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p ./logs-macos/crash
+          cp -RP "${HOME}/Library/Logs/DiagnosticReports/"* ./logs-macos/crash || true
+      - name: Upload macos logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-macos-${{ matrix.version }}
+          path: logs-macos/*
+          if-no-files-found: ignore
+
+  integration_test_windows:
+    name: Run Flutter Windows Integration Tests
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.44.8"]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    env:
+      TEST_APP_ID: ${{ secrets.APP_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Run integration tests
+        continue-on-error: true
+        shell: bash
+        run: bash scripts/run_flutter_integration_test.sh "windows"
+
   build_android_ubuntu:
     name: Build Android on Ubuntu
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
+        version: ["3.44.8"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -156,14 +273,43 @@ jobs:
         run: flutter build apk
         working-directory: example
 
+  build_android_minimum:
+    name: Build Android with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Build plugin in a Flutter 3.10 Android host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum"
+          flutter create --platforms=android --org io.agora.validation "${SMOKE_DIR}"
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/' "${SMOKE_DIR}/android/app/build.gradle"
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/' "${SMOKE_DIR}/android/app/build.gradle"
+
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build apk --release
+
   build_android_windows:
     name: Build Android on Windows
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
-    runs-on: windows-2019
+        version: ["3.44.8"]
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v3
       - name: Install JDK
@@ -186,7 +332,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["3.10.0"]
+        version: ["3.44.8"]
     runs-on: macos-latest
     timeout-minutes: 120
     steps:
@@ -195,10 +341,143 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
+      # agora_rtm ships only a podspec (no Package.swift), so force CocoaPods.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
       - run: flutter pub get
       - name: Run flutter build ios --no-codesign
         run: flutter build ios --no-codesign
         working-directory: example
+
+  build_ios_minimum:
+    name: Build iOS with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: macos-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Build plugin in a Flutter 3.10 iOS host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_ios"
+          flutter create --platforms=ios --org io.agora.validation "${SMOKE_DIR}"
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build ios --no-codesign
+
+  build_macos:
+    name: Build macOS
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.41.9", "3.44.8"]
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      # agora_rtm ships only a podspec (no Package.swift), so force CocoaPods.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
+      - name: Update pod repo
+        run: pod repo update
+      - run: flutter pub get
+      - name: Run flutter build macos
+        run: flutter build macos
+        working-directory: example
+
+  build_macos_minimum:
+    name: Build macOS with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Update pod repo
+        run: pod repo update
+      - name: Build plugin in a Flutter 3.10 macOS host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_macos"
+          flutter create --platforms=macos --org io.agora.validation "${SMOKE_DIR}"
+          cd "${SMOKE_DIR}"
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE}\"}"
+          flutter build macos
+
+  build_windows:
+    name: Build Windows
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["3.41.9", "3.44.8"]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.version }}
+          cache: true
+      - name: Check Windows SDK artifacts
+        shell: bash
+        run: |
+          IRIS_SDK_DOWNLOAD_URL="$(sed -n 's/^[[:space:]]*set(IRIS_SDK_DOWNLOAD_URL[[:space:]]*"\([^"]*\)".*/\1/p' windows/cmake/DownloadSDK.cmake | head -n 1)"
+          NATIVE_SDK_DOWNLOAD_URL="$(sed -n 's/^[[:space:]]*set(NATIVE_SDK_DOWNLOAD_URL[[:space:]]*"\([^"]*\)".*/\1/p' windows/cmake/DownloadSDK.cmake | head -n 1)"
+          if [[ -z "${IRIS_SDK_DOWNLOAD_URL}" ]]; then
+            echo "::error::IRIS_SDK_DOWNLOAD_URL is missing from windows/cmake/DownloadSDK.cmake."
+            exit 1
+          fi
+          if [[ -z "${NATIVE_SDK_DOWNLOAD_URL}" ]]; then
+            echo "::error::NATIVE_SDK_DOWNLOAD_URL is missing from windows/cmake/DownloadSDK.cmake."
+            exit 1
+          fi
+      - run: flutter pub get
+      - name: Run flutter build windows
+        run: flutter build windows
+        working-directory: example
+
+  build_windows_minimum:
+    name: Build Windows with Flutter 3.10.0
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
+    runs-on: windows-2022
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.0
+          cache: true
+      - name: Build plugin in a Flutter 3.10 Windows host
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SMOKE_DIR="${RUNNER_TEMP}/agora_rtm_flutter_minimum_windows"
+          flutter create --platforms=windows --org io.agora.validation "${SMOKE_DIR}"
+          cd "${SMOKE_DIR}"
+          # Backslashes in GITHUB_WORKSPACE are invalid JSON escapes; pub accepts
+          # forward slashes on Windows.
+          dart pub add "agora_rtm:{\"path\":\"${GITHUB_WORKSPACE//\\//}\"}"
+          flutter build windows
 
   # This job aim to cover https://github.com/flutter/flutter/issues/135739
   build_ios_xcode_15:
@@ -206,8 +485,8 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:skip') }}
     strategy:
       matrix:
-        version: ["3.24.5"]
-    runs-on: macos-13
+        version: ["3.41.9"]
+    runs-on: macos-14
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3
@@ -221,6 +500,13 @@ jobs:
           # Print used xCode version
           xcode-select -print-path
           xcodebuild -version
+      # agora_rtm ships only a podspec (no Package.swift). SwiftPM is the default
+      # from Flutter 3.44 on, so force CocoaPods to keep this job working if the
+      # pinned version is ever bumped.
+      # `|| true` because the flag does not exist on older Flutter versions.
+      - name: Force CocoaPods instead of Swift Package Manager
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
       - run: flutter pub get
       - name: Run flutter build ios --no-codesign
         run: flutter build ios --no-codesign

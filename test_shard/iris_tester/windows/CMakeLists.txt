@@ -47,7 +47,16 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
-set(iris_tester_bundled_libraries
-  "${CMAKE_CURRENT_SOURCE_DIR}/IrisDebugger.dll"
-  PARENT_SCOPE
-)
+#
+# IrisDebugger.dll is a prebuilt artifact that backs the `*_fake_test.dart`
+# suites. Those suites are no longer run (see
+# scripts/run_flutter_integration_test.sh), so the artifact is not downloaded and
+# the file is normally absent. Bundling it unconditionally makes the CMake
+# install step fail with "file INSTALL cannot find ...IrisDebugger.dll", which
+# breaks the whole Windows build, so only bundle it when it is actually present.
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/IrisDebugger.dll")
+  set(iris_tester_bundled_libraries
+    "${CMAKE_CURRENT_SOURCE_DIR}/IrisDebugger.dll"
+    PARENT_SCOPE
+  )
+endif()

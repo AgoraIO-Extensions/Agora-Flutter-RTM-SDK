@@ -64,15 +64,26 @@ end
 
 
 pre_install do |installer|
-  # Define the path for the AgoraRtm framework
-  rtm_pod_path = File.join(installer.sandbox.root, 'AgoraRtm')
-  # Full path to aosl.xcframework
-  aosl_xcframework_path = File.join(rtm_pod_path, 'aosl.xcframework')
-  # Check if the file exists, and if it does, delete it
-  if File.exist?(aosl_xcframework_path)
+  # Both agora_rtm and agora_rtc_engine vendor their own aosl.xcframework. Keeping
+  # both makes CocoaPods fail with "frameworks with conflicting names:
+  # aosl.xcframework" (and, on newer Flutter, "Multiple commands produce
+  # .../aosl.framework"), so drop the RTM copy and let the RTC one win.
+  #
+  # The RTM pod name must stay in sync with ios/agora_rtm.podspec; it was renamed
+  # from 'AgoraRtm' to 'AgoraRtm_OC_Special' in 2.2.6.
+  rtm_pod_names = ['AgoraRtm_OC_Special', 'AgoraRtm']
+  removed = false
+
+  rtm_pod_names.each do |pod_name|
+    aosl_xcframework_path = File.join(installer.sandbox.root, pod_name, 'aosl.xcframework')
+    next unless File.exist?(aosl_xcframework_path)
+
     puts "Deleting aosl.xcframework from #{aosl_xcframework_path}"
     FileUtils.rm_rf(aosl_xcframework_path)
-  else
-    puts "aosl.xcframework not found, skipping deletion."
+    removed = true
+  end
+
+  unless removed
+    puts "aosl.xcframework not found under #{rtm_pod_names.join(', ')}, skipping deletion."
   end
 end

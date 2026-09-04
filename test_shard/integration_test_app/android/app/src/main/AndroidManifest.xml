@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.agora.integration_test_app.integration_test_app">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
    <application
         android:label="integration_test_app"
         android:name="${applicationName}"

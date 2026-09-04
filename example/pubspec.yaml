@@ -5,8 +5,8 @@ description: "Demonstrates how to use the agora_rtm plugin."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: '>=3.10.0'
+  sdk: '>=3.2.0 <4.0.0'
+  flutter: '>=3.16.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -26,7 +26,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
-  agora_rtc_engine: ^6.5.1
+  agora_rtc_engine: 6.5.4
 
   flutter_riverpod: ^1.0.0
 

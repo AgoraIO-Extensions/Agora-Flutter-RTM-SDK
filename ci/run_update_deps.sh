@@ -1,14 +1,20 @@
 #!/bin/bash
 
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    export LC_CTYPE=en_US.UTF-8
+fi
+
 # get current directory
 current_dir=$(pwd)
 echo "current_dir=${current_dir}"
 
 # const variables
 dep_file_ios=ios/agora_rtm.podspec
-# dep_file_macos=macos/agora_rtm.podspec  # macOS not supported yet
+dep_file_macos=macos/agora_rtm.podspec
 dep_file_android=android/build.gradle
-# dep_file_windows=windows/cmake/DownloadSDK.cmake  # Windows not supported yet
+dep_file_windows=windows/cmake/DownloadSDK.cmake
 
 # get parsed dependencies content from argument 1, the format is as follows:
 # [
@@ -106,8 +112,11 @@ function update_cmake_file() {
     local dep_item=$2
     
     # Handle iris dependencies
-    iris_cdn_standalone=$(echo "${dep_item}" | jq -r '.iris_cdn[] | select(. | contains("Standalone"))')
-    if [ "${iris_cdn_standalone}" != "" ]; then
+    iris_cdn_standalone=$(echo "${dep_item}" | jq -r '(.iris_cdn // [])[] | select(. | contains("Standalone"))')
+    if [ "${iris_cdn_standalone}" == "" ]; then
+        iris_cdn_standalone=$(echo "${dep_item}" | jq -r '(.iris_cdn // [])[0]')
+    fi
+    if [ "${iris_cdn_standalone}" != "" ] && [ "${iris_cdn_standalone}" != "null" ]; then
         escaped_iris_cdn=$(printf '%s\n' "$iris_cdn_standalone" | sed 's/[\/&]/\\&/g')
         iris_content="set(IRIS_SDK_DOWNLOAD_URL \"${escaped_iris_cdn}\")"
         
@@ -126,7 +135,6 @@ function update_cmake_file() {
     fi
 }
 
-
 echo "${dependencies_content}" | jq -c '.[]' | while read -r dep_item; do
     # get platform from dep_item
     platform=$(echo "${dep_item}" | jq -r '.platform')
@@ -134,12 +142,11 @@ echo "${dependencies_content}" | jq -c '.[]' | while read -r dep_item; do
     # update dependencies file by platform
     if [ "${platform}" == "iOS" ]; then
         update_podspec_file "${dep_file_ios}" "${dep_item}"
-    # elif [ "${platform}" == "macOS" ]; then
-    #     update_podspec_file "${dep_file_macos}" "${dep_item}"
+    elif [ "${platform}" == "macOS" ]; then
+        update_podspec_file "${dep_file_macos}" "${dep_item}"
     elif [ "${platform}" == "Android" ]; then
         update_gradle_file "${dep_file_android}" "${dep_item}"
-    # elif [ "${platform}" == "Windows" ]; then
-    #     update_cmake_file "${dep_file_windows}" "${dep_item}"
+    elif [ "${platform}" == "Windows" ]; then
+        update_cmake_file "${dep_file_windows}" "${dep_item}"
     fi
 done
-

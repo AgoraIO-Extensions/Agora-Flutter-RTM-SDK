@@ -43,17 +43,8 @@ if [[ ${PLATFORM} == "Android" ]];then
     
 fi
 
-if [[ ${PLATFORM} == "MAC" ]];then
-    cp -RP "${UNZIP_PATH}/Debugger/MAC/IrisDebugger.framework" "${IRIS_TESTER_PATH}/macos/"
-fi
-
 if [[ ${PLATFORM} == "iOS" ]];then
     cp -RP "${UNZIP_PATH}/Debugger/ALL_ARCHITECTURE/IrisDebugger.xcframework" "${IRIS_TESTER_PATH}/ios/"
-fi
-
-if [[ ${PLATFORM} == "Windows" ]];then
-    cp -RP "${UNZIP_PATH}/Debugger/x64/IrisDebugger.dll" "${IRIS_TESTER_PATH}/windows/IrisDebugger.dll"
-    cp -RP "${UNZIP_PATH}/Debugger/x64/IrisDebugger.lib" "${IRIS_TESTER_PATH}/windows/IrisDebugger.lib"
 fi
 
 # pushd ${UNZIP_PATH}

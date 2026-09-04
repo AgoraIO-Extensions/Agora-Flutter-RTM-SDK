@@ -7,7 +7,7 @@ on:
         description: 'Target platforms, e.g. android, ios, macos, windows, web, etc; separated by comma, default is all platforms'
         type: string
         required: true
-        default: 'android, ios'
+        default: 'android, ios, macos, windows'
       target_branch:
         description: 'Target branch, leave empty will use the same as the workflow trigger branch'
         type: string
@@ -31,19 +31,25 @@ on:
         required: false
         default: 'stable'
       flutter_version:
-        description: 'Target Flutter version, e.g. 3.24.5, 3.24.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
+        description: 'Target Flutter version(s), separated by comma, e.g. "3.24.5, 3.41.9". Keep every version below 3.44 until agora_rtm ships Swift Package Manager support, because SwiftPM is the default from 3.44 on.'
         type: string
         required: false
-        # we should use the latest stable version for building example later, however, the android build will fail with the latest stable version, so we fixed use the 3.24.5 version here for now
-        # Here is the error log:
-        # Caused by: org.gradle.api.GradleException: You are applying Flutter's app_plugin_loader Gradle plugin imperatively using the apply script method, which is not possible anymore. Migrate to applying Gradle plugins with the declarative plugins block: https://flutter.dev/to/flutter-gradle-plugin-apply
-        default: '3.24.5'
+        default: '3.24.5, 3.41.9'
+      app_id_secrets:
+        description: 'App ID secret(s) used for builds'
+        type: choice
+        required: false
+        default: 'MY_APP_ID'
+        options:
+          - 'MY_APP_ID'
+          - 'APP_ID_RTM'
+          - 'MY_APP_ID, APP_ID_RTM'
   workflow_call:
     inputs:
       target_platforms:
         description: 'Target platforms, e.g. android, ios, macos, windows, web, etc; separated by comma, default is all platforms'
         type: string
-        default: 'android, ios'
+        default: 'android, ios, macos, windows'
       target_branch:
         description: 'Target branch, leave empty will use the same as the workflow trigger branch'
         type: string
@@ -67,16 +73,20 @@ on:
         required: false
         default: 'stable'
       flutter_version:
-        description: 'Target Flutter version, e.g. 3.24.5, 3.24.x, commit hash, or leave empty to use the latest release version of specified channel by flutter_version(default)'
+        description: 'Target Flutter version(s), separated by comma, e.g. "3.24.5, 3.41.9". Keep every version below 3.44 until agora_rtm ships Swift Package Manager support, because SwiftPM is the default from 3.44 on.'
         type: string
         required: false
-        # we should use the latest stable version for building example later, however, the android build will fail with the latest stable version, so we fixed use the 3.24.5 version here for now
-        # Here is the error log:
-        # Caused by: org.gradle.api.GradleException: You are applying Flutter's app_plugin_loader Gradle plugin imperatively using the apply script method, which is not possible anymore. Migrate to applying Gradle plugins with the declarative plugins block: https://flutter.dev/to/flutter-gradle-plugin-apply
-        default: '3.24.5'
+        default: '3.24.5, 3.41.9'
+      app_id_secrets:
+        description: 'App ID secret(s) used for builds, separated by comma'
+        type: string
+        required: false
+        default: 'MY_APP_ID'
     secrets:
+      MY_APP_ID:
+        required: false
       APP_ID_RTM:
-        required: true
+        required: false
       BUILD_PROVISION_PROFILE_UUID:
         required: true
       BUILD_PROVISION_PROFILE_NAME:
@@ -127,35 +137,81 @@ jobs:
           echo "final jsonlized platforms: $platforms"
           echo "platforms=$platforms" >> $GITHUB_OUTPUT
 
-  build:
-    runs-on: ${{ matrix.os }}
+  # Build a single `include` list pairing each requested platform with the cheapest
+  # runner that can build it and with every requested Flutter version. Android and
+  # web build fine on ubuntu, which is both faster to schedule and cheaper than
+  # macos; only ios/macos actually need a macos runner.
+  build-matrix:
+    runs-on: ubuntu-latest
     needs: split-platforms
+    outputs:
+      include: ${{ steps.build-matrix.outputs.include }}
+    steps:
+      - id: build-matrix
+        env:
+          platforms: ${{ needs.split-platforms.outputs.platforms }}
+          flutter_versions: ${{ inputs.flutter_version }}
+          app_id_secrets: ${{ inputs.app_id_secrets }}
+        run: |
+          set -euo pipefail
+
+          versions=$(echo "$flutter_versions" | sed 's/ //g' | tr ',' '\n' | sed '/^$/d' | jq -R -s -c 'split("\n")[:-1]')
+          echo "requested versions: $versions"
+
+          app_ids=$(printf '%s' "$app_id_secrets" | sed 's/ //g' | tr ',' '\n' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          if [ "$(echo "$app_ids" | jq 'length')" -eq 0 ]; then
+            echo "::error::At least one App ID secret is required"
+            exit 1
+          fi
+          if [ "$(echo "$app_ids" | jq '[.[] | select(. != "MY_APP_ID" and . != "APP_ID_RTM")] | length')" -ne 0 ]; then
+            echo "::error::App ID secrets must be MY_APP_ID or APP_ID_RTM"
+            exit 1
+          fi
+          if [ "$(echo "$app_ids" | jq 'length')" -ne "$(echo "$app_ids" | jq 'unique | length')" ]; then
+            echo "::error::App ID secrets must not contain duplicates"
+            exit 1
+          fi
+          echo "requested app id secrets: $app_ids"
+
+          include=$(jq -c -n \
+            --argjson platforms "$platforms" \
+            --argjson versions "$versions" \
+            --argjson app_ids "$app_ids" \
+            '
+              # Cheapest runner able to build each platform.
+              {
+                android: "ubuntu-latest",
+                web:     "ubuntu-latest",
+                windows: "windows-2022",
+                ios:     "macos-14",
+                macos:   "macos-14"
+              } as $runners
+              | [ $platforms[] as $p
+                  | $versions[] as $v
+                  | $app_ids[] as $a
+                  | { platform: $p,
+                      version: $v,
+                      app_id_secret: $a,
+                      os: $runners[$p],
+                      # Each platform/app_id pair is now built once per Flutter version, but
+                      # the job outputs used by the PR comment are keyed by platform only.
+                      # Mark the first requested version as primary so exactly one job per
+                      # platform/app_id pair writes that output and the comment is stable.
+                      primary: ($v == $versions[0]) }
+                  | select(.os != null) ]
+            ')
+
+          echo "final include: $include"
+          echo "include=$include" >> $GITHUB_OUTPUT
+
+  build:
+    name: build (${{ matrix.platform }}, Flutter ${{ matrix.version }}, ${{ matrix.app_id_secret }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: build-matrix
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-14, windows-latest]
-        platform: ${{ fromJson(needs.split-platforms.outputs.platforms) }}
-        exclude:
-          - os: ubuntu-latest
-            platform: android
-          - os: ubuntu-latest
-            platform: ios
-          - os: ubuntu-latest
-            platform: macos
-          - os: ubuntu-latest
-            platform: windows
-          - os: macos-latest
-            platform: windows
-          - os: macos-latest
-            platform: web
-          - os: windows-latest
-            platform: android
-          - os: windows-latest
-            platform: ios
-          - os: windows-latest
-            platform: macos
-          - os: windows-latest
-            platform: web
+        include: ${{ fromJson(needs.build-matrix.outputs.include) }}
     env:
         platform: ${{ matrix.platform }}
         extra_build_options: ${{ inputs.extra_build_options }}
@@ -233,15 +289,34 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: ${{ inputs.flutter_channel }}
-          flutter-version: ${{ inputs.flutter_version }}
+          flutter-version: ${{ matrix.version }}
           cache: true
+
+      # agora_rtm ships only a podspec (no Package.swift). SwiftPM is the default
+      # from Flutter 3.44 on, which breaks the iOS/macOS build, so force CocoaPods.
+      # `|| true` because the flag does not exist on older Flutter versions.
+      - name: Force CocoaPods instead of Swift Package Manager
+        if: ${{ matrix.platform == 'ios' || matrix.platform == 'macos' }}
+        shell: bash
+        run: flutter config --no-enable-swift-package-manager || true
 
       - name: Build
         env:
-          DEFAULT_BUILD_APP_ID: ${{ secrets.APP_ID_RTM }}
+          BUILD_MY_APP_ID: ${{ secrets.MY_APP_ID }}
+          BUILD_APP_ID_RTM: ${{ secrets.APP_ID_RTM }}
         shell: bash
         working-directory: example
         run: |
+          if [ "${{ matrix.app_id_secret }}" == "MY_APP_ID" ]; then
+            DEFAULT_BUILD_APP_ID="$BUILD_MY_APP_ID"
+          else
+            DEFAULT_BUILD_APP_ID="$BUILD_APP_ID_RTM"
+          fi
+          if [ -z "$DEFAULT_BUILD_APP_ID" ]; then
+            echo "::error::Selected secret ${{ matrix.app_id_secret }} is empty"
+            exit 1
+          fi
+
           # show flutter version
           flutter --version && which flutter
 
@@ -301,8 +376,10 @@ jobs:
             # copy files in build/app/outputs/flutter-apk directory to ../output directory
             cp build/app/outputs/flutter-apk/* ../output
 
-            # copy whole symbol directory to ../output directory
-            cp -r build/app/outputs/native-debug-symbols ../output
+            # copy whole symbol directory to ../output directory if it exists
+            if [ -d "build/app/outputs/native-debug-symbols" ]; then
+              cp -r build/app/outputs/native-debug-symbols ../output
+            fi
           elif [ "$platform" == "ios" ]; then
             # copy build/ios/ipa/agora_rtm_example.ipa to ../output directory
             cp build/ios/ipa/agora_rtm_example.ipa ../output
@@ -322,21 +399,31 @@ jobs:
             cp -RP build/macos/Build/Products/**/*.dSYM ../output/dSYMs
           elif [ "$platform" == "windows" ]; then
             # since flutter have no plain to support to build to run on 32-bit windows, we only need concern about the 64-bit windows
-            
+
+            # copy pdb symbols for a given build config, if any exist.
+            # NOTE: bash does not expand `**` recursively unless globstar is set, and
+            # plugin pdb files are not always emitted, so use find and treat a missing
+            # pdb as non-fatal instead of letting `cp` fail the whole job.
+            copy_plugin_pdbs() {
+              local config="$1"
+              local dest="$2"
+              if [ ! -d "build/windows/x64/plugins" ]; then
+                return 0
+              fi
+              find "build/windows/x64/plugins" -type f -path "*/${config}/*.pdb" \
+                -exec cp {} "$dest" \; || true
+            }
+
             # copy whole build/windows/x64/runner/Release directory to ../output if the directory exists
             if [ -d "build/windows/x64/runner/Release" ]; then
               cp -r build/windows/x64/runner/Release ../output
-
-              # copy all pdb files in build/windows/x64/plugins/**/Release/ to ../output/Release
-              cp -r build/windows/x64/plugins/**/Release/*.pdb ../output/Release
+              copy_plugin_pdbs "Release" "../output/Release"
             fi
 
             # copy whole build/windows/x64/runner/Debug directory to ../output if the directory exists
             if [ -d "build/windows/x64/runner/Debug" ]; then
               cp -r build/windows/x64/runner/Debug ../output
-
-              # copy all pdb files in build/windows/x64/plugins/**/Debug/ to ../output/Debug
-              cp -r build/windows/x64/plugins/**/Debug/*.pdb ../output/Debug
+              copy_plugin_pdbs "Debug" "../output/Debug"
             fi
           elif [ "$platform" == "web" ]; then
             # copy all files and files in subdirectories to ../output directory
@@ -353,8 +440,12 @@ jobs:
           # get build_timestamp
           build_timestamp=$(date +%Y%m%d%H%M%S)
 
-          # generate artifact_name
-          artifact_name="agora_rtm_example_${{ matrix.platform }}_${pub_version}_${build_timestamp}_${{ github.run_id }}"
+          # generate artifact_name. The Flutter version is part of the name because
+          # the same platform is now built against several Flutter versions, and
+          # artifact names must be unique within a run.
+          # printf, not echo: `tr` would turn echo's trailing newline into a dash.
+          flutter_version_slug="$(printf '%s' "${{ matrix.version }}" | tr -c '[:alnum:].' '-')"
+          artifact_name="agora_rtm_example_${{ matrix.platform }}_flutter${flutter_version_slug}_${{ matrix.app_id_secret }}_${pub_version}_${build_timestamp}_${{ github.run_id }}"
           echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
 
       - name: Upload build artifacts
@@ -366,6 +457,9 @@ jobs:
 
       - name: Setup download url
         id: setup_output
+        # Only the primary Flutter version publishes the per-platform link, so the
+        # PR comment does not depend on which matrix job finishes last.
+        if: ${{ matrix.primary }}
         shell: bash
         run: |
           # see https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs
