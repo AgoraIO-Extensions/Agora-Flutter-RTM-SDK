@@ -35,6 +35,15 @@ on:
         type: string
         required: false
         default: '3.24.5, 3.41.9'
+      app_id_secrets:
+        description: 'App ID secret(s) used for builds'
+        type: choice
+        required: false
+        default: 'MY_APP_ID'
+        options:
+          - 'MY_APP_ID'
+          - 'APP_ID_RTM'
+          - 'MY_APP_ID, APP_ID_RTM'
   workflow_call:
     inputs:
       target_platforms:
@@ -68,9 +77,16 @@ on:
         type: string
         required: false
         default: '3.24.5, 3.41.9'
+      app_id_secrets:
+        description: 'App ID secret(s) used for builds, separated by comma'
+        type: string
+        required: false
+        default: 'MY_APP_ID'
     secrets:
+      MY_APP_ID:
+        required: false
       APP_ID_RTM:
-        required: true
+        required: false
       BUILD_PROVISION_PROFILE_UUID:
         required: true
       BUILD_PROVISION_PROFILE_NAME:
@@ -135,15 +151,32 @@ jobs:
         env:
           platforms: ${{ needs.split-platforms.outputs.platforms }}
           flutter_versions: ${{ inputs.flutter_version }}
+          app_id_secrets: ${{ inputs.app_id_secrets }}
         run: |
           set -euo pipefail
 
           versions=$(echo "$flutter_versions" | sed 's/ //g' | tr ',' '\n' | sed '/^$/d' | jq -R -s -c 'split("\n")[:-1]')
           echo "requested versions: $versions"
 
+          app_ids=$(printf '%s' "$app_id_secrets" | sed 's/ //g' | tr ',' '\n' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          if [ "$(echo "$app_ids" | jq 'length')" -eq 0 ]; then
+            echo "::error::At least one App ID secret is required"
+            exit 1
+          fi
+          if [ "$(echo "$app_ids" | jq '[.[] | select(. != "MY_APP_ID" and . != "APP_ID_RTM")] | length')" -ne 0 ]; then
+            echo "::error::App ID secrets must be MY_APP_ID or APP_ID_RTM"
+            exit 1
+          fi
+          if [ "$(echo "$app_ids" | jq 'length')" -ne "$(echo "$app_ids" | jq 'unique | length')" ]; then
+            echo "::error::App ID secrets must not contain duplicates"
+            exit 1
+          fi
+          echo "requested app id secrets: $app_ids"
+
           include=$(jq -c -n \
             --argjson platforms "$platforms" \
             --argjson versions "$versions" \
+            --argjson app_ids "$app_ids" \
             '
               # Cheapest runner able to build each platform.
               {
@@ -155,13 +188,15 @@ jobs:
               } as $runners
               | [ $platforms[] as $p
                   | $versions[] as $v
+                  | $app_ids[] as $a
                   | { platform: $p,
                       version: $v,
+                      app_id_secret: $a,
                       os: $runners[$p],
-                      # Each platform is now built once per Flutter version, but the
-                      # job outputs used by the PR comment are keyed by platform only.
-                      # Mark the first requested version as primary so exactly one job
-                      # per platform writes that output and the comment is stable.
+                      # Each platform/app_id pair is now built once per Flutter version, but
+                      # the job outputs used by the PR comment are keyed by platform only.
+                      # Mark the first requested version as primary so exactly one job per
+                      # platform/app_id pair writes that output and the comment is stable.
                       primary: ($v == $versions[0]) }
                   | select(.os != null) ]
             ')
@@ -170,6 +205,7 @@ jobs:
           echo "include=$include" >> $GITHUB_OUTPUT
 
   build:
+    name: build (${{ matrix.platform }}, Flutter ${{ matrix.version }}, ${{ matrix.app_id_secret }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     needs: build-matrix
     strategy:
@@ -266,10 +302,21 @@ jobs:
 
       - name: Build
         env:
-          DEFAULT_BUILD_APP_ID: ${{ secrets.APP_ID_RTM }}
+          BUILD_MY_APP_ID: ${{ secrets.MY_APP_ID }}
+          BUILD_APP_ID_RTM: ${{ secrets.APP_ID_RTM }}
         shell: bash
         working-directory: example
         run: |
+          if [ "${{ matrix.app_id_secret }}" == "MY_APP_ID" ]; then
+            DEFAULT_BUILD_APP_ID="$BUILD_MY_APP_ID"
+          else
+            DEFAULT_BUILD_APP_ID="$BUILD_APP_ID_RTM"
+          fi
+          if [ -z "$DEFAULT_BUILD_APP_ID" ]; then
+            echo "::error::Selected secret ${{ matrix.app_id_secret }} is empty"
+            exit 1
+          fi
+
           # show flutter version
           flutter --version && which flutter
 
@@ -398,7 +445,7 @@ jobs:
           # artifact names must be unique within a run.
           # printf, not echo: `tr` would turn echo's trailing newline into a dash.
           flutter_version_slug="$(printf '%s' "${{ matrix.version }}" | tr -c '[:alnum:].' '-')"
-          artifact_name="agora_rtm_example_${{ matrix.platform }}_flutter${flutter_version_slug}_${pub_version}_${build_timestamp}_${{ github.run_id }}"
+          artifact_name="agora_rtm_example_${{ matrix.platform }}_flutter${flutter_version_slug}_${{ matrix.app_id_secret }}_${pub_version}_${build_timestamp}_${{ github.run_id }}"
           echo "artifact_name=$artifact_name" >> $GITHUB_OUTPUT
 
       - name: Upload build artifacts
