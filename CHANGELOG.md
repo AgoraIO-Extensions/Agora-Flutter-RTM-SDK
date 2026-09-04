@@ -1,5 +1,37 @@
 # Changelog
 
+## [2.2.6-sp.2264](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/compare/2.2.5...2.2.6-sp.2264) (2026-09-04)
+
+### Features
+
+* add desktop platform support ([#239](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/239)) ([e3c1f52](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/e3c1f52c599c137eca0c47ae62b5847c8520ae1f))
+
+## 2.2.5 (2025-09-08)
+
+### Bug Fixes
+
+* fix terra gen code config ([#221](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/221)) ([59cb782](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/59cb782d1544ad981d7d96ff5685cf08bea7c1ce))
+* modify pr_closed configuration ([#215](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/215)) ([944281f](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/944281f524f43b9408de5989b1eb1df6ddf89304))
+* modify terra/build.sh configuration ([#217](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/217)) ([a3e7a79](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/a3e7a79696fc215eb1033219fd2d5003fb3d247d))
+* prevent type mismatches in IrisMethodChannel.wrapRtmStatus ([30c493a](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/30c493a7e6ea6c1cada798ff0b84e0dce4510e7e)), references [#0](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/0) [#1](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/1)
+* prvent request with invalid requestId ([#197](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/197)) ([f771e64](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/f771e644aee9fa1dfb31749e5b2adda851c5179c)), references [#193](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/193) [#194](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/194)
+
+## 2.2.2 (2024-10-29)
+
+### Features
+
+* Update iris_method_channel: ^2.2.2 ([#179](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/179)) ([4e870a4](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/4e870a4006bd160abb6273773d546649ce3fc238))
+
+### Bug Fixes
+
+* Fix use incorrect length value in RtmClientImplOverride.publish/StreamChannelImpl.publishTopicMessage ([#177](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/issues/177)) ([b8e9ed1](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/b8e9ed14173744676fc7585d2a24ec288894a7c9))
+
+## 2.2.1 (2024-09-12)
+
+### Features
+
+* Upgrade RTM Native SDK 2.2.1 ([df1a024](https://github.com/AgoraIO-Extensions/Agora-Flutter-RTM-SDK/commit/df1a024ec28da04c90cecc7729d1b8aafe7eb142))
+
 ## 2.2.6 (2025-11-11)
 
 ### Features
