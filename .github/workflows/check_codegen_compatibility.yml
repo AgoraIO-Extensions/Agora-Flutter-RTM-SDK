@@ -32,3 +32,6 @@ jobs:
           flutter_version: '3.19.6'
       - name: Analyze generated SDK
         run: flutter analyze lib --no-pub --no-fatal-infos --no-fatal-warnings
+      - name: Run generated SDK unit tests
+        working-directory: test_shard/integration_test_app
+        run: flutter test --no-pub

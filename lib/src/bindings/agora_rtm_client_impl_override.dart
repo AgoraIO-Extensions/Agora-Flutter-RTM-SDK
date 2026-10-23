@@ -4,7 +4,6 @@ import 'dart:typed_data' show Uint8List;
 import 'package:agora_rtm/src/agora_rtm_client_ext.dart';
 import 'package:agora_rtm/src/binding_forward_export.dart'
     show PublishOptions, RtmConfig;
-import 'package:agora_rtm/src/bindings/gen/agora_rtm_client.dart';
 import 'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart';
 import 'package:agora_rtm/src/impl/extensions.dart';
 import 'package:flutter/foundation.dart'

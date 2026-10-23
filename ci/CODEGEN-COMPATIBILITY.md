@@ -17,7 +17,7 @@ hand-edit generated bindings. The old callback wrapper path forwards to the
 new generated file, replacing stale generated code when upgrading headers.
 
 The `Check codegen compatibility` PR workflow generates real 2.3.1 bindings
-and test sources, then analyzes the SDK. It has read-only repository access
+and test sources, then analyzes the SDK and runs its unit tests. It has read-only repository access
 and creates no commit, PR, tag, package release, or test notification.
 
 Local verification with Flutter 3.19.6:
@@ -27,6 +27,8 @@ flutter pub get
 corepack enable
 bash scripts/code_gen.sh rtm_2.3.1
 flutter analyze lib --no-pub --no-fatal-infos --no-fatal-warnings
+cd test_shard/integration_test_app
+flutter test --no-pub
 ```
 
 Generation modifies generated files in the checkout; use a disposable
