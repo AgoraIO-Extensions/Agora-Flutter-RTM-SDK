@@ -74,9 +74,9 @@ class RtmResultHandlerImpl extends rtm_result.RtmResultHandler {
     _funcOf('storage')?.call(event);
   }
 
-  @override
-  void onConnectionStateChanged(String channelName, RtmConnectionState state,
-      RtmConnectionChangeReason reason) {
+  // Older generated bindings still dispatch this legacy callback.
+  void onConnectionStateChanged(
+      String channelName, Object state, Object reason) {
     _funcOf('connection')?.call(channelName, state, reason);
   }
 

@@ -46,6 +46,13 @@ void main(List<String> arguments) {
 
   final bindingIntegrationTestOutputDir =
       path.join(outputDir, 'integration_test', 'generated', 'bindings');
+  // RTM 2.3.1 moved callbacks and their payloads into separate files.
+  for (final eventPath in [
+    path.join(srcDir, 'agora_rtm_event_handler.dart'),
+    path.join(srcDir, 'bindings', 'gen', 'agora_rtm_event_handler.dart'),
+  ]) {
+    if (File(eventPath).existsSync()) includedPaths.add(eventPath);
+  }
   final unitTestOutputDir = path.join(outputDir, 'test', 'generated');
   List<TemplatedTestCase> templatedTestCases = [];
   if (genIntegrationTest) {

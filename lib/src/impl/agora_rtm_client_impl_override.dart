@@ -1,12 +1,4 @@
-import 'package:agora_rtm/src/agora_rtm_base.dart';
-import 'package:agora_rtm/src/agora_rtm_client.dart';
-import 'package:agora_rtm/src/agora_rtm_client_ext.dart'
-    show AgoraRtmException, RtmStatus;
-import 'package:agora_rtm/src/agora_rtm_history.dart';
-import 'package:agora_rtm/src/agora_rtm_lock.dart';
-import 'package:agora_rtm/src/agora_rtm_presence.dart';
-import 'package:agora_rtm/src/agora_rtm_storage.dart';
-import 'package:agora_rtm/src/agora_stream_channel.dart';
+import 'package:agora_rtm/agora_rtm.dart';
 import 'package:agora_rtm/src/bindings/native_iris_api_engine_binding_delegate.dart';
 import 'package:agora_rtm/src/impl/agora_stream_channel_impl_override.dart';
 import 'package:agora_rtm/src/impl/extensions.dart';

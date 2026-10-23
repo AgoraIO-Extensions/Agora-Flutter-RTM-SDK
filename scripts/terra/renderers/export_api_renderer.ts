@@ -69,6 +69,10 @@ export default function ExportRtmApiInterfaceRenderer(
   parseResult: ParseResult
 ): RenderResult[] {
   let renderResults = (parseResult!.nodes as CXXFile[]).map((cxxFile) => {
+    const callbackExports = cxxFile.nodes
+      .filter((node) => node.isClazz() && isCallbackClass(node.name))
+      .map((node) => `export 'bindings/gen/${dartFileName(cxxFile)}.dart' show ${dartName(node)};`)
+      .join("\n");
     let subContents = cxxFile.nodes
       .filter((it) => !isNativeBindingsNode(it))
       .filter((it) => it.name.length > 0)
@@ -117,6 +121,7 @@ export default function ExportRtmApiInterfaceRenderer(
 
     let content = _trim(`
           import 'binding_forward_export.dart';
+          ${callbackExports}
           ${
             isNeedImportGDartFile
               ? `part '${dartFileName(cxxFile)}.g.dart';`
@@ -900,7 +905,7 @@ function implRendererResults(
   outputDir: string
 ): RenderResult[] {
   let renderResults = (parseResult!.nodes as CXXFile[])
-    .filter((it) => it.nodes.find((node) => node.isClazz()) != undefined)
+    .filter((it) => it.nodes.some((node) => node.isClazz() && !isCallbackClass(node.name)))
     .map((cxxFile) => {
       let subContents = cxxFile.nodes
         .filter((it) => !isNativeBindingsNode(it))
