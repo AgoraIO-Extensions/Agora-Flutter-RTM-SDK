@@ -17,6 +17,13 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://download.agora.io/maven'
+            content {
+                includeGroup 'io.agora'
+                includeGroup 'io.agora.rtm'
+            }
+        }
     }
 }
 

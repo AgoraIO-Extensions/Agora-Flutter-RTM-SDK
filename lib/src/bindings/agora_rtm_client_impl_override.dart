@@ -46,8 +46,7 @@ class _StreamChannelScopedKey implements ScopedKey {
 }
 
 class RtmClientImplOverride extends rtmc_binding.RtmClientImpl {
-  RtmClientImplOverride._(IrisMethodChannel irisMethodChannel)
-      : super(irisMethodChannel);
+  RtmClientImplOverride._(super.irisMethodChannel);
 
   static RtmClientImplOverride create(
     IrisMethodChannel irisMethodChannel,
