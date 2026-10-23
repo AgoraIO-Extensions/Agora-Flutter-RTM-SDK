@@ -4,7 +4,7 @@
   "abi": "rtm_2.3.1",
   "source": {
     "project": "Iris",
-    "commit": "0d88120e4e5f1e776f741f4309f0c4757f37ff9a",
+    "commit": "66a1e6577094b4c990eb01cea2db70447a2e5cc0",
     "productionBase": "b55b8f5b17ce1381c4ae8f76b8a4030b39c6f3e0",
     "legacyFixtureBase": "4e19c9a68180ad4686fa73e2b449c1e0f5664ecd",
     "target": "debug/rtm",
@@ -17,7 +17,7 @@
   },
   "android": {
     "archive": "android.zip",
-    "sha256": "825d38ebad82817df74fa41a82b8efa0e2ad8f21fd1e0ccee032a1876847a65a",
+    "sha256": "0c3bfe10c4f122ac5c5c097c6935eb926e93994e45842acfc0a5e8c4804c02b5",
     "ndk": "27.1.12297006",
     "api": 21,
     "abis": ["arm64-v8a", "armeabi-v7a", "x86_64"],
@@ -25,7 +25,7 @@
   },
   "ios": {
     "archive": "ios.zip",
-    "sha256": "2e8a8a41dec7d47770836974665a0f13e1cb3375f71b526001217d53d0e572c8",
+    "sha256": "a0d748ac165c00d19c4c4df0a525b0ec6f73057f3c9924c2865e79dae2f1623f",
     "xcode": "16.4 (16F6)",
     "minimumVersion": "12.0",
     "device": ["arm64"],

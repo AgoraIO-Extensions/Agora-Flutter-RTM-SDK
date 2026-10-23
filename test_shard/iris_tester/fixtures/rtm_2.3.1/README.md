@@ -4,7 +4,7 @@ These are fake clients for native binding tests, not distributable SDKs.
 The old 2.2.1 Debugger has a different C++ virtual interface and cannot safely
 be injected into Iris built against 2.3.1 (`getHistory` shifts later methods).
 
-Source: Iris fixture revision `0d88120e4e5f1e776f741f4309f0c4757f37ff9a`,
+Source: Iris fixture revision `66a1e6577094b4c990eb01cea2db70447a2e5cc0`,
 based on production Iris revision `b55b8f5b17ce1381c4ae8f76b8a4030b39c6f3e0`.
 The historical fixture generators are run against `rtm_2.3.1` headers and
 formatted with clang-format; generated C++ is not hand-patched. Build the
@@ -18,7 +18,7 @@ Native SDK factory/version functions and C++ implementation symbols are hidden.
 
 The host CTest dynamically loads the actual fixture and checks version,
 history/stream virtual dispatch, channel name, online-status and binary-message
-callback data, including rejection of invalid bytes and lengths. Assertions
+callback data (including nested history messages), with rejection of invalid bytes and lengths. Assertions
 remain enabled in Release builds.
 `GetRtmFixtureVersion` must return `rtm_2.3.1`. The installer checks archive
 SHA-256 before extraction, and the Dart test adapter checks the ABI marker.
