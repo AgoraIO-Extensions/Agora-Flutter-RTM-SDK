@@ -12,3 +12,17 @@ def deduplicate_rtm_aosl(installer)
     FileUtils.rm_rf(rtc_aosl)
   end
 end
+
+# Inspect the selected provider after CocoaPods has generated its copy phase.
+# File-only tests cannot establish that a simulator framework is actually copied.
+def report_rtm_aosl_copy(installer)
+  root = installer.sandbox.root
+  source = File.join(root, 'ShengwangRtm_iOS', 'aosl.xcframework')
+  script = File.join(root, 'Target Support Files', 'ShengwangRtm_iOS', 'ShengwangRtm_iOS-xcframeworks.sh')
+  puts "RTM AOSL provider present: #{File.directory?(source)}"
+  if File.file?(script)
+    File.foreach(script) do |line|
+      puts "RTM copy phase: #{line.strip}" if line.start_with?('install_xcframework ')
+    end
+  end
+end
