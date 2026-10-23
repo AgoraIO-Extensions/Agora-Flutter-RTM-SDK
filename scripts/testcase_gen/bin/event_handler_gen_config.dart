@@ -18,6 +18,7 @@ import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
 import 'package:agora_rtm/src/bindings/native_iris_api_engine_binding_delegate.dart';
 import 'package:agora_rtm/src/bindings/agora_rtm_client_impl_override.dart';
 import 'event_ids_mapping_gen.dart';
+import '../../fixture_json.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';

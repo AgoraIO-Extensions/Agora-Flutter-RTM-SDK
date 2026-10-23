@@ -11,6 +11,7 @@ import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
 import 'package:agora_rtm/src/bindings/native_iris_api_engine_binding_delegate.dart';
 import 'package:agora_rtm/src/bindings/agora_rtm_client_impl_override.dart';
 import 'event_ids_mapping_gen.dart';
+import '../../fixture_json.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -78,7 +79,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds =
@@ -146,7 +147,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds =
@@ -235,7 +236,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds =
@@ -295,7 +296,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds = eventIdsMapping['RtmEventHandler_onTopicEvent'] ?? [];
@@ -354,7 +355,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds = eventIdsMapping['RtmEventHandler_onLockEvent'] ?? [];
@@ -422,7 +423,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds =
@@ -486,7 +487,7 @@ void testCases(
         );
 
         final eventJson = {
-          'event': event.toJson(),
+          'event': fixtureJsonValue(event),
         };
 
         final eventIds = eventIdsMapping['RtmEventHandler_onTokenEvent'] ?? [];
@@ -843,8 +844,8 @@ void testCases(
           'channelName': channelName,
           'userId': userId,
           'topic': topic,
-          'succeedUsers': succeedUsers.toJson(),
-          'failedUsers': failedUsers.toJson(),
+          'succeedUsers': fixtureJsonValue(succeedUsers),
+          'failedUsers': fixtureJsonValue(failedUsers),
           'errorCode': errorCode.value(),
         };
 
@@ -961,7 +962,7 @@ void testCases(
           'requestId': requestId,
           'channelName': channelName,
           'topic': topic,
-          'users': users.toJson(),
+          'users': fixtureJsonValue(users),
           'errorCode': errorCode.value(),
         };
 
@@ -1562,7 +1563,7 @@ void testCases(
           'requestId': requestId,
           'channelName': channelName,
           'channelType': channelType.value(),
-          'data': data.toJson(),
+          'data': fixtureJsonValue(data),
           'errorCode': errorCode.value(),
         };
 
@@ -1787,7 +1788,7 @@ void testCases(
         final eventJson = {
           'requestId': requestId,
           'userId': userId,
-          'data': data.toJson(),
+          'data': fixtureJsonValue(data),
           'errorCode': errorCode.value(),
         };
 
@@ -2280,7 +2281,7 @@ void testCases(
           'requestId': requestId,
           'channelName': channelName,
           'channelType': channelType.value(),
-          'lockDetailList': lockDetailList,
+          'lockDetailList': fixtureJsonValue(lockDetailList),
           'count': count,
           'errorCode': errorCode.value(),
         };
@@ -2347,7 +2348,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'userStateList': userStateList,
+          'userStateList': fixtureJsonValue(userStateList),
           'count': count,
           'nextPage': nextPage,
           'errorCode': errorCode.value(),
@@ -2415,7 +2416,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'userStateList': userStateList,
+          'userStateList': fixtureJsonValue(userStateList),
           'count': count,
           'nextPage': nextPage,
           'errorCode': errorCode.value(),
@@ -2482,7 +2483,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'channels': channels,
+          'channels': fixtureJsonValue(channels),
           'count': count,
           'errorCode': errorCode.value(),
         };
@@ -2548,7 +2549,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'channels': channels,
+          'channels': fixtureJsonValue(channels),
           'count': count,
           'errorCode': errorCode.value(),
         };
@@ -2711,7 +2712,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'state': state.toJson(),
+          'state': fixtureJsonValue(state),
           'errorCode': errorCode.value(),
         };
 
@@ -2770,7 +2771,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'status': status.toJson(),
+          'status': fixtureJsonValue(status),
           'errorCode': errorCode.value(),
         };
 
@@ -2846,7 +2847,7 @@ void testCases(
 
         final eventJson = {
           'requestId': requestId,
-          'messageList': messageList,
+          'messageList': fixtureJsonValue(messageList),
           'count': count,
           'newStart': newStart,
           'errorCode': errorCode.value(),

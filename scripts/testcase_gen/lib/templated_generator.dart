@@ -330,6 +330,9 @@ class TemplatedGenerator extends DefaultGenerator {
           if (parameterType == 'Uint8List') {
             jsonBuffer
                 .writeln('\'${parameter.name}\': ${parameter.name}.toList(),');
+          } else if (parameter.type.type == 'List') {
+            jsonBuffer.writeln(
+                '\'${parameter.name}\': fixtureJsonValue(${parameter.name}),');
           } else {
             jsonBuffer.writeln('\'${parameter.name}\': ${parameter.name},');
           }
@@ -343,8 +346,8 @@ class TemplatedGenerator extends DefaultGenerator {
             if (parameterClass.constructors.isEmpty) {
               continue;
             }
-            jsonBuffer
-                .writeln('\'${parameter.name}\': ${parameter.name}.toJson(),');
+            jsonBuffer.writeln(
+                '\'${parameter.name}\': fixtureJsonValue(${parameter.name}),');
           }
         }
       }
