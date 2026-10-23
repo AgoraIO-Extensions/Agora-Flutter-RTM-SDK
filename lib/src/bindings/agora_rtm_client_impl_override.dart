@@ -11,8 +11,18 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart' show MethodChannel;
 
 import 'gen/binding_forward_export.dart'
-    show RtmEventHandler, RtmEventHandlerWrapper;
+    show
+        RtmEventHandler,
+        RtmEventHandlerWrapper,
+        RtmHistory,
+        RtmLock,
+        RtmPresence,
+        RtmStorage;
 import 'gen/agora_rtm_client_impl.dart' as rtmc_binding;
+import 'gen/agora_rtm_history_impl.dart' as history_binding;
+import 'gen/agora_rtm_lock_impl.dart' as lock_binding;
+import 'gen/agora_rtm_presence_impl.dart' as presence_binding;
+import 'gen/agora_rtm_storage_impl.dart' as storage_binding;
 import 'package:iris_method_channel/iris_method_channel.dart';
 import 'agora_stream_channel_impl_override.dart';
 import 'package:async/async.dart' show AsyncMemoizer;
@@ -96,6 +106,25 @@ class RtmClientImplOverride extends rtmc_binding.RtmClientImpl {
   IrisMethodChannel getIrisMethodChannel() {
     return irisMethodChannel;
   }
+
+  // Child wrappers share the client's transport; they do not marshal C++
+  // interface pointers through JSON factory calls. Iris resolves the child
+  // interface from its client when a child operation is invoked.
+  @override
+  Future<RtmHistory> getHistory() async =>
+      history_binding.RtmHistoryImpl(irisMethodChannel);
+
+  @override
+  Future<RtmLock> getLock() async =>
+      lock_binding.RtmLockImpl(irisMethodChannel);
+
+  @override
+  Future<RtmPresence> getPresence() async =>
+      presence_binding.RtmPresenceImpl(irisMethodChannel);
+
+  @override
+  Future<RtmStorage> getStorage() async =>
+      storage_binding.RtmStorageImpl(irisMethodChannel);
 
   @override
   Future<StreamChannel> createStreamChannel(String channelName) async {

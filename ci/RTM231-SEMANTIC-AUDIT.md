@@ -16,11 +16,18 @@ Audited against dependency PR #246 (`d2736343eee417dd7fcd35ba34a9cba993b01e22`):
 | Token events | Native payload reaches the listener with `reason` and nested `affectedResources.messageChannels`; listener removal stops delivery |
 | Configuration and payload split | `RtmConfig` now lives in base; events live in the event-handler file; public barrel and handwritten imports resolve these types |
 | Existing semantic conversions | Map/StateItem, option flattening, area/service bitmasks, stream scoping and UTF-8 buffer conversion remain in the existing renderer/overrides |
+| Native child factories | History, lock, presence and storage bindings are constructed locally on the existing Iris transport; C++ interface pointers are not cast from JSON factory results |
 
 Found and fixed a handwritten-layer inconsistency: stream text/binary publish
 overrides did not catch `AgoraRtmException`, unlike generated semantic methods.
 Both now return an error `RtmStatus` and null result using the shared converter.
 Other exception types still propagate.
+
+The handwritten native client adapter also supplies the four child factories.
+In particular, raw `RtmClient_getHistory` is not a registered pointer-marshalling
+API in the published Iris build; history operations resolve their native child
+from the client internally. The regression verifies shared transport and no
+factory RPC, rather than accepting an unregistered-API error in tests.
 
 `rtm231_semantic_test.dart` uses the real native bindings, event JSON decoder,
 result handler and semantic implementation; only the native transport is fake.
