@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.1 (unreleased)
+
+* Update Android/iOS Native RTM and Iris dependencies to 2.3.1-dev.4.
+* Add the semantic `getUserOnlineStatus` API and adapt the 2.3.1 event/configuration headers.
+* Preserve the `RtmStatus` error contract for stream text and binary publishing.
+* Validate real Dart callback-to-Future routing and restore the supported CI toolchain matrix.
+
 ## 2.2.6 (2025-11-11)
 
 ### Features

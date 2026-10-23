@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:agora_rtm/src/binding_forward_export.dart';
-import 'package:agora_rtm/src/bindings/gen/agora_rtm_client.dart';
 
 abstract class RtmResultHandler {
   RtmResultHandler() {

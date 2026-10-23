@@ -1408,7 +1408,7 @@ class RtmEncryptionConfig {
   @JsonKey(name: 'encryptionKey')
   final String? encryptionKey;
 
-  @JsonKey(name: 'encryptionSalt', ignore: true)
+  @JsonKey(name: 'encryptionSalt', includeFromJson: false, includeToJson: false)
   final Uint8List? encryptionSalt;
 
   factory RtmEncryptionConfig.fromJson(Map<String, dynamic> json) =>
@@ -1471,7 +1471,7 @@ class HistoryMessage {
   @JsonKey(name: 'publisher')
   final String? publisher;
 
-  @JsonKey(name: 'message', ignore: true)
+  @JsonKey(name: 'message', includeFromJson: false, includeToJson: false)
   final Uint8List? message;
 
   @JsonKey(name: 'messageLength')

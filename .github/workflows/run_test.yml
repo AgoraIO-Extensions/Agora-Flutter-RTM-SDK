@@ -97,7 +97,7 @@ jobs:
       fail-fast: false
       matrix:
         version: ["3.10.0", "3.24.5"]
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 120
     env:
       TEST_APP_ID: ${{ secrets.APP_ID }}
@@ -107,9 +107,11 @@ jobs:
         with:
           flutter-version: ${{ matrix.version }}
           cache: true
+      - name: Select Xcode for the simulator runtime
+        run: sudo xcode-select -switch /Applications/Xcode_16.4.app
       - uses: futureware-tech/simulator-action@v3
         with:
-          model: 'iPhone 15'
+          model: 'iPhone 16'
       - run: bash scripts/run_flutter_integration_test.sh "ios"
       - name: Get ios crash logs
         if: always()
@@ -163,7 +165,7 @@ jobs:
       fail-fast: false
       matrix:
         version: ["3.10.0", "3.24.5"] # Need 3.10.0 to build with Gradle 8.x https://github.com/flutter/flutter/issues/124838
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v3
       - name: Install JDK
@@ -187,10 +189,12 @@ jobs:
       fail-fast: false
       matrix:
         version: ["3.10.0"]
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode_16.4.app
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.version }}
@@ -207,7 +211,7 @@ jobs:
     strategy:
       matrix:
         version: ["3.24.5"]
-    runs-on: macos-13
+    runs-on: macos-14
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3
@@ -217,7 +221,7 @@ jobs:
           cache: true
       - run: | # https://github.com/actions/runner-images/issues/6746#issuecomment-1380042553
           # set xcode version to use for build
-          sudo xcode-select -switch /Applications/Xcode_15.0.1.app
+          sudo xcode-select -switch /Applications/Xcode_15.4.app
           # Print used xCode version
           xcode-select -print-path
           xcodebuild -version

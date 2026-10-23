@@ -42,6 +42,7 @@ end
 
 pre_install do |installer|
   possible_paths = [
+    File.join(installer.sandbox.root, 'ShengwangRtm_iOS', 'aosl.xcframework'),
     File.join(installer.sandbox.root, 'AgoraRtm_OC_Special', 'aosl.xcframework'),
     File.join(installer.sandbox.root, 'AgoraRtm', 'aosl.xcframework')
   ]
