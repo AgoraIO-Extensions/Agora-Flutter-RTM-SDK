@@ -20,7 +20,7 @@ case "${PLATFORM}" in
 esac
 
 pushd "${MY_PATH}/../test_shard/integration_test_app"
-flutter packages get
+flutter pub get --verbose
 flutter test --verbose
 flutter test integration_test/integration_test.dart --reporter expanded --verbose
 popd
