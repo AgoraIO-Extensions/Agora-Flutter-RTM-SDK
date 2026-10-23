@@ -36,13 +36,7 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
     DOWNLOAD_IRIS_DEBUGGER=${2:-1}
 
     if [[ ${DOWNLOAD_IRIS_DEBUGGER} == 1 ]];then
-        source ${MY_PATH}/artifacts_version.sh
-
-        if [[ ${PLATFORM} == "android" ]];then
-            bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_ANDROID} "Android"
-        elif [[ ${PLATFORM} == "ios" ]];then
-            bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_IOS} "iOS"
-        fi
+        bash "${MY_PATH}/install_rtm_test_fixture.sh" "${PLATFORM}"
     fi
 
     pushd ${MY_PATH}/../test_shard/integration_test_app

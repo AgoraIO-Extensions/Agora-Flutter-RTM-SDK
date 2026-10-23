@@ -50,10 +50,19 @@ on `macos-14` with Xcode 15.4, rather than pretending a newer Xcode tests it.
 GitHub schedules macOS 14 retirement for November 2, 2026; that legacy check
 will need an explicitly provisioned runner to retain Xcode 15 coverage then.
 
-The pinned IrisDebugger download is a test-only fake-client fixture, not the
-Native/Iris SDK dependency. The published dev.4 Standalone archives contain no
-Debugger. Do not silently replace the fixture URL with a production archive,
-or claim fake-client tests establish service/device QA.
+IrisDebugger is a test-only fake client, not a Native/Iris SDK dependency.
+The published dev.4 Standalone archives contain no Debugger. Current tests use
+the checksum-pinned `test_shard/iris_tester/fixtures/rtm_2.3.1` assets: the old
+2.2.1 fake client lacks `getHistory`, shifting the virtual calls in 2.3.1.
+The installer verifies archive hashes and the Dart adapter verifies the fixture
+ABI marker. The test framework is explicitly linked on iOS for FFI lookup.
+The fixture source has a standalone build and host ABI/event CTest; its six
+exports cannot interpose Native SDK factory/version calls. These are test
+assets, excluded from Dart publication, not service/device QA evidence.
+
+Event test generation must initialize the client with the event handler supplied
+by each test. A fresh default result handler discards that callback and makes
+the generated completion check hang even when native event dispatch succeeds.
 
 RTM 2.3.1-dev.4 bundles Android AOSL 1.3.5. Both example/test apps must
 request that version rather than 1.2.13: the latter lacks

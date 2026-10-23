@@ -30,14 +30,13 @@ void testCases(ValueGetter<IrisTester> irisTester,
   Future<RtmClientImplOverride> _createBindingRtmClient(RtmEventHandler rtmEventHandler) async {
     String appId = const String.fromEnvironment('TEST_APP_ID',
         defaultValue: '<YOUR_APP_ID>');
-    final rtmResultHandler = RtmResultHandlerImpl();
     final client = RtmClientImplOverride.create(
       IrisMethodChannel(IrisApiEngineNativeBindingDelegateProvider()),
     );
     await client.initialize(
       appId,
       'user_id',
-      rtmResultHandler.rtmEventHandler,
+      rtmEventHandler,
       args: irisMethodChannelInitilizationArgs(),
     );
     return client;

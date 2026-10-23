@@ -14,15 +14,20 @@ import 'iris_tester_rtm_bindings.dart';
 const int kBasicResultLength = 64 * 1024;
 
 ffi.DynamicLibrary _loadLib() {
+  late final ffi.DynamicLibrary library;
   if (Platform.isWindows) {
-    return ffi.DynamicLibrary.open('IrisDebugger.dll');
+    library = ffi.DynamicLibrary.open('IrisDebugger.dll');
+  } else if (Platform.isAndroid) {
+    library = ffi.DynamicLibrary.open("libIrisDebugger.so");
+  } else {
+    library = ffi.DynamicLibrary.process();
   }
-
-  if (Platform.isAndroid) {
-    return ffi.DynamicLibrary.open("libIrisDebugger.so");
+  final version = library.lookupFunction<ffi.Pointer<Utf8> Function(),
+      ffi.Pointer<Utf8> Function()>('GetRtmFixtureVersion');
+  if (version().toDartString() != 'rtm_2.3.1') {
+    throw StateError('IrisDebugger must match the RTM 2.3.1 test ABI');
   }
-
-  return ffi.DynamicLibrary.process();
+  return library;
 }
 
 class IrisTesterIO implements IrisTester {

@@ -8,8 +8,11 @@
 #import "iris_tester-Swift.h"
 #endif
 
+extern const char *GetRtmFixtureVersion(void);
 @implementation IrisTesterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+  // Keep the test framework linked so its FFI exports exist in the process.
+  (void)GetRtmFixtureVersion();
   [SwiftIrisTesterPlugin registerWithRegistrar:registrar];
 }
 @end
