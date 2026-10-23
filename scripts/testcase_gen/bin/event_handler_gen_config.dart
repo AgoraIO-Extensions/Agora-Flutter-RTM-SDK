@@ -18,6 +18,7 @@ import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
 import 'package:agora_rtm/src/bindings/native_iris_api_engine_binding_delegate.dart';
 import 'package:agora_rtm/src/bindings/agora_rtm_client_impl_override.dart';
 import 'event_ids_mapping_gen.dart';
+import '../../fixture_json.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,14 +31,13 @@ void testCases(ValueGetter<IrisTester> irisTester,
   Future<RtmClientImplOverride> _createBindingRtmClient(RtmEventHandler rtmEventHandler) async {
     String appId = const String.fromEnvironment('TEST_APP_ID',
         defaultValue: '<YOUR_APP_ID>');
-    final rtmResultHandler = RtmResultHandlerImpl();
     final client = RtmClientImplOverride.create(
       IrisMethodChannel(IrisApiEngineNativeBindingDelegateProvider()),
     );
     await client.initialize(
       appId,
       'user_id',
-      rtmResultHandler.rtmEventHandler,
+      rtmEventHandler,
       args: irisMethodChannelInitilizationArgs(),
     );
     return client;

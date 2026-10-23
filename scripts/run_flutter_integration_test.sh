@@ -6,6 +6,18 @@ MY_PATH=$(realpath $(dirname "$0"))
 PROJECT_ROOT=$(realpath ${MY_PATH}/..)
 PLATFORM=$1 # android/ios/macos/windows/web
 
+# Keep the original failure status and expose native crash stacks, rather than
+# relying on test-start labels from the GitHub reporter as completion evidence.
+report_native_crash() {
+    status=$?
+    if [[ ${status} -ne 0 && ${PLATFORM} == "android" ]] && command -v adb >/dev/null; then
+        adb logcat -b crash -d -t 150 2>/dev/null |
+            sed -E '/credential|token|secret|password|cookie|crumb|webhook|curl|[Ee][Nn][Vv]/Id' || true
+    fi
+    exit "${status}"
+}
+trap report_native_crash EXIT
+
 if [[ ${PLATFORM} == "web" ]];then
     pushd ${PROJECT_ROOT}/test_shard/fake_test_app
 
@@ -36,13 +48,7 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
     DOWNLOAD_IRIS_DEBUGGER=${2:-1}
 
     if [[ ${DOWNLOAD_IRIS_DEBUGGER} == 1 ]];then
-        source ${MY_PATH}/artifacts_version.sh
-
-        if [[ ${PLATFORM} == "android" ]];then
-            bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_ANDROID} "Android"
-        elif [[ ${PLATFORM} == "ios" ]];then
-            bash ${MY_PATH}/download_unzip_iris_cdn_artifacts.sh ${IRIS_CDN_URL_IOS} "iOS"
-        fi
+        bash "${MY_PATH}/install_rtm_test_fixture.sh" "${PLATFORM}"
     fi
 
     pushd ${MY_PATH}/../test_shard/integration_test_app
@@ -51,7 +57,7 @@ elif [[ ${PLATFORM} == "android" || ${PLATFORM} == "ios" ]];then
 
     flutter test --verbose
 
-    flutter test integration_test/binding_apis_call_fake_test.dart --dart-define=TEST_APP_ID="${TEST_APP_ID}" --verbose
+    flutter test integration_test/binding_apis_call_fake_test.dart --dart-define=TEST_APP_ID="${TEST_APP_ID}" --reporter expanded --verbose
 
     flutter test integration_test/integration_test.dart --verbose
 
