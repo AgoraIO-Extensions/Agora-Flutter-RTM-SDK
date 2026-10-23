@@ -110,28 +110,6 @@ void testCases() {
   );
 
   test(
-    'RtmConnectionState',
-    () async {
-      for (final e in RtmConnectionState.values) {
-        expect(
-            RtmConnectionState.fromValue(e.value()), isA<RtmConnectionState>());
-        expect(RtmConnectionState.fromValue(e.value()) == e, isTrue);
-      }
-    },
-  );
-
-  test(
-    'RtmConnectionChangeReason',
-    () async {
-      for (final e in RtmConnectionChangeReason.values) {
-        expect(RtmConnectionChangeReason.fromValue(e.value()),
-            isA<RtmConnectionChangeReason>());
-        expect(RtmConnectionChangeReason.fromValue(e.value()) == e, isTrue);
-      }
-    },
-  );
-
-  test(
     'RtmChannelType',
     () async {
       for (final e in RtmChannelType.values) {

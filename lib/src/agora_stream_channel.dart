@@ -1,4 +1,5 @@
 import 'binding_forward_export.dart';
+
 part 'agora_stream_channel.g.dart';
 
 @JsonEnum(alwaysCreate: true)

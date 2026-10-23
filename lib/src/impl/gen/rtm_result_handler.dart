@@ -21,7 +21,6 @@ abstract class RtmResultHandler {
       onSubscribeTopicResult: onSubscribeTopicResult,
       onUnsubscribeTopicResult: onUnsubscribeTopicResult,
       onGetSubscribedUserListResult: onGetSubscribedUserListResult,
-      onConnectionStateChanged: onConnectionStateChanged,
       onTokenPrivilegeWillExpire: onTokenPrivilegeWillExpire,
       onSubscribeResult: onSubscribeResult,
       onUnsubscribeResult: onUnsubscribeResult,
@@ -52,6 +51,7 @@ abstract class RtmResultHandler {
       onPresenceSetStateResult: onPresenceSetStateResult,
       onPresenceRemoveStateResult: onPresenceRemoveStateResult,
       onPresenceGetStateResult: onPresenceGetStateResult,
+      onGetUserOnlineStatusResult: onGetUserOnlineStatusResult,
       onHistoryGetMessagesResult: onHistoryGetMessagesResult,
     );
   }
@@ -170,11 +170,6 @@ abstract class RtmResultHandler {
         channelName: channelName, topic: topic, users: users);
     response(requestId, (result, errorCode));
   }
-
-  @visibleForTesting
-  @protected
-  void onConnectionStateChanged(String channelName, RtmConnectionState state,
-      RtmConnectionChangeReason reason) {}
 
   @visibleForTesting
   @protected
@@ -433,6 +428,14 @@ abstract class RtmResultHandler {
   void onPresenceGetStateResult(
       int requestId, UserState state, RtmErrorCode errorCode) {
     final result = GetStateResult(state: state);
+    response(requestId, (result, errorCode));
+  }
+
+  @visibleForTesting
+  @protected
+  void onGetUserOnlineStatusResult(
+      int requestId, UserOnlineStatus status, RtmErrorCode errorCode) {
+    final result = GetUserOnlineStatusResult(status: status);
     response(requestId, (result, errorCode));
   }
 

@@ -31,9 +31,6 @@ const eventIdsMapping = {
   "RtmEventHandler_onGetSubscribedUserListResult": [
     "RtmEventHandler_onGetSubscribedUserListResult_79f7ec8"
   ],
-  "RtmEventHandler_onConnectionStateChanged": [
-    "RtmEventHandler_onConnectionStateChanged_ac0fd53"
-  ],
   "RtmEventHandler_onTokenPrivilegeWillExpire": [
     "RtmEventHandler_onTokenPrivilegeWillExpire_3a2037f"
   ],
@@ -117,6 +114,9 @@ const eventIdsMapping = {
   ],
   "RtmEventHandler_onPresenceGetStateResult": [
     "RtmEventHandler_onPresenceGetStateResult_3d764cc"
+  ],
+  "RtmEventHandler_onGetUserOnlineStatusResult": [
+    "RtmEventHandler_onGetUserOnlineStatusResult_eb2c395"
   ],
   "RtmEventHandler_onHistoryGetMessagesResult": [
     "RtmEventHandler_onGetHistoryMessagesResult_c5dd08c"

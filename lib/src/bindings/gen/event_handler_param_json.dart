@@ -550,42 +550,6 @@ extension RtmEventHandlerOnGetSubscribedUserListResultJsonBufferExt
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
-class RtmEventHandlerOnConnectionStateChangedJson {
-  const RtmEventHandlerOnConnectionStateChangedJson(
-      {this.channelName, this.state, this.reason});
-
-  @JsonKey(name: 'channelName')
-  final String? channelName;
-
-  @JsonKey(name: 'state')
-  final RtmConnectionState? state;
-
-  @JsonKey(name: 'reason')
-  final RtmConnectionChangeReason? reason;
-
-  factory RtmEventHandlerOnConnectionStateChangedJson.fromJson(
-          Map<String, dynamic> json) =>
-      _$RtmEventHandlerOnConnectionStateChangedJsonFromJson(json);
-
-  Map<String, dynamic> toJson() =>
-      _$RtmEventHandlerOnConnectionStateChangedJsonToJson(this);
-}
-
-extension RtmEventHandlerOnConnectionStateChangedJsonBufferExt
-    on RtmEventHandlerOnConnectionStateChangedJson {
-  RtmEventHandlerOnConnectionStateChangedJson fillBuffers(
-      List<Uint8List> bufferList) {
-    if (bufferList.isEmpty) return this;
-    return this;
-  }
-
-  List<Uint8List> collectBufferList() {
-    final bufferList = <Uint8List>[];
-    return bufferList;
-  }
-}
-
-@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RtmEventHandlerOnTokenPrivilegeWillExpireJson {
   const RtmEventHandlerOnTokenPrivilegeWillExpireJson({this.channelName});
 
@@ -1740,6 +1704,42 @@ class RtmEventHandlerOnPresenceGetStateResultJson {
 extension RtmEventHandlerOnPresenceGetStateResultJsonBufferExt
     on RtmEventHandlerOnPresenceGetStateResultJson {
   RtmEventHandlerOnPresenceGetStateResultJson fillBuffers(
+      List<Uint8List> bufferList) {
+    if (bufferList.isEmpty) return this;
+    return this;
+  }
+
+  List<Uint8List> collectBufferList() {
+    final bufferList = <Uint8List>[];
+    return bufferList;
+  }
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class RtmEventHandlerOnGetUserOnlineStatusResultJson {
+  const RtmEventHandlerOnGetUserOnlineStatusResultJson(
+      {this.requestId, this.status, this.errorCode});
+
+  @JsonKey(name: 'requestId')
+  final int? requestId;
+
+  @JsonKey(name: 'status')
+  final UserOnlineStatus? status;
+
+  @JsonKey(name: 'errorCode')
+  final RtmErrorCode? errorCode;
+
+  factory RtmEventHandlerOnGetUserOnlineStatusResultJson.fromJson(
+          Map<String, dynamic> json) =>
+      _$RtmEventHandlerOnGetUserOnlineStatusResultJsonFromJson(json);
+
+  Map<String, dynamic> toJson() =>
+      _$RtmEventHandlerOnGetUserOnlineStatusResultJsonToJson(this);
+}
+
+extension RtmEventHandlerOnGetUserOnlineStatusResultJsonBufferExt
+    on RtmEventHandlerOnGetUserOnlineStatusResultJson {
+  RtmEventHandlerOnGetUserOnlineStatusResultJson fillBuffers(
       List<Uint8List> bufferList) {
     if (bufferList.isEmpty) return this;
     return this;

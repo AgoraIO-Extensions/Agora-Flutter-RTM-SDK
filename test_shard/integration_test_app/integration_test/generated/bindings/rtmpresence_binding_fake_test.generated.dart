@@ -276,4 +276,33 @@ void testCases(
       await rtmClient.release();
     },
   );
+
+  testWidgets(
+    'RtmPresence.getUserOnlineStatus',
+    (WidgetTester tester) async {
+      final rtmClient = await _createBindingRtmClient();
+      await rtmClient.setParameters('{"rtm.log_filter":2063}');
+      final rtmPresence = RtmPresenceImpl(rtmClient.getIrisMethodChannel());
+
+      try {
+        String userId = "hello";
+        await rtmPresence.getUserOnlineStatus(
+          userId,
+        );
+      } catch (e) {
+        if (e is! AgoraRtmException) {
+          debugPrint(
+              '[RtmPresence.getUserOnlineStatus] error: ${e.toString()}');
+          rethrow;
+        }
+
+        if (e.code != -4) {
+          // Only not supported error supported.
+          rethrow;
+        }
+      }
+
+      await rtmClient.release();
+    },
+  );
 }

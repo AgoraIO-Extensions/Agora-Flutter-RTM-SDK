@@ -281,6 +281,21 @@ class RtmPresenceGetUserChannelsJson {
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
+class RtmPresenceGetUserOnlineStatusJson {
+  const RtmPresenceGetUserOnlineStatusJson(this.requestId);
+
+  @JsonKey(name: 'requestId')
+  final int requestId;
+
+  factory RtmPresenceGetUserOnlineStatusJson.fromJson(
+          Map<String, dynamic> json) =>
+      _$RtmPresenceGetUserOnlineStatusJsonFromJson(json);
+
+  Map<String, dynamic> toJson() =>
+      _$RtmPresenceGetUserOnlineStatusJsonToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class RtmStorageSetChannelMetadataJson {
   const RtmStorageSetChannelMetadataJson(this.requestId);
 

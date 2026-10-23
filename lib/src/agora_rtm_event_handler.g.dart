@@ -1,69 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'agora_rtm_client.dart';
+part of 'agora_rtm_event_handler.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
-
-RtmConfig _$RtmConfigFromJson(Map<String, dynamic> json) => RtmConfig(
-      areaCode: json['areaCode'] == null
-          ? const {RtmAreaCode.glob}
-          : const RtmAreaCodeListConverter()
-              .fromJson((json['areaCode'] as num?)?.toInt()),
-      protocolType:
-          $enumDecodeNullable(_$RtmProtocolTypeEnumMap, json['protocolType']) ??
-              RtmProtocolType.tcpUdp,
-      presenceTimeout: (json['presenceTimeout'] as num?)?.toInt() ?? 300,
-      heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt() ?? 5,
-      reconnectTimeout: (json['reconnectTimeout'] as num?)?.toInt() ?? 0,
-      useStringUserId: json['useStringUserId'] as bool? ?? true,
-      ispPolicyEnabled: json['ispPolicyEnabled'] as bool? ?? false,
-      logConfig: json['logConfig'] == null
-          ? null
-          : RtmLogConfig.fromJson(json['logConfig'] as Map<String, dynamic>),
-      proxyConfig: json['proxyConfig'] == null
-          ? null
-          : RtmProxyConfig.fromJson(
-              json['proxyConfig'] as Map<String, dynamic>),
-      encryptionConfig: json['encryptionConfig'] == null
-          ? null
-          : RtmEncryptionConfig.fromJson(
-              json['encryptionConfig'] as Map<String, dynamic>),
-      privateConfig: json['privateConfig'] == null
-          ? null
-          : RtmPrivateConfig.fromJson(
-              json['privateConfig'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$RtmConfigToJson(RtmConfig instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull(
-      'areaCode', const RtmAreaCodeListConverter().toJson(instance.areaCode));
-  writeNotNull('protocolType', _$RtmProtocolTypeEnumMap[instance.protocolType]);
-  writeNotNull('presenceTimeout', instance.presenceTimeout);
-  writeNotNull('heartbeatInterval', instance.heartbeatInterval);
-  writeNotNull('reconnectTimeout', instance.reconnectTimeout);
-  writeNotNull('useStringUserId', instance.useStringUserId);
-  writeNotNull('ispPolicyEnabled', instance.ispPolicyEnabled);
-  writeNotNull('logConfig', instance.logConfig?.toJson());
-  writeNotNull('proxyConfig', instance.proxyConfig?.toJson());
-  writeNotNull('encryptionConfig', instance.encryptionConfig?.toJson());
-  writeNotNull('privateConfig', instance.privateConfig?.toJson());
-  return val;
-}
-
-const _$RtmProtocolTypeEnumMap = {
-  RtmProtocolType.tcpUdp: 0,
-  RtmProtocolType.tcpOnly: 1,
-};
 
 LinkStateEvent _$LinkStateEventFromJson(Map<String, dynamic> json) =>
     LinkStateEvent(
@@ -289,6 +230,7 @@ IntervalInfo _$IntervalInfoFromJson(Map<String, dynamic> json) => IntervalInfo(
       userStateList: (json['userStateList'] as List<dynamic>?)
           ?.map((e) => UserState.fromJson(e as Map<String, dynamic>))
           .toList(),
+      totalOccupancy: (json['totalOccupancy'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$IntervalInfoToJson(IntervalInfo instance) {
@@ -305,6 +247,7 @@ Map<String, dynamic> _$IntervalInfoToJson(IntervalInfo instance) {
   writeNotNull('timeoutUserList', instance.timeoutUserList?.toJson());
   writeNotNull(
       'userStateList', instance.userStateList?.map((e) => e.toJson()).toList());
+  writeNotNull('totalOccupancy', instance.totalOccupancy);
   return val;
 }
 

@@ -1,4 +1,5 @@
 import 'binding_forward_export.dart';
+
 part 'agora_rtm_base.g.dart';
 
 /// @nodoc
@@ -513,6 +514,9 @@ enum RtmErrorCode {
   @JsonValue(-10026)
   renewTokenTimeout,
 
+  @JsonValue(-10027)
+  duplicateUserId,
+
   @JsonValue(-11001)
   channelNotJoined,
 
@@ -630,6 +634,9 @@ enum RtmErrorCode {
   @JsonValue(-11039)
   channelPublishPermissionDenied,
 
+  @JsonValue(-11040)
+  channelSubscribeCanceled,
+
   @JsonValue(-12001)
   storageOperationFailed,
 
@@ -729,6 +736,15 @@ enum RtmErrorCode {
   @JsonValue(-13013)
   presenceOperationFailed,
 
+  @JsonValue(-13014)
+  presenceInactive,
+
+  @JsonValue(-13015)
+  presencePendingRequestCancelled,
+
+  @JsonValue(-13016)
+  presencePendingRequestExceedLimitation,
+
   @JsonValue(-14001)
   lockOperationFailed,
 
@@ -794,149 +810,6 @@ extension RtmErrorCodeExt on RtmErrorCode {
   /// @nodoc
   int value() {
     return _$RtmErrorCodeEnumMap[this]!;
-  }
-}
-
-@JsonEnum(alwaysCreate: true)
-enum RtmConnectionState {
-  @JsonValue(1)
-  disconnected,
-
-  @JsonValue(2)
-  connecting,
-
-  @JsonValue(3)
-  connected,
-
-  @JsonValue(4)
-  reconnecting,
-
-  @JsonValue(5)
-  failed,
-  ;
-
-  /// @nodoc
-  static RtmConnectionState fromValue(int value) {
-    return $enumDecode(_$RtmConnectionStateEnumMap, value);
-  }
-}
-
-extension RtmConnectionStateExt on RtmConnectionState {
-  /// @nodoc
-  @Deprecated('Use RtmConnectionState.fromValue instead')
-  static RtmConnectionState fromValue(int value) {
-    return $enumDecode(_$RtmConnectionStateEnumMap, value);
-  }
-
-  /// @nodoc
-  int value() {
-    return _$RtmConnectionStateEnumMap[this]!;
-  }
-}
-
-@JsonEnum(alwaysCreate: true)
-enum RtmConnectionChangeReason {
-  @JsonValue(0)
-  connecting,
-
-  @JsonValue(1)
-  joinSuccess,
-
-  @JsonValue(2)
-  interrupted,
-
-  @JsonValue(3)
-  bannedByServer,
-
-  @JsonValue(4)
-  joinFailed,
-
-  @JsonValue(5)
-  leaveChannel,
-
-  @JsonValue(6)
-  invalidAppId,
-
-  @JsonValue(7)
-  invalidChannelName,
-
-  @JsonValue(8)
-  invalidToken,
-
-  @JsonValue(9)
-  tokenExpired,
-
-  @JsonValue(10)
-  rejectedByServer,
-
-  @JsonValue(11)
-  settingProxyServer,
-
-  @JsonValue(12)
-  renewToken,
-
-  @JsonValue(13)
-  clientIpAddressChanged,
-
-  @JsonValue(14)
-  keepAliveTimeout,
-
-  @JsonValue(15)
-  rejoinSuccess,
-
-  @JsonValue(16)
-  lost,
-
-  @JsonValue(17)
-  echoTest,
-
-  @JsonValue(18)
-  clientIpAddressChangedByUser,
-
-  @JsonValue(19)
-  sameUidLogin,
-
-  @JsonValue(20)
-  tooManyBroadcasters,
-
-  @JsonValue(21)
-  licenseValidationFailure,
-
-  @JsonValue(22)
-  certificationVerifyFailure,
-
-  @JsonValue(23)
-  streamChannelNotAvailable,
-
-  @JsonValue(24)
-  inconsistentAppid,
-
-  @JsonValue(10001)
-  loginSuccess,
-
-  @JsonValue(10002)
-  logout,
-
-  @JsonValue(10003)
-  presenceNotReady,
-  ;
-
-  /// @nodoc
-  static RtmConnectionChangeReason fromValue(int value) {
-    return $enumDecode(_$RtmConnectionChangeReasonEnumMap, value);
-  }
-}
-
-extension RtmConnectionChangeReasonExt on RtmConnectionChangeReason {
-  /// @nodoc
-  @Deprecated('Use RtmConnectionChangeReason.fromValue instead')
-  static RtmConnectionChangeReason fromValue(int value) {
-    return $enumDecode(_$RtmConnectionChangeReasonEnumMap, value);
-  }
-
-  /// @nodoc
-  int value() {
-    return _$RtmConnectionChangeReasonEnumMap[this]!;
   }
 }
 
@@ -1343,6 +1216,22 @@ class UserState {
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
+class UserOnlineStatus {
+  const UserOnlineStatus({this.userId, this.online = false});
+
+  @JsonKey(name: 'userId')
+  final String? userId;
+
+  @JsonKey(name: 'online')
+  final bool? online;
+
+  factory UserOnlineStatus.fromJson(Map<String, dynamic> json) =>
+      _$UserOnlineStatusFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserOnlineStatusToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SubscribeOptions {
   const SubscribeOptions(
       {this.withMessage = true,
@@ -1598,6 +1487,65 @@ class HistoryMessage {
       _$HistoryMessageFromJson(json);
 
   Map<String, dynamic> toJson() => _$HistoryMessageToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class RtmConfig {
+  const RtmConfig(
+      {this.areaCode = const {RtmAreaCode.glob},
+      this.protocolType = RtmProtocolType.tcpUdp,
+      this.presenceTimeout = 300,
+      this.heartbeatInterval = 5,
+      this.reconnectTimeout = 0,
+      this.useStringUserId = true,
+      this.ispPolicyEnabled = false,
+      this.logConfig,
+      this.proxyConfig,
+      this.encryptionConfig,
+      this.privateConfig,
+      this.parameters});
+
+  @RtmAreaCodeListConverter()
+  @JsonKey(name: 'areaCode')
+  final Set<RtmAreaCode>? areaCode;
+
+  @JsonKey(name: 'protocolType')
+  final RtmProtocolType? protocolType;
+
+  @JsonKey(name: 'presenceTimeout')
+  final int? presenceTimeout;
+
+  @JsonKey(name: 'heartbeatInterval')
+  final int? heartbeatInterval;
+
+  @JsonKey(name: 'reconnectTimeout')
+  final int? reconnectTimeout;
+
+  @JsonKey(name: 'useStringUserId')
+  final bool? useStringUserId;
+
+  @JsonKey(name: 'ispPolicyEnabled')
+  final bool? ispPolicyEnabled;
+
+  @JsonKey(name: 'logConfig')
+  final RtmLogConfig? logConfig;
+
+  @JsonKey(name: 'proxyConfig')
+  final RtmProxyConfig? proxyConfig;
+
+  @JsonKey(name: 'encryptionConfig')
+  final RtmEncryptionConfig? encryptionConfig;
+
+  @JsonKey(name: 'privateConfig')
+  final RtmPrivateConfig? privateConfig;
+
+  @JsonKey(name: 'parameters')
+  final String? parameters;
+
+  factory RtmConfig.fromJson(Map<String, dynamic> json) =>
+      _$RtmConfigFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RtmConfigToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

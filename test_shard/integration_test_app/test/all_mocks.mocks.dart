@@ -4,18 +4,16 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
-import 'dart:typed_data' as _i13;
-import 'dart:ui' as _i15;
+import 'dart:typed_data' as _i11;
+import 'dart:ui' as _i13;
 
-import 'package:agora_rtm/src/agora_rtm_base.dart' as _i12;
-import 'package:agora_rtm/src/agora_rtm_client.dart' as _i11;
 import 'package:agora_rtm/src/agora_rtm_client_ext.dart' as _i4;
+import 'package:agora_rtm/src/binding_forward_export.dart' as _i7;
 import 'package:agora_rtm/src/bindings/agora_rtm_client_impl_override.dart'
     as _i9;
-import 'package:agora_rtm/src/bindings/gen/agora_rtm_client.dart' as _i7;
 import 'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart' as _i5;
 import 'package:agora_rtm/src/bindings/gen/binding_forward_export.dart' as _i6;
-import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart' as _i14;
+import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart' as _i12;
 import 'package:flutter/services.dart' as _i2;
 import 'package:iris_method_channel/iris_method_channel.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
@@ -233,7 +231,7 @@ class MockRtmClientImplOverride extends _i1.Mock
     String? appId,
     String? userId,
     _i7.RtmEventHandler? rtmEventHandler, {
-    _i11.RtmConfig? config,
+    _i7.RtmConfig? config,
     List<_i3.InitilizationArgProvider>? args = const [],
   }) =>
       (super.noSuchMethod(
@@ -343,7 +341,7 @@ class MockRtmClientImplOverride extends _i1.Mock
     required String? channelName,
     required String? message,
     required int? length,
-    required _i12.PublishOptions? option,
+    required _i7.PublishOptions? option,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -495,7 +493,7 @@ class MockRtmClientImplOverride extends _i1.Mock
   @override
   _i8.Future<int> subscribe({
     required String? channelName,
-    required _i12.SubscribeOptions? options,
+    required _i7.SubscribeOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -533,9 +531,9 @@ class MockRtmClientImplOverride extends _i1.Mock
   @override
   _i8.Future<int> publishBinaryMessage({
     required String? channelName,
-    required _i13.Uint8List? message,
+    required _i11.Uint8List? message,
     required int? length,
-    required _i12.PublishOptions? option,
+    required _i7.PublishOptions? option,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -604,7 +602,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
   @override
   _i8.Future<int> setLock({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required String? lockName,
     required int? ttl,
   }) =>
@@ -626,7 +624,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
   @override
   _i8.Future<int> getLocks({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -644,7 +642,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
   @override
   _i8.Future<int> removeLock({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required String? lockName,
   }) =>
       (super.noSuchMethod(
@@ -664,7 +662,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
   @override
   _i8.Future<int> acquireLock({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required String? lockName,
     required bool? retry,
   }) =>
@@ -686,7 +684,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
   @override
   _i8.Future<int> releaseLock({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required String? lockName,
   }) =>
       (super.noSuchMethod(
@@ -706,7 +704,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
   @override
   _i8.Future<int> revokeLock({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required String? lockName,
     required String? owner,
   }) =>
@@ -777,8 +775,8 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
   @override
   _i8.Future<int> whoNow({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
-    required _i12.PresenceOptions? options,
+    required _i7.RtmChannelType? channelType,
+    required _i7.PresenceOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -807,8 +805,8 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
   @override
   _i8.Future<int> setState({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
-    required List<_i12.StateItem>? items,
+    required _i7.RtmChannelType? channelType,
+    required List<_i7.StateItem>? items,
     required int? count,
   }) =>
       (super.noSuchMethod(
@@ -829,7 +827,7 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
   @override
   _i8.Future<int> removeState({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required List<String>? keys,
     required int? count,
   }) =>
@@ -851,7 +849,7 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
   @override
   _i8.Future<int> getState({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
     required String? userId,
   }) =>
       (super.noSuchMethod(
@@ -871,8 +869,8 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
   @override
   _i8.Future<int> getOnlineUsers({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
-    required _i12.GetOnlineUsersOptions? options,
+    required _i7.RtmChannelType? channelType,
+    required _i7.GetOnlineUsersOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -892,6 +890,16 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
   _i8.Future<int> getUserChannels(String? userId) => (super.noSuchMethod(
         Invocation.method(
           #getUserChannels,
+          [userId],
+        ),
+        returnValue: _i8.Future<int>.value(0),
+        returnValueForMissingStub: _i8.Future<int>.value(0),
+      ) as _i8.Future<int>);
+
+  @override
+  _i8.Future<int> getUserOnlineStatus(String? userId) => (super.noSuchMethod(
+        Invocation.method(
+          #getUserOnlineStatus,
           [userId],
         ),
         returnValue: _i8.Future<int>.value(0),
@@ -950,9 +958,9 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> setChannelMetadata({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
-    required _i6.Metadata? data,
-    required _i6.MetadataOptions? options,
+    required _i7.RtmChannelType? channelType,
+    required _i7.Metadata? data,
+    required _i7.MetadataOptions? options,
     required String? lockName,
   }) =>
       (super.noSuchMethod(
@@ -974,9 +982,9 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> updateChannelMetadata({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
-    required _i6.Metadata? data,
-    required _i6.MetadataOptions? options,
+    required _i7.RtmChannelType? channelType,
+    required _i7.Metadata? data,
+    required _i7.MetadataOptions? options,
     required String? lockName,
   }) =>
       (super.noSuchMethod(
@@ -998,9 +1006,9 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> removeChannelMetadata({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
-    required _i6.Metadata? data,
-    required _i6.MetadataOptions? options,
+    required _i7.RtmChannelType? channelType,
+    required _i7.Metadata? data,
+    required _i7.MetadataOptions? options,
     required String? lockName,
   }) =>
       (super.noSuchMethod(
@@ -1022,7 +1030,7 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> getChannelMetadata({
     required String? channelName,
-    required _i12.RtmChannelType? channelType,
+    required _i7.RtmChannelType? channelType,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1040,8 +1048,8 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> setUserMetadata({
     required String? userId,
-    required _i6.Metadata? data,
-    required _i6.MetadataOptions? options,
+    required _i7.Metadata? data,
+    required _i7.MetadataOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1060,8 +1068,8 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> updateUserMetadata({
     required String? userId,
-    required _i6.Metadata? data,
-    required _i6.MetadataOptions? options,
+    required _i7.Metadata? data,
+    required _i7.MetadataOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1080,8 +1088,8 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
   @override
   _i8.Future<int> removeUserMetadata({
     required String? userId,
-    required _i6.Metadata? data,
-    required _i6.MetadataOptions? options,
+    required _i7.Metadata? data,
+    required _i7.MetadataOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1178,7 +1186,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
       ) as Map<String, dynamic>);
 
   @override
-  _i8.Future<int> join(_i6.JoinChannelOptions? options) => (super.noSuchMethod(
+  _i8.Future<int> join(_i7.JoinChannelOptions? options) => (super.noSuchMethod(
         Invocation.method(
           #join,
           [options],
@@ -1233,7 +1241,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
   @override
   _i8.Future<int> joinTopic({
     required String? topic,
-    required _i6.JoinTopicOptions? options,
+    required _i7.JoinTopicOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1253,7 +1261,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
     required String? topic,
     required String? message,
     required int? length,
-    required _i12.TopicMessageOptions? option,
+    required _i7.TopicMessageOptions? option,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1283,7 +1291,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
   @override
   _i8.Future<int> subscribeTopic({
     required String? topic,
-    required _i6.TopicOptions? options,
+    required _i7.TopicOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1301,7 +1309,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
   @override
   _i8.Future<int> unsubscribeTopic({
     required String? topic,
-    required _i6.TopicOptions? options,
+    required _i7.TopicOptions? options,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1351,7 +1359,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
     required String? topic,
     required String? message,
     required int? length,
-    required _i12.TopicMessageOptions? option,
+    required _i7.TopicMessageOptions? option,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1371,9 +1379,9 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
   @override
   _i8.Future<int> publishBinaryMessage({
     required String? topic,
-    required _i13.Uint8List? message,
+    required _i11.Uint8List? message,
     required int? length,
-    required _i12.TopicMessageOptions? option,
+    required _i7.TopicMessageOptions? option,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1395,7 +1403,7 @@ class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockRtmResultHandlerImpl extends _i1.Mock
-    implements _i14.RtmResultHandlerImpl {
+    implements _i12.RtmResultHandlerImpl {
   @override
   _i7.RtmEventHandler get rtmEventHandler => (super.noSuchMethod(
         Invocation.getter(#rtmEventHandler),
@@ -1464,7 +1472,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void response(
     int? requestId,
-    (Object, _i12.RtmErrorCode)? data,
+    (Object, _i7.RtmErrorCode)? data,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1478,7 +1486,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onLinkStateEvent(_i11.LinkStateEvent? event) => super.noSuchMethod(
+  void onLinkStateEvent(_i7.LinkStateEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onLinkStateEvent,
           [event],
@@ -1487,7 +1495,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onMessageEvent(_i11.MessageEvent? event) => super.noSuchMethod(
+  void onMessageEvent(_i7.MessageEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onMessageEvent,
           [event],
@@ -1496,7 +1504,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onPresenceEvent(_i11.PresenceEvent? event) => super.noSuchMethod(
+  void onPresenceEvent(_i7.PresenceEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onPresenceEvent,
           [event],
@@ -1505,7 +1513,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onTopicEvent(_i11.TopicEvent? event) => super.noSuchMethod(
+  void onTopicEvent(_i7.TopicEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onTopicEvent,
           [event],
@@ -1514,7 +1522,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onLockEvent(_i11.LockEvent? event) => super.noSuchMethod(
+  void onLockEvent(_i7.LockEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onLockEvent,
           [event],
@@ -1523,7 +1531,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onStorageEvent(_i11.StorageEvent? event) => super.noSuchMethod(
+  void onStorageEvent(_i7.StorageEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onStorageEvent,
           [event],
@@ -1534,8 +1542,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onConnectionStateChanged(
     String? channelName,
-    _i12.RtmConnectionState? state,
-    _i12.RtmConnectionChangeReason? reason,
+    Object? state,
+    Object? reason,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1550,7 +1558,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
-  void onTokenEvent(_i11.TokenEvent? event) => super.noSuchMethod(
+  void onTokenEvent(_i7.TokenEvent? event) => super.noSuchMethod(
         Invocation.method(
           #onTokenEvent,
           [event],
@@ -1597,7 +1605,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     int? requestId,
     String? channelName,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1617,7 +1625,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     int? requestId,
     String? channelName,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1637,7 +1645,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     int? requestId,
     String? channelName,
     String? topic,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1659,7 +1667,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     String? userId,
     String? topic,
     String? meta,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1683,7 +1691,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     String? userId,
     String? topic,
     String? meta,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1706,9 +1714,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     String? channelName,
     String? userId,
     String? topic,
-    _i12.UserList? succeedUsers,
-    _i12.UserList? failedUsers,
-    _i12.RtmErrorCode? errorCode,
+    _i7.UserList? succeedUsers,
+    _i7.UserList? failedUsers,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1731,7 +1739,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     int? requestId,
     String? channelName,
     String? topic,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1751,8 +1759,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
     int? requestId,
     String? channelName,
     String? topic,
-    _i12.UserList? users,
-    _i12.RtmErrorCode? errorCode,
+    _i7.UserList? users,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1772,7 +1780,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onSubscribeResult(
     int? requestId,
     String? channelName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1790,7 +1798,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onUnsubscribeResult(
     int? requestId,
     String? channelName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1807,7 +1815,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onPublishResult(
     int? requestId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1823,7 +1831,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onLoginResult(
     int? requestId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1839,7 +1847,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onLogoutResult(
     int? requestId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1855,9 +1863,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onRenewTokenResult(
     int? requestId,
-    _i12.RtmServiceType? serverType,
+    _i7.RtmServiceType? serverType,
     String? channelName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1876,8 +1884,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onSetChannelMetadataResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmChannelType? channelType,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1896,8 +1904,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onUpdateChannelMetadataResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmChannelType? channelType,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1916,8 +1924,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onRemoveChannelMetadataResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmChannelType? channelType,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1936,9 +1944,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onGetChannelMetadataResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
-    _i6.Metadata? data,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmChannelType? channelType,
+    _i7.Metadata? data,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1958,7 +1966,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onSetUserMetadataResult(
     int? requestId,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1976,7 +1984,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onUpdateUserMetadataResult(
     int? requestId,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1994,7 +2002,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onRemoveUserMetadataResult(
     int? requestId,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2012,8 +2020,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onGetUserMetadataResult(
     int? requestId,
     String? userId,
-    _i6.Metadata? data,
-    _i12.RtmErrorCode? errorCode,
+    _i7.Metadata? data,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2032,7 +2040,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onSubscribeUserMetadataResult(
     int? requestId,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2050,7 +2058,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onUnsubscribeUserMetadataResult(
     int? requestId,
     String? userId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2068,9 +2076,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onSetLockResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
+    _i7.RtmChannelType? channelType,
     String? lockName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2090,9 +2098,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onRemoveLockResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
+    _i7.RtmChannelType? channelType,
     String? lockName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2112,9 +2120,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onReleaseLockResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
+    _i7.RtmChannelType? channelType,
     String? lockName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2134,9 +2142,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onAcquireLockResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
+    _i7.RtmChannelType? channelType,
     String? lockName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
     String? errorDetails,
   ) =>
       super.noSuchMethod(
@@ -2158,9 +2166,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onRevokeLockResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
+    _i7.RtmChannelType? channelType,
     String? lockName,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2180,10 +2188,10 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   void onGetLocksResult(
     int? requestId,
     String? channelName,
-    _i12.RtmChannelType? channelType,
-    List<_i12.LockDetail>? lockDetailList,
+    _i7.RtmChannelType? channelType,
+    List<_i7.LockDetail>? lockDetailList,
     int? count,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2203,10 +2211,10 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onWhoNowResult(
     int? requestId,
-    List<_i12.UserState>? userStateList,
+    List<_i7.UserState>? userStateList,
     int? count,
     String? nextPage,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2225,10 +2233,10 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onGetOnlineUsersResult(
     int? requestId,
-    List<_i12.UserState>? userStateList,
+    List<_i7.UserState>? userStateList,
     int? count,
     String? nextPage,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2247,9 +2255,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onWhereNowResult(
     int? requestId,
-    List<_i12.ChannelInfo>? channels,
+    List<_i7.ChannelInfo>? channels,
     int? count,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2267,9 +2275,9 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onGetUserChannelsResult(
     int? requestId,
-    List<_i12.ChannelInfo>? channels,
+    List<_i7.ChannelInfo>? channels,
     int? count,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2287,7 +2295,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onPresenceSetStateResult(
     int? requestId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2303,7 +2311,7 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onPresenceRemoveStateResult(
     int? requestId,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2319,8 +2327,8 @@ class MockRtmResultHandlerImpl extends _i1.Mock
   @override
   void onPresenceGetStateResult(
     int? requestId,
-    _i12.UserState? state,
-    _i12.RtmErrorCode? errorCode,
+    _i7.UserState? state,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2335,12 +2343,30 @@ class MockRtmResultHandlerImpl extends _i1.Mock
       );
 
   @override
+  void onGetUserOnlineStatusResult(
+    int? requestId,
+    _i7.UserOnlineStatus? status,
+    _i7.RtmErrorCode? errorCode,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #onGetUserOnlineStatusResult,
+          [
+            requestId,
+            status,
+            errorCode,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void onHistoryGetMessagesResult(
     int? requestId,
-    List<_i12.HistoryMessage>? messageList,
+    List<_i7.HistoryMessage>? messageList,
     int? count,
     int? newStart,
-    _i12.RtmErrorCode? errorCode,
+    _i7.RtmErrorCode? errorCode,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2528,7 +2554,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
       ) as int);
 
   @override
-  _i15.VoidCallback addHotRestartListener(_i3.HotRestartListener? listener) =>
+  _i13.VoidCallback addHotRestartListener(_i3.HotRestartListener? listener) =>
       (super.noSuchMethod(
         Invocation.method(
           #addHotRestartListener,
@@ -2536,7 +2562,7 @@ class MockIrisMethodChannel extends _i1.Mock implements _i3.IrisMethodChannel {
         ),
         returnValue: () {},
         returnValueForMissingStub: () {},
-      ) as _i15.VoidCallback);
+      ) as _i13.VoidCallback);
 
   @override
   void removeHotRestartListener(_i3.HotRestartListener? listener) =>

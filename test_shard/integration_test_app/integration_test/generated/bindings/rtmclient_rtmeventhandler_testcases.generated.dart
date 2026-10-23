@@ -208,11 +208,13 @@ void testCases(
           users: timeoutUserListUsers,
         );
         List<UserState> intervalUserStateList = [];
+        int intervalTotalOccupancy = 5;
         IntervalInfo eventInterval = IntervalInfo(
           joinUserList: intervalJoinUserList,
           leaveUserList: intervalLeaveUserList,
           timeoutUserList: intervalTimeoutUserList,
           userStateList: intervalUserStateList,
+          totalOccupancy: intervalTotalOccupancy,
         );
         List<UserState> snapshotUserStateList = [];
         SnapshotInfo eventSnapshot = SnapshotInfo(
@@ -981,60 +983,6 @@ void testCases(
       }
 
       final eventCalled = await onGetSubscribedUserListResultCompleter.future;
-      expect(eventCalled, isTrue);
-
-      {}
-// Delay 500 milliseconds to ensure the  call completed.
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      await rtmClient.release();
-    },
-    timeout: const Timeout(Duration(minutes: 2)),
-  );
-
-  testWidgets(
-    'RtmEventHandler.onConnectionStateChanged',
-    (WidgetTester tester) async {
-      final onConnectionStateChangedCompleter = Completer<bool>();
-      final theRtmEventHandler = RtmEventHandler(
-        onConnectionStateChanged: (String channelName, RtmConnectionState state,
-            RtmConnectionChangeReason reason) {
-          onConnectionStateChangedCompleter.complete(true);
-        },
-      );
-
-      final rtmClient = await _createBindingRtmClient(theRtmEventHandler);
-
-// Delay 500 milliseconds to ensure the  call completed.
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      {
-        String channelName = "hello";
-        RtmConnectionState state = RtmConnectionState.disconnected;
-        RtmConnectionChangeReason reason = RtmConnectionChangeReason.connecting;
-
-        final eventJson = {
-          'channelName': channelName,
-          'state': state.value(),
-          'reason': reason.value(),
-        };
-
-        final eventIds =
-            eventIdsMapping['RtmEventHandler_onConnectionStateChanged'] ?? [];
-        for (final event in eventIds) {
-          final ret = irisTester().fireEvent(event, params: eventJson);
-          // Delay 200 milliseconds to ensure the callback is called.
-          await Future.delayed(const Duration(milliseconds: 200));
-          // TODO(littlegnal): Most of callbacks on web are not implemented, we're temporarily skip these callbacks at this time.
-          if (kIsWeb && ret) {
-            if (!onConnectionStateChangedCompleter.isCompleted) {
-              onConnectionStateChangedCompleter.complete(true);
-            }
-          }
-        }
-      }
-
-      final eventCalled = await onConnectionStateChangedCompleter.future;
       expect(eventCalled, isTrue);
 
       {}
@@ -2784,6 +2732,66 @@ void testCases(
       }
 
       final eventCalled = await onPresenceGetStateResultCompleter.future;
+      expect(eventCalled, isTrue);
+
+      {}
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      await rtmClient.release();
+    },
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
+
+  testWidgets(
+    'RtmEventHandler.onGetUserOnlineStatusResult',
+    (WidgetTester tester) async {
+      final onGetUserOnlineStatusResultCompleter = Completer<bool>();
+      final theRtmEventHandler = RtmEventHandler(
+        onGetUserOnlineStatusResult:
+            (int requestId, UserOnlineStatus status, RtmErrorCode errorCode) {
+          onGetUserOnlineStatusResultCompleter.complete(true);
+        },
+      );
+
+      final rtmClient = await _createBindingRtmClient(theRtmEventHandler);
+
+// Delay 500 milliseconds to ensure the  call completed.
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      {
+        int requestId = 5;
+        String statusUserId = "hello";
+        bool statusOnline = true;
+        UserOnlineStatus status = UserOnlineStatus(
+          userId: statusUserId,
+          online: statusOnline,
+        );
+        RtmErrorCode errorCode = RtmErrorCode.ok;
+
+        final eventJson = {
+          'requestId': requestId,
+          'status': status.toJson(),
+          'errorCode': errorCode.value(),
+        };
+
+        final eventIds =
+            eventIdsMapping['RtmEventHandler_onGetUserOnlineStatusResult'] ??
+                [];
+        for (final event in eventIds) {
+          final ret = irisTester().fireEvent(event, params: eventJson);
+          // Delay 200 milliseconds to ensure the callback is called.
+          await Future.delayed(const Duration(milliseconds: 200));
+          // TODO(littlegnal): Most of callbacks on web are not implemented, we're temporarily skip these callbacks at this time.
+          if (kIsWeb && ret) {
+            if (!onGetUserOnlineStatusResultCompleter.isCompleted) {
+              onGetUserOnlineStatusResultCompleter.complete(true);
+            }
+          }
+        }
+      }
+
+      final eventCalled = await onGetUserOnlineStatusResultCompleter.future;
       expect(eventCalled, isTrue);
 
       {}

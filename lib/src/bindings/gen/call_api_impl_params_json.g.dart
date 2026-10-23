@@ -252,6 +252,18 @@ Map<String, dynamic> _$RtmPresenceGetUserChannelsJsonToJson(
       'requestId': instance.requestId,
     };
 
+RtmPresenceGetUserOnlineStatusJson _$RtmPresenceGetUserOnlineStatusJsonFromJson(
+        Map<String, dynamic> json) =>
+    RtmPresenceGetUserOnlineStatusJson(
+      (json['requestId'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$RtmPresenceGetUserOnlineStatusJsonToJson(
+        RtmPresenceGetUserOnlineStatusJson instance) =>
+    <String, dynamic>{
+      'requestId': instance.requestId,
+    };
+
 RtmStorageSetChannelMetadataJson _$RtmStorageSetChannelMetadataJsonFromJson(
         Map<String, dynamic> json) =>
     RtmStorageSetChannelMetadataJson(

@@ -1,4 +1,5 @@
 import 'binding_forward_export.dart';
+
 part 'agora_rtm_storage.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)

@@ -201,4 +201,24 @@ class RtmPresenceImpl implements RtmPresence {
     final getUserChannelsJson = RtmPresenceGetUserChannelsJson.fromJson(rm);
     return getUserChannelsJson.requestId;
   }
+
+  @override
+  Future<int> getUserOnlineStatus(String userId) async {
+    final apiType =
+        '${isOverrideClassName ? className : 'RtmPresence'}_getUserOnlineStatus_1fa04dd';
+    final param = createParams({'userId': userId});
+    final callApiResult = await irisMethodChannel.invokeMethod(
+        IrisMethodCall(apiType, jsonEncode(param), buffers: null));
+    if (callApiResult.irisReturnCode < 0) {
+      throwExceptionHandler(code: callApiResult.irisReturnCode);
+    }
+    final rm = callApiResult.data;
+    final result = rm['result'];
+    if (result < 0) {
+      throwExceptionHandler(code: result);
+    }
+    final getUserOnlineStatusJson =
+        RtmPresenceGetUserOnlineStatusJson.fromJson(rm);
+    return getUserOnlineStatusJson.requestId;
+  }
 }

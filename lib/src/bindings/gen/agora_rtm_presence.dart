@@ -31,4 +31,6 @@ abstract class RtmPresence {
       required GetOnlineUsersOptions options});
 
   Future<int> getUserChannels(String userId);
+
+  Future<int> getUserOnlineStatus(String userId);
 }
