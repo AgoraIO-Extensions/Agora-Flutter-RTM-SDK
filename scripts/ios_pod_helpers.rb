@@ -13,16 +13,19 @@ def deduplicate_rtm_aosl(installer)
   end
 end
 
-# Inspect the selected provider after CocoaPods has generated its copy phase.
-# File-only tests cannot establish that a simulator framework is actually copied.
-def report_rtm_aosl_copy(installer)
-  root = installer.sandbox.root
-  source = File.join(root, 'ShengwangRtm_iOS', 'aosl.xcframework')
-  script = File.join(root, 'Target Support Files', 'ShengwangRtm_iOS', 'ShengwangRtm_iOS-xcframeworks.sh')
-  puts "RTM AOSL provider present: #{File.directory?(source)}"
-  if File.file?(script)
-    File.foreach(script) do |line|
-      puts "RTM copy phase: #{line.strip}" if line.start_with?('install_xcframework ')
-    end
+# Removing the RTC duplicate also removes its generated framework search path.
+# Link RTC against the selected RTM provider and wait for its copy phase.
+def configure_rtm_aosl_consumers(installer)
+  return unless File.directory?(File.join(installer.sandbox.root, 'ShengwangRtm_iOS', 'aosl.xcframework'))
+
+  provider = installer.pods_project.targets.find { |target| target.name == 'ShengwangRtm_iOS' }
+  consumer = installer.pods_project.targets.find { |target| target.name == 'agora_rtc_engine' }
+  return unless provider && consumer
+
+  consumer.add_dependency(provider) unless consumer.dependencies.any? { |dependency| dependency.target == provider }
+  consumer.build_configurations.each do |config|
+    paths = Array(config.build_settings['FRAMEWORK_SEARCH_PATHS'] || '$(inherited)')
+    paths << '"$(PODS_XCFRAMEWORKS_BUILD_DIR)/ShengwangRtm_iOS"'
+    config.build_settings['FRAMEWORK_SEARCH_PATHS'] = paths.uniq
   end
 end

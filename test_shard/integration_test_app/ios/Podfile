@@ -51,7 +51,7 @@ end
 
 post_install do |installer|
   require File.expand_path('../../../scripts/ios_pod_helpers', __dir__)
-  report_rtm_aosl_copy(installer)
+  configure_rtm_aosl_consumers(installer)
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
 
