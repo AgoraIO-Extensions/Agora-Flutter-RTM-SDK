@@ -28,17 +28,6 @@ import 'agora_stream_channel_impl_override.dart';
 import 'package:async/async.dart' show AsyncMemoizer;
 import 'package:meta/meta.dart';
 
-class SharedNativeHandleInitilizationArgProvider
-    implements InitilizationArgProvider {
-  const SharedNativeHandleInitilizationArgProvider(this.sharedNativeHandle);
-
-  final Object sharedNativeHandle;
-  @override
-  IrisHandle provide(IrisApiEngineHandle apiEngineHandle) {
-    return ObjectIrisHandle(sharedNativeHandle);
-  }
-}
-
 class _StreamChannelScopedKey implements ScopedKey {
   const _StreamChannelScopedKey(this.channelName);
   final String channelName;

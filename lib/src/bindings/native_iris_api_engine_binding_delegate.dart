@@ -39,18 +39,7 @@ class NativeIrisApiEngineBindingsDelegate
 
   @override
   CreateApiEngineResult createApiEngine(List<InitilizationArgProvider> args) {
-    ffi.Pointer<bindings.ProcTableRtm> enginePtr = ffi.nullptr;
-    if (args.isNotEmpty) {
-      assert(args.length == 1);
-      final engineIntPtr =
-          args[0].provide(const IrisApiEngineHandle(0))() as int;
-      if (engineIntPtr != 0) {
-        enginePtr =
-            ffi.Pointer<bindings.ProcTableRtm>.fromAddress(engineIntPtr);
-      }
-    }
-
-    final apiEnginePtr = _binding.CreateIrisRtmEngineWithProcTable(enginePtr);
+    final apiEnginePtr = _binding.CreateIrisRtmEngine(ffi.nullptr);
 
     return CreateApiEngineResult(IrisApiEngineHandle(apiEnginePtr));
   }
