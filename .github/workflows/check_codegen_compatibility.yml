@@ -7,6 +7,7 @@ on:
       - scripts/terra/**
       - scripts/testcase_gen/**
       - lib/**
+      - test_shard/integration_test_app/test/**
       - .github/workflows/check_codegen_compatibility.yml
   workflow_dispatch:
 
