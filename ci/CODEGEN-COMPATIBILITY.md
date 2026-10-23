@@ -54,3 +54,12 @@ The pinned IrisDebugger download is a test-only fake-client fixture, not the
 Native/Iris SDK dependency. The published dev.4 Standalone archives contain no
 Debugger. Do not silently replace the fixture URL with a production archive,
 or claim fake-client tests establish service/device QA.
+
+RTM 2.3.1-dev.4 bundles Android AOSL 1.3.5. Both example/test apps must
+request that version rather than 1.2.13: the latter lacks
+`aosl_ref_magic_hold_args`, so APK builds pass but loading RTM fails at runtime.
+The Maven 1.3.5 and Native RTM bundled x86_64 libraries have identical SHA-256.
+On iOS, keep the new RTM AOSL and remove only the duplicate AgoraInfra copy
+from the generated Pods sandbox. Deleting RTM's copy can leave the simulator
+linker without AOSL. Both apps share the same selection helper; its regression
+check covers repeated installation and an absent RTM provider.
