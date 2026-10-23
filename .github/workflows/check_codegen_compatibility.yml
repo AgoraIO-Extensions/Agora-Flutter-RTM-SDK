@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - pubspec.yaml
-      - scripts/terra/prepare.sh
+      - scripts/terra/**
+      - scripts/testcase_gen/**
+      - lib/**
       - .github/workflows/check_codegen_compatibility.yml
   workflow_dispatch:
 

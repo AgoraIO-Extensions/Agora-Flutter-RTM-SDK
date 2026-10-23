@@ -2,8 +2,8 @@ import 'dart:convert' show utf8, jsonEncode;
 import 'dart:typed_data' show Uint8List;
 
 import 'package:agora_rtm/src/agora_rtm_client_ext.dart';
-import 'package:agora_rtm/src/agora_rtm_base.dart' show PublishOptions;
-import 'package:agora_rtm/src/agora_rtm_client.dart' show RtmConfig;
+import 'package:agora_rtm/src/binding_forward_export.dart'
+    show PublishOptions, RtmConfig;
 import 'package:agora_rtm/src/bindings/gen/agora_rtm_client.dart';
 import 'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart';
 import 'package:agora_rtm/src/impl/extensions.dart';
@@ -11,7 +11,8 @@ import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform, debugPrint;
 import 'package:flutter/services.dart' show MethodChannel;
 
-import 'gen/agora_rtm_client_event_impl.dart';
+import 'gen/binding_forward_export.dart'
+    show RtmEventHandler, RtmEventHandlerWrapper;
 import 'gen/agora_rtm_client_impl.dart' as rtmc_binding;
 import 'package:iris_method_channel/iris_method_channel.dart';
 import 'agora_stream_channel_impl_override.dart';

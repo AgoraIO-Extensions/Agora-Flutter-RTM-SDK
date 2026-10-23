@@ -1,4 +1,4 @@
-import 'package:agora_rtm/src/agora_rtm_base.dart';
+import 'package:agora_rtm/agora_rtm.dart';
 import 'package:agora_rtm/src/agora_rtm_client.dart';
 import 'package:agora_rtm/src/agora_rtm_client_ext.dart'
     show AgoraRtmException, RtmStatus;

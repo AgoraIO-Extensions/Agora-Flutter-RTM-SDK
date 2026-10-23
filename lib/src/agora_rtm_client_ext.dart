@@ -1,4 +1,5 @@
 import 'agora_rtm_client.dart';
+import 'binding_forward_export.dart' show RtmConfig;
 import 'package:agora_rtm/src/impl/agora_rtm_client_impl_override.dart';
 
 // ignore_for_file: non_constant_identifier_names,

@@ -102,6 +102,20 @@ export 'call_api_event_handler_buffer_ext.dart';
 `;
 
   return [
+    // Overwrite the old callback file when its declarations move to a new header.
+    ...(cxxFiles.some((file) => dartFileName(file) === "agora_rtm_event_handler")
+      ? [{
+          file_name: path.join(outputDir, "bindings", "gen", "agora_rtm_client_event_impl.dart"),
+          file_content: "export 'agora_rtm_event_handler_event_impl.dart';",
+        }]
+      : []),
+    {
+      file_name: path.join(outputDir, "..", "agora_rtm.dart"),
+      file_content: [
+        ...cxxFiles.map((file) => `export 'src/${dartFileName(file)}.dart';`),
+        "export 'src/agora_rtm_client_ext.dart';",
+      ].join("\n"),
+    },
     {
       file_name: path.join(outputDir, `binding_forward_export.dart`),
       file_content: exportApiForwardExport,
