@@ -35,11 +35,8 @@ build/
 .fvmrc
 artifacts/
 
-# Native test fixtures are CI assets, never part of the published Dart SDK.
+# Test applications and generators are not part of the published Dart SDK.
 /test_shard/
 /scripts/testcase_gen/
-/test_shard/iris_tester/fixtures/
-/test_shard/iris_tester/android/libs/
-/test_shard/iris_tester/ios/IrisDebugger.xcframework/
 **/node_modules/
 **/.terra/

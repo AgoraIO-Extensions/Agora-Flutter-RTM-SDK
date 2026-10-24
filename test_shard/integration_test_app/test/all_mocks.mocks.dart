@@ -11,8 +11,8 @@ import 'package:agora_rtm/src/agora_rtm_client_ext.dart' as _i4;
 import 'package:agora_rtm/src/binding_forward_export.dart' as _i7;
 import 'package:agora_rtm/src/bindings/agora_rtm_client_impl_override.dart'
     as _i9;
-import 'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart' as _i5;
-import 'package:agora_rtm/src/bindings/gen/binding_forward_export.dart' as _i6;
+import 'package:agora_rtm/src/bindings/gen/agora_stream_channel.dart' as _i6;
+import 'package:agora_rtm/src/bindings/gen/binding_forward_export.dart' as _i5;
 import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart' as _i12;
 import 'package:flutter/services.dart' as _i2;
 import 'package:iris_method_channel/iris_method_channel.dart' as _i3;
@@ -63,8 +63,8 @@ class _FakeRtmStatus_2 extends _i1.SmartFake implements _i4.RtmStatus {
         );
 }
 
-class _FakeStreamChannel_3 extends _i1.SmartFake implements _i5.StreamChannel {
-  _FakeStreamChannel_3(
+class _FakeRtmHistory_3 extends _i1.SmartFake implements _i5.RtmHistory {
+  _FakeRtmHistory_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -73,8 +73,8 @@ class _FakeStreamChannel_3 extends _i1.SmartFake implements _i5.StreamChannel {
         );
 }
 
-class _FakeRtmStorage_4 extends _i1.SmartFake implements _i6.RtmStorage {
-  _FakeRtmStorage_4(
+class _FakeRtmLock_4 extends _i1.SmartFake implements _i5.RtmLock {
+  _FakeRtmLock_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -83,8 +83,8 @@ class _FakeRtmStorage_4 extends _i1.SmartFake implements _i6.RtmStorage {
         );
 }
 
-class _FakeRtmLock_5 extends _i1.SmartFake implements _i6.RtmLock {
-  _FakeRtmLock_5(
+class _FakeRtmPresence_5 extends _i1.SmartFake implements _i5.RtmPresence {
+  _FakeRtmPresence_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -93,8 +93,8 @@ class _FakeRtmLock_5 extends _i1.SmartFake implements _i6.RtmLock {
         );
 }
 
-class _FakeRtmPresence_6 extends _i1.SmartFake implements _i6.RtmPresence {
-  _FakeRtmPresence_6(
+class _FakeRtmStorage_6 extends _i1.SmartFake implements _i5.RtmStorage {
+  _FakeRtmStorage_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -103,8 +103,8 @@ class _FakeRtmPresence_6 extends _i1.SmartFake implements _i6.RtmPresence {
         );
 }
 
-class _FakeRtmHistory_7 extends _i1.SmartFake implements _i6.RtmHistory {
-  _FakeRtmHistory_7(
+class _FakeStreamChannel_7 extends _i1.SmartFake implements _i6.StreamChannel {
+  _FakeStreamChannel_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -303,13 +303,104 @@ class MockRtmClientImplOverride extends _i1.Mock
       ) as _i3.IrisMethodChannel);
 
   @override
-  _i8.Future<_i5.StreamChannel> createStreamChannel(String? channelName) =>
+  _i8.Future<_i5.RtmHistory> getHistory() => (super.noSuchMethod(
+        Invocation.method(
+          #getHistory,
+          [],
+        ),
+        returnValue: _i8.Future<_i5.RtmHistory>.value(_FakeRtmHistory_3(
+          this,
+          Invocation.method(
+            #getHistory,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i5.RtmHistory>.value(_FakeRtmHistory_3(
+          this,
+          Invocation.method(
+            #getHistory,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i5.RtmHistory>);
+
+  @override
+  _i8.Future<_i5.RtmLock> getLock() => (super.noSuchMethod(
+        Invocation.method(
+          #getLock,
+          [],
+        ),
+        returnValue: _i8.Future<_i5.RtmLock>.value(_FakeRtmLock_4(
+          this,
+          Invocation.method(
+            #getLock,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i8.Future<_i5.RtmLock>.value(_FakeRtmLock_4(
+          this,
+          Invocation.method(
+            #getLock,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i5.RtmLock>);
+
+  @override
+  _i8.Future<_i5.RtmPresence> getPresence() => (super.noSuchMethod(
+        Invocation.method(
+          #getPresence,
+          [],
+        ),
+        returnValue: _i8.Future<_i5.RtmPresence>.value(_FakeRtmPresence_5(
+          this,
+          Invocation.method(
+            #getPresence,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i5.RtmPresence>.value(_FakeRtmPresence_5(
+          this,
+          Invocation.method(
+            #getPresence,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i5.RtmPresence>);
+
+  @override
+  _i8.Future<_i5.RtmStorage> getStorage() => (super.noSuchMethod(
+        Invocation.method(
+          #getStorage,
+          [],
+        ),
+        returnValue: _i8.Future<_i5.RtmStorage>.value(_FakeRtmStorage_6(
+          this,
+          Invocation.method(
+            #getStorage,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i5.RtmStorage>.value(_FakeRtmStorage_6(
+          this,
+          Invocation.method(
+            #getStorage,
+            [],
+          ),
+        )),
+      ) as _i8.Future<_i5.RtmStorage>);
+
+  @override
+  _i8.Future<_i6.StreamChannel> createStreamChannel(String? channelName) =>
       (super.noSuchMethod(
         Invocation.method(
           #createStreamChannel,
           [channelName],
         ),
-        returnValue: _i8.Future<_i5.StreamChannel>.value(_FakeStreamChannel_3(
+        returnValue: _i8.Future<_i6.StreamChannel>.value(_FakeStreamChannel_7(
           this,
           Invocation.method(
             #createStreamChannel,
@@ -317,14 +408,14 @@ class MockRtmClientImplOverride extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i8.Future<_i5.StreamChannel>.value(_FakeStreamChannel_3(
+            _i8.Future<_i6.StreamChannel>.value(_FakeStreamChannel_7(
           this,
           Invocation.method(
             #createStreamChannel,
             [channelName],
           ),
         )),
-      ) as _i8.Future<_i5.StreamChannel>);
+      ) as _i8.Future<_i6.StreamChannel>);
 
   @override
   _i8.Future<void> release() => (super.noSuchMethod(
@@ -388,97 +479,6 @@ class MockRtmClientImplOverride extends _i1.Mock
         returnValue: _i8.Future<int>.value(0),
         returnValueForMissingStub: _i8.Future<int>.value(0),
       ) as _i8.Future<int>);
-
-  @override
-  _i8.Future<_i6.RtmStorage> getStorage() => (super.noSuchMethod(
-        Invocation.method(
-          #getStorage,
-          [],
-        ),
-        returnValue: _i8.Future<_i6.RtmStorage>.value(_FakeRtmStorage_4(
-          this,
-          Invocation.method(
-            #getStorage,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i8.Future<_i6.RtmStorage>.value(_FakeRtmStorage_4(
-          this,
-          Invocation.method(
-            #getStorage,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i6.RtmStorage>);
-
-  @override
-  _i8.Future<_i6.RtmLock> getLock() => (super.noSuchMethod(
-        Invocation.method(
-          #getLock,
-          [],
-        ),
-        returnValue: _i8.Future<_i6.RtmLock>.value(_FakeRtmLock_5(
-          this,
-          Invocation.method(
-            #getLock,
-            [],
-          ),
-        )),
-        returnValueForMissingStub: _i8.Future<_i6.RtmLock>.value(_FakeRtmLock_5(
-          this,
-          Invocation.method(
-            #getLock,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i6.RtmLock>);
-
-  @override
-  _i8.Future<_i6.RtmPresence> getPresence() => (super.noSuchMethod(
-        Invocation.method(
-          #getPresence,
-          [],
-        ),
-        returnValue: _i8.Future<_i6.RtmPresence>.value(_FakeRtmPresence_6(
-          this,
-          Invocation.method(
-            #getPresence,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i8.Future<_i6.RtmPresence>.value(_FakeRtmPresence_6(
-          this,
-          Invocation.method(
-            #getPresence,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i6.RtmPresence>);
-
-  @override
-  _i8.Future<_i6.RtmHistory> getHistory() => (super.noSuchMethod(
-        Invocation.method(
-          #getHistory,
-          [],
-        ),
-        returnValue: _i8.Future<_i6.RtmHistory>.value(_FakeRtmHistory_7(
-          this,
-          Invocation.method(
-            #getHistory,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i8.Future<_i6.RtmHistory>.value(_FakeRtmHistory_7(
-          this,
-          Invocation.method(
-            #getHistory,
-            [],
-          ),
-        )),
-      ) as _i8.Future<_i6.RtmHistory>);
 
   @override
   _i8.Future<int> renewToken(String? token) => (super.noSuchMethod(
@@ -554,7 +554,7 @@ class MockRtmClientImplOverride extends _i1.Mock
 /// A class which mocks [RtmLockImpl].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
+class MockRtmLockImpl extends _i1.Mock implements _i5.RtmLockImpl {
   @override
   _i3.IrisMethodChannel get irisMethodChannel => (super.noSuchMethod(
         Invocation.getter(#irisMethodChannel),
@@ -727,7 +727,7 @@ class MockRtmLockImpl extends _i1.Mock implements _i6.RtmLockImpl {
 /// A class which mocks [RtmPresenceImpl].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
+class MockRtmPresenceImpl extends _i1.Mock implements _i5.RtmPresenceImpl {
   @override
   _i3.IrisMethodChannel get irisMethodChannel => (super.noSuchMethod(
         Invocation.getter(#irisMethodChannel),
@@ -910,7 +910,7 @@ class MockRtmPresenceImpl extends _i1.Mock implements _i6.RtmPresenceImpl {
 /// A class which mocks [RtmStorageImpl].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
+class MockRtmStorageImpl extends _i1.Mock implements _i5.RtmStorageImpl {
   @override
   _i3.IrisMethodChannel get irisMethodChannel => (super.noSuchMethod(
         Invocation.getter(#irisMethodChannel),
@@ -1140,7 +1140,7 @@ class MockRtmStorageImpl extends _i1.Mock implements _i6.RtmStorageImpl {
 /// A class which mocks [StreamChannelImpl].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStreamChannelImpl extends _i1.Mock implements _i6.StreamChannelImpl {
+class MockStreamChannelImpl extends _i1.Mock implements _i5.StreamChannelImpl {
   @override
   _i3.IrisMethodChannel get irisMethodChannel => (super.noSuchMethod(
         Invocation.getter(#irisMethodChannel),
