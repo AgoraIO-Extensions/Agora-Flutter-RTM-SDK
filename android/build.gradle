@@ -17,6 +17,14 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://download.agora.io/maven'
+            content {
+                includeGroup 'io.agora'
+                includeGroup 'io.agora.rtm'
+                includeGroup 'io.agora.infra'
+            }
+        }
     }
 }
 
@@ -69,11 +77,11 @@ dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
   } else {
     // iris dependencies start
-    api 'io.agora.rtm:iris-rtm:2.2.6.2-build.1'
+    api 'io.agora.rtm:iris-rtm:2.3.1-dev.4'
     // iris dependencies end
 
     // native dependencies start
-    api 'io.agora:agora-rtm-special:2.2.6.2'
+    api 'io.agora:agora-rtm-preview:2.3.1-dev.4'
     // native dependencies end
   }
 }

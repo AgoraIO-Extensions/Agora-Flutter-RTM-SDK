@@ -306,4 +306,47 @@ void testCases() {
       expect(ret, expectedResultHandlerReturnValue);
     },
   );
+
+  test(
+    'RtmPresence.getUserOnlineStatus',
+    () async {
+      final mockRtmPresenceNativeBinding = MockRtmPresenceImpl();
+      final mockRtmResultHandlerImpl = MockRtmResultHandlerImpl();
+      RtmPresence rtmPresence = rtm_presence_impl.RtmPresenceImpl(
+        mockRtmPresenceNativeBinding,
+        mockRtmResultHandlerImpl,
+      );
+
+      const rtmStatus = RtmStatus.success(operation: 'getUserOnlineStatus');
+      String statusUserId = "hello";
+      bool statusOnline = true;
+      UserOnlineStatus theGetUserOnlineStatusResultStatus = UserOnlineStatus(
+        userId: statusUserId,
+        online: statusOnline,
+      );
+      GetUserOnlineStatusResult theGetUserOnlineStatusResult =
+          GetUserOnlineStatusResult(
+        status: theGetUserOnlineStatusResultStatus,
+      );
+      final mockResultHandlerReturnValue =
+          (theGetUserOnlineStatusResult, RtmErrorCode.ok);
+      final expectedResultHandlerReturnValue =
+          (rtmStatus, theGetUserOnlineStatusResult);
+      int mockRequestId = 1;
+      {
+        String userId = "hello";
+        when(mockRtmPresenceNativeBinding.getUserOnlineStatus(
+          userId,
+        )).thenAnswer((_) async => mockRequestId);
+        when(mockRtmResultHandlerImpl.request(mockRequestId))
+            .thenAnswer((_) async => mockResultHandlerReturnValue);
+      }
+
+      String userId = "hello";
+      final ret = await rtmPresence.getUserOnlineStatus(
+        userId,
+      );
+      expect(ret, expectedResultHandlerReturnValue);
+    },
+  );
 }

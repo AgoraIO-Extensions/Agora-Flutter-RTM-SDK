@@ -6,7 +6,10 @@ on:
       - pubspec.yaml
       - scripts/terra/**
       - scripts/testcase_gen/**
+      - scripts/*ios_pod*
+      - '**/ios/Podfile'
       - lib/**
+      - test_shard/integration_test_app/test/**
       - .github/workflows/check_codegen_compatibility.yml
   workflow_dispatch:
 
@@ -19,6 +22,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - name: Test iOS AOSL provider selection
+        run: ruby scripts/test_ios_pod_helpers.rb
       - uses: subosito/flutter-action@v2
         with:
           channel: stable

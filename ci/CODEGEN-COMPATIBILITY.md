@@ -3,6 +3,8 @@
 The generator uses Flutter 3.19.6. Its `flutter_test` pins `meta` 1.11.0 and
 its Dart SDK resolves `async` 2.11.0. The package lower bounds must permit
 these versions; newer compatible versions remain available on newer SDKs.
+The declared minimum Flutter 3.10.0 additionally pins `meta` 1.9.1, so the
+constraint must permit that version too. Keep both existing CI matrix versions.
 Do not use dependency overrides or disable generation to hide solver failures.
 
 Terra uses the exact Yarn version declared in `scripts/terra/package.json`.
@@ -34,3 +36,33 @@ flutter test --no-pub
 Generation modifies generated files in the checkout; use a disposable
 worktree. Existing lint information is allowed, while analyzer errors still
 fail the check. Generation and analysis do not establish device or QA success.
+
+The internal PR workflow must be checked at job level: a queued matrix child
+can leave the workflow summary `queued` even after other children fail.
+Native/Iris dev.4 Android coordinates are served by
+`https://download.agora.io/maven`, not Maven Central. The plugin registers this
+repository for its two dependency groups.
+
+Windows builds use `windows-2022`. iOS simulator tests use `macos-15` with
+Xcode 16.4 and an iPhone 16; `macos-latest` can change both architecture and
+installed simulator models. The explicit Xcode 15 regression check remains
+on `macos-14` with Xcode 15.4, rather than pretending a newer Xcode tests it.
+GitHub schedules macOS 14 retirement for November 2, 2026; that legacy check
+will need an explicitly provisioned runner to retain Xcode 15 coverage then.
+
+The test app uses the published Native/Iris SDKs directly, without a separate
+debug library or fake native client. Code generation retains the Dart unit tests,
+including transport, callback-decoder and semantic Future regressions. Device CI
+retains the existing RTC/RTM coexistence smoke test. Its invalid-app-id errors
+remain allowed: it checks library loading and coexistence, not service behavior.
+The removed 95 fake-native API/callback cases are no longer executed or counted
+as coverage. Unit and smoke success must not be reported as service/device QA.
+
+RTM 2.3.1-dev.4 bundles Android AOSL 1.3.5. Both example/test apps must
+request that version rather than 1.2.13: the latter lacks
+`aosl_ref_magic_hold_args`, so APK builds pass but loading RTM fails at runtime.
+The Maven 1.3.5 and Native RTM bundled x86_64 libraries have identical SHA-256.
+On iOS, keep the new RTM AOSL and remove only the duplicate AgoraInfra copy
+from the generated Pods sandbox. Deleting RTM's copy can leave the simulator
+linker without AOSL. Both apps share the same selection helper; its regression
+check covers repeated installation and an absent RTM provider.

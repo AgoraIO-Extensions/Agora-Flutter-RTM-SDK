@@ -158,6 +158,26 @@ Map<String, dynamic> _$UserStateToJson(UserState instance) {
   return val;
 }
 
+UserOnlineStatus _$UserOnlineStatusFromJson(Map<String, dynamic> json) =>
+    UserOnlineStatus(
+      userId: json['userId'] as String?,
+      online: json['online'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$UserOnlineStatusToJson(UserOnlineStatus instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('userId', instance.userId);
+  writeNotNull('online', instance.online);
+  return val;
+}
+
 SubscribeOptions _$SubscribeOptionsFromJson(Map<String, dynamic> json) =>
     SubscribeOptions(
       withMessage: json['withMessage'] as bool? ?? true,
@@ -455,6 +475,67 @@ Map<String, dynamic> _$HistoryMessageToJson(HistoryMessage instance) {
   return val;
 }
 
+RtmConfig _$RtmConfigFromJson(Map<String, dynamic> json) => RtmConfig(
+      areaCode: json['areaCode'] == null
+          ? const {RtmAreaCode.glob}
+          : const RtmAreaCodeListConverter()
+              .fromJson((json['areaCode'] as num?)?.toInt()),
+      protocolType:
+          $enumDecodeNullable(_$RtmProtocolTypeEnumMap, json['protocolType']) ??
+              RtmProtocolType.tcpUdp,
+      presenceTimeout: (json['presenceTimeout'] as num?)?.toInt() ?? 300,
+      heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt() ?? 5,
+      reconnectTimeout: (json['reconnectTimeout'] as num?)?.toInt() ?? 0,
+      useStringUserId: json['useStringUserId'] as bool? ?? true,
+      ispPolicyEnabled: json['ispPolicyEnabled'] as bool? ?? false,
+      logConfig: json['logConfig'] == null
+          ? null
+          : RtmLogConfig.fromJson(json['logConfig'] as Map<String, dynamic>),
+      proxyConfig: json['proxyConfig'] == null
+          ? null
+          : RtmProxyConfig.fromJson(
+              json['proxyConfig'] as Map<String, dynamic>),
+      encryptionConfig: json['encryptionConfig'] == null
+          ? null
+          : RtmEncryptionConfig.fromJson(
+              json['encryptionConfig'] as Map<String, dynamic>),
+      privateConfig: json['privateConfig'] == null
+          ? null
+          : RtmPrivateConfig.fromJson(
+              json['privateConfig'] as Map<String, dynamic>),
+      parameters: json['parameters'] as String?,
+    );
+
+Map<String, dynamic> _$RtmConfigToJson(RtmConfig instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull(
+      'areaCode', const RtmAreaCodeListConverter().toJson(instance.areaCode));
+  writeNotNull('protocolType', _$RtmProtocolTypeEnumMap[instance.protocolType]);
+  writeNotNull('presenceTimeout', instance.presenceTimeout);
+  writeNotNull('heartbeatInterval', instance.heartbeatInterval);
+  writeNotNull('reconnectTimeout', instance.reconnectTimeout);
+  writeNotNull('useStringUserId', instance.useStringUserId);
+  writeNotNull('ispPolicyEnabled', instance.ispPolicyEnabled);
+  writeNotNull('logConfig', instance.logConfig?.toJson());
+  writeNotNull('proxyConfig', instance.proxyConfig?.toJson());
+  writeNotNull('encryptionConfig', instance.encryptionConfig?.toJson());
+  writeNotNull('privateConfig', instance.privateConfig?.toJson());
+  writeNotNull('parameters', instance.parameters);
+  return val;
+}
+
+const _$RtmProtocolTypeEnumMap = {
+  RtmProtocolType.tcpUdp: 0,
+  RtmProtocolType.tcpOnly: 1,
+};
+
 ChannelList _$ChannelListFromJson(Map<String, dynamic> json) => ChannelList(
       channels: (json['channels'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -569,11 +650,6 @@ const _$RtmLinkStateChangeReasonEnumMap = {
   RtmLinkStateChangeReason.loginTooFrequent: 37,
 };
 
-const _$RtmProtocolTypeEnumMap = {
-  RtmProtocolType.tcpUdp: 0,
-  RtmProtocolType.tcpOnly: 1,
-};
-
 const _$RtmAreaCodeEnumMap = {
   RtmAreaCode.cn: 1,
   RtmAreaCode.na: 2,
@@ -612,6 +688,7 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.invalidPrivateConfig: -10024,
   RtmErrorCode.notConnected: -10025,
   RtmErrorCode.renewTokenTimeout: -10026,
+  RtmErrorCode.duplicateUserId: -10027,
   RtmErrorCode.channelNotJoined: -11001,
   RtmErrorCode.channelNotSubscribed: -11002,
   RtmErrorCode.channelExceedTopicUserLimitation: -11003,
@@ -651,6 +728,7 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.channelMessageDeliveredButStoreFailed: -11037,
   RtmErrorCode.channelSubscribePermissionDenied: -11038,
   RtmErrorCode.channelPublishPermissionDenied: -11039,
+  RtmErrorCode.channelSubscribeCanceled: -11040,
   RtmErrorCode.storageOperationFailed: -12001,
   RtmErrorCode.storageMetadataItemExceedLimitation: -12002,
   RtmErrorCode.storageInvalidMetadataItem: -12003,
@@ -684,6 +762,9 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.presenceUserNotExist: -13011,
   RtmErrorCode.presenceOperationTimeout: -13012,
   RtmErrorCode.presenceOperationFailed: -13013,
+  RtmErrorCode.presenceInactive: -13014,
+  RtmErrorCode.presencePendingRequestCancelled: -13015,
+  RtmErrorCode.presencePendingRequestExceedLimitation: -13016,
   RtmErrorCode.lockOperationFailed: -14001,
   RtmErrorCode.lockOperationTimeout: -14002,
   RtmErrorCode.lockOperationPerforming: -14003,
@@ -700,45 +781,6 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.historyOperationNotPermitted: -15004,
   RtmErrorCode.historyNotAvailable: -15005,
   RtmErrorCode.historyPermissionDenied: -15006,
-};
-
-const _$RtmConnectionStateEnumMap = {
-  RtmConnectionState.disconnected: 1,
-  RtmConnectionState.connecting: 2,
-  RtmConnectionState.connected: 3,
-  RtmConnectionState.reconnecting: 4,
-  RtmConnectionState.failed: 5,
-};
-
-const _$RtmConnectionChangeReasonEnumMap = {
-  RtmConnectionChangeReason.connecting: 0,
-  RtmConnectionChangeReason.joinSuccess: 1,
-  RtmConnectionChangeReason.interrupted: 2,
-  RtmConnectionChangeReason.bannedByServer: 3,
-  RtmConnectionChangeReason.joinFailed: 4,
-  RtmConnectionChangeReason.leaveChannel: 5,
-  RtmConnectionChangeReason.invalidAppId: 6,
-  RtmConnectionChangeReason.invalidChannelName: 7,
-  RtmConnectionChangeReason.invalidToken: 8,
-  RtmConnectionChangeReason.tokenExpired: 9,
-  RtmConnectionChangeReason.rejectedByServer: 10,
-  RtmConnectionChangeReason.settingProxyServer: 11,
-  RtmConnectionChangeReason.renewToken: 12,
-  RtmConnectionChangeReason.clientIpAddressChanged: 13,
-  RtmConnectionChangeReason.keepAliveTimeout: 14,
-  RtmConnectionChangeReason.rejoinSuccess: 15,
-  RtmConnectionChangeReason.lost: 16,
-  RtmConnectionChangeReason.echoTest: 17,
-  RtmConnectionChangeReason.clientIpAddressChangedByUser: 18,
-  RtmConnectionChangeReason.sameUidLogin: 19,
-  RtmConnectionChangeReason.tooManyBroadcasters: 20,
-  RtmConnectionChangeReason.licenseValidationFailure: 21,
-  RtmConnectionChangeReason.certificationVerifyFailure: 22,
-  RtmConnectionChangeReason.streamChannelNotAvailable: 23,
-  RtmConnectionChangeReason.inconsistentAppid: 24,
-  RtmConnectionChangeReason.loginSuccess: 10001,
-  RtmConnectionChangeReason.logout: 10002,
-  RtmConnectionChangeReason.presenceNotReady: 10003,
 };
 
 const _$RtmStorageTypeEnumMap = {

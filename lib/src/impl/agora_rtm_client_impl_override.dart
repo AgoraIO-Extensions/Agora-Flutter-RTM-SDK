@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:agora_rtm/agora_rtm.dart';
 import 'package:agora_rtm/src/bindings/native_iris_api_engine_binding_delegate.dart';
 import 'package:agora_rtm/src/impl/agora_stream_channel_impl_override.dart';
@@ -25,22 +27,10 @@ import 'package:agora_rtm/src/bindings/gen/agora_rtm_client_impl.dart'
     as rtm_client_native_binding;
 import 'package:agora_rtm/src/impl/gen/rtm_result_handler.dart';
 import 'package:agora_rtm/src/impl/rtm_result_handler_impl.dart';
-import 'package:flutter/foundation.dart';
-import 'package:iris_method_channel/iris_method_channel.dart';
 import 'package:agora_rtm/src/impl/gen/agora_rtm_history_impl.dart'
     as rtm_history_impl;
 import 'package:agora_rtm/src/bindings/gen/agora_rtm_history_impl.dart'
     as rtm_history_impl_binding;
-
-InitilizationArgProvider? _mockSharedNativeHandleProvider;
-@visibleForTesting
-void setMockSharedNativeHandleProvider(
-    InitilizationArgProvider? mockSharedNativeHandleProvider) {
-  assert(() {
-    _mockSharedNativeHandleProvider = mockSharedNativeHandleProvider;
-    return true;
-  }());
-}
 
 class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
   // ignore: use_super_parameters
@@ -64,16 +54,6 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
 
     final rtmResultHandler = rtmResultHandlerImpl ?? RtmResultHandlerImpl();
 
-    List<InitilizationArgProvider> args = [];
-
-    // We only want to set it in testing.
-    assert(() {
-      if (_mockSharedNativeHandleProvider != null) {
-        args.add(_mockSharedNativeHandleProvider!);
-      }
-      return true;
-    }());
-
     final bindingRtmClientImpl = rtmClientNativeBinding ??
         rtm_client_impl_override.RtmClientImplOverride.create(
           IrisMethodOverride(IrisApiEngineNativeBindingDelegateProvider()),
@@ -84,7 +64,6 @@ class RtmClientImplOverride extends rtm_client_impl.RtmClientImpl {
       userId,
       rtmResultHandler.rtmEventHandler,
       config: config,
-      args: args,
     );
 
     _instance = RtmClientImplOverride(bindingRtmClientImpl, rtmResultHandler);

@@ -154,4 +154,22 @@ class RtmPresenceImpl implements RtmPresence {
       return (status, null);
     }
   }
+
+  @override
+  Future<(RtmStatus, GetUserOnlineStatusResult?)> getUserOnlineStatus(
+      String userId) async {
+    try {
+      final requestId =
+          await nativeBindingRtmPresenceImpl.getUserOnlineStatus(userId);
+      final (GetUserOnlineStatusResult result, RtmErrorCode errorCode) =
+          await rtmResultHandler.request(requestId);
+      final status = await nativeBindingRtmPresenceImpl.irisMethodChannel
+          .wrapRtmStatus(errorCode.value(), 'getUserOnlineStatus');
+      return (status, result);
+    } on AgoraRtmException catch (e) {
+      final status = await nativeBindingRtmPresenceImpl.irisMethodChannel
+          .wrapRtmStatus(e.code, 'getUserOnlineStatus');
+      return (status, null);
+    }
+  }
 }

@@ -34,9 +34,6 @@ dependencies:
   agora_rtm:
     path: ../../
 
-  iris_tester:
-    path: ../iris_tester
-
   agora_rtc_engine: ^6.5.1
 
 

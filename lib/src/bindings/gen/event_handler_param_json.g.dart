@@ -214,6 +214,7 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.invalidPrivateConfig: -10024,
   RtmErrorCode.notConnected: -10025,
   RtmErrorCode.renewTokenTimeout: -10026,
+  RtmErrorCode.duplicateUserId: -10027,
   RtmErrorCode.channelNotJoined: -11001,
   RtmErrorCode.channelNotSubscribed: -11002,
   RtmErrorCode.channelExceedTopicUserLimitation: -11003,
@@ -253,6 +254,7 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.channelMessageDeliveredButStoreFailed: -11037,
   RtmErrorCode.channelSubscribePermissionDenied: -11038,
   RtmErrorCode.channelPublishPermissionDenied: -11039,
+  RtmErrorCode.channelSubscribeCanceled: -11040,
   RtmErrorCode.storageOperationFailed: -12001,
   RtmErrorCode.storageMetadataItemExceedLimitation: -12002,
   RtmErrorCode.storageInvalidMetadataItem: -12003,
@@ -286,6 +288,9 @@ const _$RtmErrorCodeEnumMap = {
   RtmErrorCode.presenceUserNotExist: -13011,
   RtmErrorCode.presenceOperationTimeout: -13012,
   RtmErrorCode.presenceOperationFailed: -13013,
+  RtmErrorCode.presenceInactive: -13014,
+  RtmErrorCode.presencePendingRequestCancelled: -13015,
+  RtmErrorCode.presencePendingRequestExceedLimitation: -13016,
   RtmErrorCode.lockOperationFailed: -14001,
   RtmErrorCode.lockOperationTimeout: -14002,
   RtmErrorCode.lockOperationPerforming: -14003,
@@ -518,72 +523,6 @@ Map<String, dynamic> _$RtmEventHandlerOnGetSubscribedUserListResultJsonToJson(
   writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
   return val;
 }
-
-RtmEventHandlerOnConnectionStateChangedJson
-    _$RtmEventHandlerOnConnectionStateChangedJsonFromJson(
-            Map<String, dynamic> json) =>
-        RtmEventHandlerOnConnectionStateChangedJson(
-          channelName: json['channelName'] as String?,
-          state:
-              $enumDecodeNullable(_$RtmConnectionStateEnumMap, json['state']),
-          reason: $enumDecodeNullable(
-              _$RtmConnectionChangeReasonEnumMap, json['reason']),
-        );
-
-Map<String, dynamic> _$RtmEventHandlerOnConnectionStateChangedJsonToJson(
-    RtmEventHandlerOnConnectionStateChangedJson instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('channelName', instance.channelName);
-  writeNotNull('state', _$RtmConnectionStateEnumMap[instance.state]);
-  writeNotNull('reason', _$RtmConnectionChangeReasonEnumMap[instance.reason]);
-  return val;
-}
-
-const _$RtmConnectionStateEnumMap = {
-  RtmConnectionState.disconnected: 1,
-  RtmConnectionState.connecting: 2,
-  RtmConnectionState.connected: 3,
-  RtmConnectionState.reconnecting: 4,
-  RtmConnectionState.failed: 5,
-};
-
-const _$RtmConnectionChangeReasonEnumMap = {
-  RtmConnectionChangeReason.connecting: 0,
-  RtmConnectionChangeReason.joinSuccess: 1,
-  RtmConnectionChangeReason.interrupted: 2,
-  RtmConnectionChangeReason.bannedByServer: 3,
-  RtmConnectionChangeReason.joinFailed: 4,
-  RtmConnectionChangeReason.leaveChannel: 5,
-  RtmConnectionChangeReason.invalidAppId: 6,
-  RtmConnectionChangeReason.invalidChannelName: 7,
-  RtmConnectionChangeReason.invalidToken: 8,
-  RtmConnectionChangeReason.tokenExpired: 9,
-  RtmConnectionChangeReason.rejectedByServer: 10,
-  RtmConnectionChangeReason.settingProxyServer: 11,
-  RtmConnectionChangeReason.renewToken: 12,
-  RtmConnectionChangeReason.clientIpAddressChanged: 13,
-  RtmConnectionChangeReason.keepAliveTimeout: 14,
-  RtmConnectionChangeReason.rejoinSuccess: 15,
-  RtmConnectionChangeReason.lost: 16,
-  RtmConnectionChangeReason.echoTest: 17,
-  RtmConnectionChangeReason.clientIpAddressChangedByUser: 18,
-  RtmConnectionChangeReason.sameUidLogin: 19,
-  RtmConnectionChangeReason.tooManyBroadcasters: 20,
-  RtmConnectionChangeReason.licenseValidationFailure: 21,
-  RtmConnectionChangeReason.certificationVerifyFailure: 22,
-  RtmConnectionChangeReason.streamChannelNotAvailable: 23,
-  RtmConnectionChangeReason.inconsistentAppid: 24,
-  RtmConnectionChangeReason.loginSuccess: 10001,
-  RtmConnectionChangeReason.logout: 10002,
-  RtmConnectionChangeReason.presenceNotReady: 10003,
-};
 
 RtmEventHandlerOnTokenPrivilegeWillExpireJson
     _$RtmEventHandlerOnTokenPrivilegeWillExpireJsonFromJson(
@@ -1430,6 +1369,35 @@ Map<String, dynamic> _$RtmEventHandlerOnPresenceGetStateResultJsonToJson(
 
   writeNotNull('requestId', instance.requestId);
   writeNotNull('state', instance.state?.toJson());
+  writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
+  return val;
+}
+
+RtmEventHandlerOnGetUserOnlineStatusResultJson
+    _$RtmEventHandlerOnGetUserOnlineStatusResultJsonFromJson(
+            Map<String, dynamic> json) =>
+        RtmEventHandlerOnGetUserOnlineStatusResultJson(
+          requestId: (json['requestId'] as num?)?.toInt(),
+          status: json['status'] == null
+              ? null
+              : UserOnlineStatus.fromJson(
+                  json['status'] as Map<String, dynamic>),
+          errorCode:
+              $enumDecodeNullable(_$RtmErrorCodeEnumMap, json['errorCode']),
+        );
+
+Map<String, dynamic> _$RtmEventHandlerOnGetUserOnlineStatusResultJsonToJson(
+    RtmEventHandlerOnGetUserOnlineStatusResultJson instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('requestId', instance.requestId);
+  writeNotNull('status', instance.status?.toJson());
   writeNotNull('errorCode', _$RtmErrorCodeEnumMap[instance.errorCode]);
   return val;
 }

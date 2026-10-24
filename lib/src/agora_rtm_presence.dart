@@ -56,6 +56,12 @@ class GetUserChannelsResult {
   final int count;
 }
 
+class GetUserOnlineStatusResult {
+  GetUserOnlineStatusResult({required this.status});
+
+  final UserOnlineStatus status;
+}
+
 abstract class RtmPresence {
   Future<(RtmStatus, WhoNowResult?)> whoNow(
       String channelName, RtmChannelType channelType,
@@ -78,4 +84,7 @@ abstract class RtmPresence {
       {bool includeUserId = true, bool includeState = false, String? page});
 
   Future<(RtmStatus, GetUserChannelsResult?)> getUserChannels(String userId);
+
+  Future<(RtmStatus, GetUserOnlineStatusResult?)> getUserOnlineStatus(
+      String userId);
 }

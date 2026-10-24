@@ -23,5 +23,3 @@ flutter pub run ffigen --config=${MY_PATH}/ffigen_config.yaml
 popd
 
 rm -rf ${TMP_FFI_GEN_INCLUDE_DIR_NAME}
-
-bash ${PROJECT_ROOT}/test_shard/iris_tester/ffigen.sh ${IRIS_PATH}
