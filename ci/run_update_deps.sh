@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # get current directory
 current_dir=$(pwd)
@@ -46,26 +47,26 @@ function update_podspec_file() {
     local dep_item=$2
     
     # Handle iris dependencies
-    iris_cocoapods=$(echo "${dep_item}" | jq -r '.iris_cocoapods[]')
+    iris_cocoapods=$(echo "${dep_item}" | jq -r '.iris_cocoapods[]?')
     if [ "${iris_cocoapods}" != "" ]; then
         # replace 'pod' with 's.dependency' and remove quotes
         iris_deps=$(echo "${iris_cocoapods}" | sed 's/pod/s.dependency/g' | sed 's/"//g')
         # Add indentation
         iris_deps=$(echo "${iris_deps}" | sed 's/^/    /')
         
-        perl -0777 -pe "s/# iris dependencies start.*# iris dependencies end/# iris dependencies start\n${iris_deps}\n    # iris dependencies end/ms" "${dep_file}" > "${dep_file}.tmp"
+        RTM_POD_DEPS="${iris_deps}" perl -0777 -pe 's/# iris dependencies start.*# iris dependencies end/"# iris dependencies start\n".$ENV{RTM_POD_DEPS}."\n    # iris dependencies end"/mse' "${dep_file}" > "${dep_file}.tmp"
         mv "${dep_file}.tmp" "${dep_file}"
     fi
     
     # Handle native dependencies
-    cocoapods=$(echo "${dep_item}" | jq -r '.cocoapods[]')
+    cocoapods=$(echo "${dep_item}" | jq -r '.cocoapods[]?')
     if [ "${cocoapods}" != "" ]; then
         # replace 'pod' with 's.dependency' and remove quotes
         native_deps=$(echo "${cocoapods}" | sed 's/pod/s.dependency/g' | sed 's/"//g')
         # Add indentation
         native_deps=$(echo "${native_deps}" | sed 's/^/    /')
         
-        perl -0777 -pe "s/# native dependencies start.*# native dependencies end/# native dependencies start\n${native_deps}\n    # native dependencies end/ms" "${dep_file}" > "${dep_file}.tmp"
+        RTM_POD_DEPS="${native_deps}" perl -0777 -pe 's/# native dependencies start.*# native dependencies end/"# native dependencies start\n".$ENV{RTM_POD_DEPS}."\n    # native dependencies end"/mse' "${dep_file}" > "${dep_file}.tmp"
         mv "${dep_file}.tmp" "${dep_file}"
     fi
 }
@@ -76,7 +77,7 @@ function update_gradle_file() {
     local dep_item=$2
     
     # Handle iris dependencies
-    iris_maven=$(echo "${dep_item}" | jq -r '.iris_maven[]')
+    iris_maven=$(echo "${dep_item}" | jq -r '.iris_maven[]?')
     if [ "${iris_maven}" != "" ]; then
         # replace 'implementation' with 'api' and remove quotes
         iris_deps=$(echo "${iris_maven}" | sed 's/implementation/api/g' | sed 's/"//g')
@@ -88,7 +89,7 @@ function update_gradle_file() {
     fi
     
     # Handle native dependencies
-    maven=$(echo "${dep_item}" | jq -r '.maven[]')
+    maven=$(echo "${dep_item}" | jq -r '.maven[]?')
     if [ "${maven}" != "" ]; then
         # replace 'implementation' with 'api' and remove quotes
         native_deps=$(echo "${maven}" | sed 's/implementation/api/g' | sed 's/"//g')

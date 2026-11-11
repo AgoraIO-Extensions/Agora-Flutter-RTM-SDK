@@ -4,7 +4,7 @@ require_relative 'ios_pod_helpers'
 
 [true, false].each do |rtm_present|
   Dir.mktmpdir('rtm-aosldedup-') do |root|
-    rtm = File.join(root, 'ShengwangRtm_iOS', 'aosl.xcframework')
+    rtm = File.join(root, 'Agora-Rtm', 'aosl.xcframework')
     rtc = File.join(root, 'AgoraInfra_iOS', 'aosl.xcframework')
     other = File.join(root, 'OtherPod', 'aosl.xcframework')
     FileUtils.mkdir_p([rtc, other])
@@ -26,15 +26,15 @@ TestPodTarget = Struct.new(:name, :dependencies, :build_configurations) do
 end
 
 Dir.mktmpdir('rtm-aosllink-') do |root|
-  FileUtils.mkdir_p(File.join(root, 'ShengwangRtm_iOS', 'aosl.xcframework'))
-  provider = TestPodTarget.new('ShengwangRtm_iOS', [], [])
+  FileUtils.mkdir_p(File.join(root, 'Agora-Rtm', 'aosl.xcframework'))
+  provider = TestPodTarget.new('Agora-Rtm', [], [])
   config = OpenStruct.new(build_settings: { 'FRAMEWORK_SEARCH_PATHS' => ['$(inherited)', 'custom'] })
   consumer = TestPodTarget.new('agora_rtc_engine', [], [config])
   installer = OpenStruct.new(sandbox: OpenStruct.new(root: root),
     pods_project: OpenStruct.new(targets: [provider, consumer]))
   2.times { configure_rtm_aosl_consumers(installer) }
   raise 'Selected provider copy phase is not a dependency' unless consumer.dependencies.map(&:target) == [provider]
-  expected = ['$(inherited)', 'custom', '"$(PODS_XCFRAMEWORKS_BUILD_DIR)/ShengwangRtm_iOS"']
+  expected = ['$(inherited)', 'custom', '"$(PODS_XCFRAMEWORKS_BUILD_DIR)/Agora-Rtm"']
   raise 'RTC does not resolve the selected AOSL provider' unless config.build_settings['FRAMEWORK_SEARCH_PATHS'] == expected
 end
 puts 'AOSL provider selection tests passed'

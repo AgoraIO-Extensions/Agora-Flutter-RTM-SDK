@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.platform = :ios, '9.0'
+  s.platform = :ios, '11.0'
   s.libraries = 'stdc++'
 
   plugin_dev_path = File.join(File.dirname(File.realpath(__FILE__)), '..', '.plugin_dev')
@@ -26,11 +26,12 @@ Pod::Spec.new do |s|
     s.vendored_frameworks = 'libs/*.xcframework'
   else
   # iris dependencies start
-    s.dependency 'AgoraIrisRTM_iOS', '2.3.1-dev.4'
+    s.dependency 'AgoraIrisRTM_iOS', '2.3.1'
     # iris dependencies end
 
   # native dependencies start
-    s.dependency 'ShengwangRtm_iOS', '2.3.1-dev.4'
+    s.dependency 'Agora-Rtm/RtmKit', '2.3.1'
+    s.dependency 'Agora-Rtm/RtmBasic', '2.3.1'
     # native dependencies end
   end
 
