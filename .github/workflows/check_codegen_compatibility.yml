@@ -3,6 +3,8 @@ name: Check codegen compatibility
 on:
   pull_request:
     paths:
+      - ci/run_update_deps.sh
+      - scripts/test_update_deps.rb
       - pubspec.yaml
       - scripts/terra/**
       - scripts/testcase_gen/**
@@ -18,10 +20,12 @@ permissions:
 
 jobs:
   codegen:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - name: Test dependency updates including Pod subspecs
+        run: ruby scripts/test_update_deps.rb
       - name: Test iOS AOSL provider selection
         run: ruby scripts/test_ios_pod_helpers.rb
       - uses: subosito/flutter-action@v2
